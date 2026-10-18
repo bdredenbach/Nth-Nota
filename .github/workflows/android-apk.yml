@@ -13,8 +13,6 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    env:
-      NOTA_PREVIEW_KEYSTORE: ${{ runner.temp }}/nota-signing/debug.keystore
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,6 +43,8 @@ jobs:
           path: ${{ runner.temp }}/nota-signing/debug.keystore
           key: nth-nota-preview-signing-v2
       - name: Create the preview key if no cached copy exists
+        env:
+          NOTA_PREVIEW_KEYSTORE: ${{ runner.temp }}/nota-signing/debug.keystore
         run: |
           if [ ! -f "$NOTA_PREVIEW_KEYSTORE" ]; then
             mkdir -p "$(dirname "$NOTA_PREVIEW_KEYSTORE")"
@@ -55,6 +55,7 @@ jobs:
       - name: Build preview APK
         env:
           NOTA_AI_GATEWAY_URL: ${{ vars.NOTA_AI_GATEWAY_URL }}
+          NOTA_PREVIEW_KEYSTORE: ${{ runner.temp }}/nota-signing/debug.keystore
         run: gradle -p android assembleDebug --no-daemon
       - name: Verify APK signature
         run: |
