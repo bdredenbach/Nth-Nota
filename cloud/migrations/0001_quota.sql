@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS quota (
+  day TEXT NOT NULL,
+  bucket TEXT NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY(day, bucket)
+);
+CREATE TABLE IF NOT EXISTS cooldown (
+  provider TEXT PRIMARY KEY,
+  until_ms INTEGER NOT NULL
+);

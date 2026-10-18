@@ -33,7 +33,7 @@ final class LocalAI {
             if(action.equals("status")){send(id,new JSONObject().put("status",statusName(status)));return;}
             if(!action.equals("generate")){error(id,"INVALID_REQUEST","Unknown writing action.",0);return;}
             JSONObject input=new JSONObject(json);String prompt=input.optString("prompt");String task=input.optString("task");
-            if(prompt.isBlank()||prompt.length()>20000||!task.matches("proofread|polish|brainstorm|generate|summarize")){error(id,"INVALID_REQUEST","Use a shorter piece of writing or choose a writing tool.",0);return;}
+            if(prompt.trim().isEmpty()||prompt.length()>20000||!task.matches("proofread|polish|brainstorm|generate|summarize")){error(id,"INVALID_REQUEST","Use a shorter piece of writing or choose a writing tool.",0);return;}
             if(status==FeatureStatus.UNAVAILABLE){error(id,"UNAVAILABLE","Local AI is not available on this phone yet. Check Android and AICore updates, then try again.",60000);return;}
             if(status==FeatureStatus.DOWNLOADING){error(id,"BUSY","Local AI is downloading. Keep an internet connection and try again shortly.",30000);return;}
             if(status==FeatureStatus.DOWNLOADABLE){
@@ -55,7 +55,7 @@ final class LocalAI {
             GenerateContentResponse response=await(job,model.generateContent(request),120);
             if(job.cancelled.get()||!foreground)throw new CancellationException();
             String text=response.getCandidates().isEmpty()?"":response.getCandidates().get(0).getText();
-            if(text==null||text.isBlank()){error(id,"UNAVAILABLE","The local assistant returned no text. Try a clearer or shorter request.",30000);return;}
+            if(text==null||text.trim().isEmpty()){error(id,"UNAVAILABLE","The local assistant returned no text. Try a clearer or shorter request.",30000);return;}
             send(id,new JSONObject().put("text",text).put("local",true));
         }catch(Throwable raw){Throwable e=raw;while(e instanceof ExecutionException&&e.getCause()!=null)e=e.getCause();
             if(e instanceof InterruptedException||e instanceof CancellationException||job.cancelled.get())error(id,"CANCELLED","Request cancelled. Your notes are unchanged.",0);

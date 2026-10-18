@@ -1,4 +1,4 @@
-/* Free-only engine selection. No provider credentials or network adapter is bundled. */
+/* Free-only engine selection. Provider credentials are never bundled. */
 (function(root){'use strict';
 class Unavailable extends Error {constructor(message,retryAt=null){super(message);this.name='AIUnavailable';this.retryAt=retryAt;}}
 const abortError=()=>new DOMException('Request cancelled','AbortError');

@@ -16,3 +16,6 @@ dist/vendor/pdf.worker.min.mjs
 
 # Also ignore a local dependency-directory symlink.
 node_modules
+cloud/wrangler.jsonc
+cloud/.dev.vars
+cloud/.wrangler/

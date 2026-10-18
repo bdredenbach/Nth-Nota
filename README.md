@@ -1,4 +1,4 @@
-# Nth Nota 0.2
+# Nth Nota 0.3
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or cloud key is configured.
 
@@ -28,11 +28,11 @@ Pushing app changes to `main` starts the Android preview workflow. Its APK and c
 - Recently Deleted with restore and explicit permanent deletion. Deleted reminders are paused.
 - Up to 15 text history snapshots per note, with restore and backup preservation.
 - Revision-checked writes protect newer notes from a stale second window. A conflicting window preserves its unsaved copy and offers backup before reload.
-- Free-only AI router with tested task selection, provider/model quota scopes, retry cooldowns, context preservation, cancellation and privacy gating. No real engines are registered yet.
+- Free-only AI router with tested task selection, provider/model quota scopes, retry cooldowns, context preservation, cancellation and privacy gating. Version 0.3 registers the Android local engine and an optional owner-configured gateway.
 - Android project in android/ with bundled editor, native file pickers and chunked export, offline TTS and inexact reminders. The first Android APK compiled successfully on GitHub Actions and passed APK v2 signature verification. Physical-device testing is still pending. See android/BUILDING.md.
 
 ## Intentional prototype limits
-No generative AI connection yet. The writing companion clearly marks this status; no generated answers are simulated. Android Gemini Nano, real cloud/local AI adapter connections, cursive-to-text, device verification of the prepared notification integration, background audio and cross-device sync are future work. No model picker or user API-key input is exposed. Local text-to-task conversion is labeled as a built-in tool, not AI.
+The Gemini Nano integration compiles against the real ML Kit SDK, but inference quality and phone compatibility still need physical-device testing. Cloud gateway code is implemented and tested with simulated provider responses; no cloud account or live endpoint is connected. Cursive-to-text, device verification of notifications, background audio and cross-device sync remain future work. No model picker or user API-key input is exposed. Local text-to-task conversion is labeled as a built-in tool, not AI.
 
 Document import extracts paragraphs, not full Word layout, tables, tracked changes or embedded media. Image attachments are placed on the workspace beside their parent item. PDF and attachment import has a 12 MB per-file prototype limit. PDF annotations on rotated/cropped pages need device testing. Backups are readable JSON and must be stored privately.
 
@@ -57,3 +57,13 @@ No paid service is configured. Adding a cloud adapter requires an independently 
 ## First verified Android preview
 
 Nth Nota 0.2.0 built successfully in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/actions/runs/39176169879). All 25 JavaScript checks passed, the APK signature verified, and all 22 bundled editor assets matched the source. Package: `com.nthexperience.nota.preview`, minimum Android 8 (API 26), target API 36. The APK is ready for phone testing; no physical-device tests or live AI connection are claimed. See [build verification](docs/android-build-verification.json).
+
+## Added in 0.3
+
+- Shared italic N icon, with “th” above “ota,” including adaptive and monochrome Android icons. The outlined lettering is derived from URW Base35 Nimbus Roman Italic; no font binary is embedded.
+- Android on-device writing assistance through ML Kit’s Gemini Nano Prompt API, with availability checks, first-use model preparation, progress, cancellation, short-request limits and foreground lifecycle handling. No API key is needed. Supported device/AICore configuration is required; unsupported phones show an honest status.
+- Proofread, polish, idea board, drafting and summarization tasks. Recent conversation and selected note context are carried between turns. Replies can be copied, read back, or saved as a separate note; original writing is not overwritten.
+- Optional HTTPS cloud gateway with server-held provider secrets, atomic global/per-connection daily caps, provider cooldowns, Cloudflare-to-Groq failover, and hard stop when free capacity is unavailable. No account rotation or paid fallback. Cloud calls require explicit opt-in, which is held in app-private native preferences rather than restored from a desk backup.
+- The default APK has no gateway URL and sends no writing to cloud providers. Owner activation instructions: [cloud/README.md](cloud/README.md). Ordinary app users never enter keys or select models.
+
+The local integration is not a continuously running background service: it checks and uses available engines when assistance is requested. Android’s on-device generation requires the app to be in the foreground. Automatic switching preserves context but different models can produce different quality or style.

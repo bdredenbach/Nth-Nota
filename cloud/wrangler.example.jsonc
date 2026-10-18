@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nth-nota-free-ai",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-18",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "ai": { "binding": "AI" },
+  "d1_databases": [{ "binding": "DB", "database_name": "nth-nota-ai-quota", "database_id": "REPLACE_WITH_CREATED_DATABASE_ID", "migrations_dir": "migrations" }],
+  "vars": {
+    "FREE_ONLY_CONFIRMED": "no",
+    "ALLOWED_ORIGINS": "https://nth-nota.bradredenbach.chatgpt.site"
+  },
+  "triggers": { "crons": ["7 0 * * *"] }
+}

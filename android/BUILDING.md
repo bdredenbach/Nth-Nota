@@ -1,4 +1,4 @@
-# Nth Nota Android project, 0.2.0
+# Nth Nota Android project, 0.3.0
 
 Status: the 0.2.0 preview APK compiled successfully on GitHub Actions, passed all 25 JavaScript checks, and passed APK v2 signature verification. It is not yet tested on a physical device. The working browser prototype is deployed separately.
 
@@ -24,7 +24,9 @@ Before installing a succession of test APKs, configure a persistent signing key 
 - Reminder edits, trashing, removal and backup replacement synchronize with scheduled alarms. Native delivery state is merged into the desk when it resumes to prevent duplicate one-time alerts and retain recurrence.
 - Application allowBackup is false: explicit Nth Nota backups are the portable recovery method. No automatic cloud copy is claimed.
 
-No local generative model or cloud API is connected. The tested free-only router can be connected to real adapters after SDK compilation, model evaluation and secure backend/account configuration. No cloud key belongs in this app or its source.
+Gemini Nano is connected through `LocalAI.java` and ML Kit Prompt API 1.0.0-beta4. Compatibility and availability are queried at runtime; first use can download model assets through AICore. Requests pause/cancel when the Activity leaves the foreground. No physical-device inference has been verified.
+
+`CloudAI.java` connects only to an owner-fixed HTTPS gateway when the build includes `NOTA_AI_GATEWAY_URL` and the user explicitly enables cloud assistance. The default URL is empty. Redirects are rejected, request/response sizes and timeouts are bounded, and opt-out cancels in-flight client requests. A provider may finish a request it already received after cancellation. No provider key belongs in this app or source. See [cloud activation](../cloud/README.md).
 
 ## Remaining device verification
 
@@ -35,3 +37,5 @@ Primary references:
 - https://developer.android.com/develop/background-work/services/alarms
 - https://developer.android.com/reference/android/speech/tts/TextToSpeech
 - https://developer.android.com/guide/topics/providers/document-provider
+
+ML Kit reference: https://developers.google.com/ml-kit/genai/prompt/android/get-started
