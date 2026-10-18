@@ -1,0 +1,7 @@
+'use strict';
+const VERSION='nth-nota-shell-0.2.0';
+const FILES=['./','./index.html','./style.css','./app.js','./core.js','./desk-store.js','./ai-router.js','./platform.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./vendor/lucide.js','./vendor/jszip.js','./vendor/docx.js','./vendor/pdf-lib.js','./vendor/pdf.mjs','./vendor/pdf.worker.min.mjs'];
+self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(VERSION);await cache.addAll(FILES);})()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('nth-nota-shell-')&&key!==VERSION)await caches.delete(key);await self.clients.claim();})()));
+self.addEventListener('message',e=>{if(e.data==='ACTIVATE_UPDATE')self.skipWaiting();});
+self.addEventListener('fetch',e=>{const url=new URL(e.request.url);if(e.request.method!=='GET'||url.origin!==self.location.origin)return;const path=url.pathname;const isShell=FILES.some(p=>new URL(p,self.registration.scope).pathname===path);if(!isShell)return;e.respondWith((async()=>{const cache=await caches.open(VERSION);const hit=await cache.match(e.request,{ignoreSearch:true});if(hit)return hit;try{return await fetch(e.request);}catch{return new Response('Open Nth Nota once online to prepare offline access.',{status:503,headers:{'Content-Type':'text/plain'}});}})());});

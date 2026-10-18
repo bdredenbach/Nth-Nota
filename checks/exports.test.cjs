@@ -1,0 +1,6 @@
+const fs=require('node:fs');const vm=require('node:vm');const assert=require('node:assert/strict');
+const context=vm.createContext({Blob,TextEncoder,TextDecoder,Uint8Array,ArrayBuffer,setTimeout,clearTimeout,console,atob,btoa});
+for(const file of ['docx.js','jszip.js','pdf-lib.js'])vm.runInContext(fs.readFileSync('dist/vendor/'+file,'utf8'),context);
+const JSZip=context.JSZip;
+(async()=>{assert(context.docx);const d=context.docx;const doc=new d.Document({sections:[{children:[new d.Paragraph({text:'Nth Nota export',heading:d.HeadingLevel.TITLE}),new d.Paragraph({text:'A thought to keep. Cursive: café.'})]}]});const blob=await d.Packer.toBlob(doc);const zip=await JSZip.loadAsync(await blob.arrayBuffer());const xml=await zip.file('word/document.xml').async('string');assert(xml.includes('Nth Nota export'));assert(xml.includes('café'));
+const PDFLib=context.PDFLib;const p=await PDFLib.PDFDocument.create();const f=await p.embedFont(PDFLib.StandardFonts.Helvetica);p.addPage().drawText('Nth Nota export',{font:f});const data=await p.save();const opened=await PDFLib.PDFDocument.load(data);assert.equal(opened.getPageCount(),1);console.log('Export checks passed: browser DOCX bundle creates a valid Word archive; PDF roundtrip succeeds.');})().catch(e=>{console.error(e);process.exit(1)});

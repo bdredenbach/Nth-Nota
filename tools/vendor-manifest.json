@@ -1,0 +1,26 @@
+{
+  "docx.js": {
+    "source": "docx/dist/index.iife.js",
+    "sha256": "ecef72931c98461fc327aa6e95867820aced5db4c3d971ac5ad38ccda21dd360"
+  },
+  "jszip.js": {
+    "source": "jszip/dist/jszip.min.js",
+    "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e"
+  },
+  "lucide.js": {
+    "source": "lucide/dist/umd/lucide.min.js",
+    "sha256": "ab85225ecc1daa2033607856f03dd2dabcbc08e2d260a5b97e17c690aa929766"
+  },
+  "pdf-lib.js": {
+    "source": "pdf-lib/dist/pdf-lib.min.js",
+    "sha256": "0f9a5cad07941f0826586c94e089d89b918c46e5c17cf2d5a3c6f666e3bc694f"
+  },
+  "pdf.mjs": {
+    "source": "pdfjs-dist/build/pdf.min.mjs",
+    "sha256": "2221020ea508479dcc1221f36f2731656339230097c69ba1f78802832c0ad685"
+  },
+  "pdf.worker.min.mjs": {
+    "source": "pdfjs-dist/build/pdf.worker.min.mjs",
+    "sha256": "51a2fd1ea47f1a9b0814e65e0c336c739c54957795ee774e8f93cb81e8028dd1"
+  }
+}

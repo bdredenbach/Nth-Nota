@@ -1,0 +1,15 @@
+android/.gradle/
+android/local.properties
+android/**/build/
+*.jks
+*.keystore
+.env
+node_modules/
+
+# Recreated byte-for-byte from pinned npm packages during builds.
+dist/vendor/docx.js
+dist/vendor/jszip.js
+dist/vendor/lucide.js
+dist/vendor/pdf-lib.js
+dist/vendor/pdf.mjs
+dist/vendor/pdf.worker.min.mjs
