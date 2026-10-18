@@ -13,3 +13,6 @@ dist/vendor/lucide.js
 dist/vendor/pdf-lib.js
 dist/vendor/pdf.mjs
 dist/vendor/pdf.worker.min.mjs
+
+# Also ignore a local dependency-directory symlink.
+node_modules

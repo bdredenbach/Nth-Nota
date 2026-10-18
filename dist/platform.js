@@ -1,6 +1,9 @@
 /* Same interface for the browser prototype and the packaged Android app. */
-(function(){'use strict';const native=window.NotaAndroid;
-window.NotaPlatform={isAndroid:!!native,
+(function(){'use strict';const native=window.NotaAndroid,pending=new Map();
+window.addEventListener('nota-ai',e=>{const d=e.detail,job=pending.get(d?.id);if(!job)return;if(d.event==='progress'){job.progress?.(d.message);return;}pending.delete(d.id);clearTimeout(job.timer);job.cleanup?.();if(d.error){const error=Object.assign(Error(d.message||'Assistance is unavailable.'),{code:d.error==='CANCELLED'?'CANCELLED':d.error,retryAt:d.retryAt});if(d.error==='CANCELLED')error.name='AbortError';job.reject(error);}else job.resolve(d);});
+function localRequest(action,input={},options={}){if(!native?.requestAI)return Promise.reject(Object.assign(Error('Local AI is available in the Android app on supported phones.'),{code:'UNAVAILABLE'}));return new Promise((resolve,reject)=>{const id=crypto.randomUUID();const stop=()=>{native.cancelAI(id);pending.delete(id);clearTimeout(job.timer);options.signal?.removeEventListener('abort',stop);reject(new DOMException('Request cancelled','AbortError'));};const job={resolve,reject,progress:options.onProgress,cleanup:()=>options.signal?.removeEventListener('abort',stop),timer:setTimeout(()=>{native.cancelAI(id);pending.delete(id);job.cleanup();reject(Object.assign(Error('The assistant took too long to prepare. Try again after the download finishes.'),{code:'TIMEOUT'}));},action==='generate'?660000:35000)};if(options.signal?.aborted){clearTimeout(job.timer);reject(new DOMException('Request cancelled','AbortError'));return;}pending.set(id,job);options.signal?.addEventListener('abort',stop,{once:true});try{native.requestAI(id,action,JSON.stringify(input));}catch(e){pending.delete(id);clearTimeout(job.timer);job.cleanup();reject(Object.assign(Error('Update the Android app to connect local assistance.'),{code:'UNAVAILABLE'}));}});}
+
+window.NotaPlatform={isAndroid:!!native,hasLocalAI:!!native?.requestAI,localRequest,
  read(text,rate){if(!native)return false;native.speak(String(text),Number(rate)||1);return true;},
  stopRead(){native?.stopSpeaking();window.speechSynthesis?.cancel();},
  syncReminders(items){if(!native)return;native.syncReminders(JSON.stringify(items.filter(n=>!n.deletedAt&&n.reminder).map(n=>({id:n.id,...n.reminder}))));},
