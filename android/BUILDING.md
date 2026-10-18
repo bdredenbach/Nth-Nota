@@ -1,6 +1,6 @@
 # Nth Nota Android project, 0.2.0
 
-Status: source prepared, not compiled or device-tested. The working browser prototype is deployed separately. There is no APK in this project yet.
+Status: the 0.2.0 preview APK compiled successfully on GitHub Actions, passed all 25 JavaScript checks, and passed APK v2 signature verification. It is not yet tested on a physical device. The working browser prototype is deployed separately.
 
 This is an Android WebView application with the complete local editor bundled into its assets. It does not load the hosted prototype. Android notes use app-private WebView storage, separate from browser notes. Export a JSON backup from the browser and restore it in the Android app to transfer a desk.
 
@@ -26,9 +26,9 @@ Before installing a succession of test APKs, configure a persistent signing key 
 
 No local generative model or cloud API is connected. The tested free-only router can be connected to real adapters after SDK compilation, model evaluation and secure backend/account configuration. No cloud key belongs in this app or its source.
 
-## Required verification before APK delivery
+## Remaining device verification
 
-Compile against the real SDK. Test install/relaunch/upgrade, microphone acceptance and denial, native backup export/restore and cancellation, multi-file import, PDF workers, TTS without an installed voice, notification permission denial, reminders after closure/reboot, keyboard insets and stylus handling. Check portrait/landscape and phone/tablet layouts. This project does not claim any of those device tests have passed.
+Compilation against the real SDK and APK signature verification have passed. Test install/relaunch/upgrade, microphone acceptance and denial, native backup export/restore and cancellation, multi-file import, PDF workers, TTS without an installed voice, notification permission denial, reminders after closure/reboot, keyboard insets and stylus handling. Check portrait/landscape and phone/tablet layouts. This project does not claim any of those device tests have passed.
 
 Primary references:
 - https://developer.android.com/develop/ui/views/layout/webapps/load-local-content

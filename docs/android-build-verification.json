@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "source_commit": "ccbdf62a33e3bda667549c4a2d5e72cea695a97f",
+  "workflow_run": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39176169879",
+  "workflow_conclusion": "success",
+  "automated_checks_passed": 25,
+  "package": "com.nthexperience.nota.preview",
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "apk_sha256": "49021cf2082d88ba92a2b71c878b150f5c8004a354297bb21d18bb2f3cdec4cf",
+  "apk_v2_signature_verified": true,
+  "signing_certificate_sha256": "c3287ac146b441d600fdf40cf03aa5ef499e2d62160c4d0ba52dfc76675ad7e4",
+  "bundled_editor_assets_verified": 22,
+  "physical_device_tested": false,
+  "live_ai_connected": false
+}

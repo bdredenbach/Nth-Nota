@@ -29,7 +29,7 @@ Pushing app changes to `main` starts the Android preview workflow. Its APK and c
 - Up to 15 text history snapshots per note, with restore and backup preservation.
 - Revision-checked writes protect newer notes from a stale second window. A conflicting window preserves its unsaved copy and offers backup before reload.
 - Free-only AI router with tested task selection, provider/model quota scopes, retry cooldowns, context preservation, cancellation and privacy gating. No real engines are registered yet.
-- Android project in android/ with bundled editor, native file pickers and chunked export, offline TTS and inexact reminders. The SDK is not available in the authoring environment: native source is uncompiled and untested. See android/BUILDING.md.
+- Android project in android/ with bundled editor, native file pickers and chunked export, offline TTS and inexact reminders. The first Android APK compiled successfully on GitHub Actions and passed APK v2 signature verification. Physical-device testing is still pending. See android/BUILDING.md.
 
 ## Intentional prototype limits
 No generative AI connection yet. The writing companion clearly marks this status; no generated answers are simulated. Android Gemini Nano, real cloud/local AI adapter connections, cursive-to-text, device verification of the prepared notification integration, background audio and cross-device sync are future work. No model picker or user API-key input is exposed. Local text-to-task conversion is labeled as a built-in tool, not AI.
@@ -53,3 +53,7 @@ The exports smoke test exercises the same locally bundled libraries served to th
 Third-party browser libraries and their licenses are in dist/vendor. All runtime assets are local; there are no external CDN dependencies.
 
 No paid service is configured. Adding a cloud adapter requires an independently verified free plan, server-held credentials, allowance tracking and hard stop behavior. Router flags alone do not enforce a provider billing account configuration.
+
+## First verified Android preview
+
+Nth Nota 0.2.0 built successfully in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/actions/runs/39176169879). All 25 JavaScript checks passed, the APK signature verified, and all 22 bundled editor assets matched the source. Package: `com.nthexperience.nota.preview`, minimum Android 8 (API 26), target API 36. The APK is ready for phone testing; no physical-device tests or live AI connection are claimed. See [build verification](docs/android-build-verification.json).
