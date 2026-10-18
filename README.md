@@ -67,3 +67,7 @@ Nth Nota 0.2.0 built successfully in [GitHub Actions](https://github.com/bdreden
 - The default APK has no gateway URL and sends no writing to cloud providers. Owner activation instructions: [cloud/README.md](cloud/README.md). Ordinary app users never enter keys or select models.
 
 The local integration is not a continuously running background service: it checks and uses available engines when assistance is requested. Android’s on-device generation requires the app to be in the foreground. Automatic switching preserves context but different models can produce different quality or style.
+
+## Verified 0.3 Android preview
+
+Version 0.3.0 built in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/actions/runs/39177629344). All 38 automated checks passed, APK v2 signing verified, and all 23 bundled web assets matched source. The corrected signing-key cache saved successfully. This preview's signing certificate differs from 0.2: export a full desk backup before any reinstall and restore it afterward. See [verification record](docs/android-build-verification-0.3.json). Physical-device AI and live cloud inference have not been tested; cloud activation still needs the owner's free account.

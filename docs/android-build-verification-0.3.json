@@ -1,0 +1,28 @@
+{
+  "version": "0.3.0",
+  "source_commit": "e2772e31253397fa71f904de1b2320af887d6e39",
+  "workflow_run": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39177629344",
+  "workflow_conclusion": "success",
+  "automated_checks_passed": 38,
+  "additional_checks": [
+    "Real SQLite quota cap/reset",
+    "Native JS bridge request/cancel/privacy smoke check",
+    "Android adaptive/monochrome XML validation"
+  ],
+  "package": "com.nthexperience.nota.preview",
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "apk_sha256": "da7ed5faea211cfebf23f0da07a8dec762b41f8fd1f3c9b2f3f1f661f32f40f5",
+  "apk_v2_signature_verified": true,
+  "signing_certificate_sha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "signing_key_cache_saved": true,
+  "in_place_update_from_0_2_supported": false,
+  "bundled_editor_assets_verified": 23,
+  "physical_device_tested": false,
+  "local_ai_sdk_compiled": true,
+  "local_ai_inference_device_tested": false,
+  "cloud_gateway_mock_tests_passed": true,
+  "cloud_gateway_deployed": false,
+  "cloud_credentials_configured": false,
+  "live_cloud_inference_tested": false
+}
