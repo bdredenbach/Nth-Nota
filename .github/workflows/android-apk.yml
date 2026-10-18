@@ -13,6 +13,8 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      NOTA_PREVIEW_KEYSTORE: ${{ runner.temp }}/nota-signing/debug.keystore
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -40,8 +42,14 @@ jobs:
       - name: Reuse the preview signing key when available
         uses: actions/cache@v4
         with:
-          path: ~/.android/debug.keystore
-          key: nth-nota-preview-signing-v1
+          path: ${{ runner.temp }}/nota-signing/debug.keystore
+          key: nth-nota-preview-signing-v2
+      - name: Create the preview key if no cached copy exists
+        run: |
+          if [ ! -f "$NOTA_PREVIEW_KEYSTORE" ]; then
+            mkdir -p "$(dirname "$NOTA_PREVIEW_KEYSTORE")"
+            keytool -genkeypair -keystore "$NOTA_PREVIEW_KEYSTORE" -storepass android -alias androiddebugkey -keypass android -dname 'CN=Nth Nota Preview,O=Nth Experience,C=US' -keyalg RSA -keysize 2048 -validity 10000
+          fi
       - name: Install compile SDK
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Build preview APK

@@ -39,3 +39,7 @@ Primary references:
 - https://developer.android.com/guide/topics/providers/document-provider
 
 ML Kit reference: https://developers.google.com/ml-kit/genai/prompt/android/get-started
+
+## Preview signing transition
+
+The first 0.2 key was not retained by the runner's default path. Version 0.3 explicitly uses a generated key at `NOTA_PREVIEW_KEYSTORE` and caches that exact path. This improves continuity while the cache survives; production requires a securely backed-up owner key. The 0.3 certificate differs from 0.2, so Android may reject an in-place update. Export a full desk backup first. If a reinstall is needed, restore that backup afterward. Never uninstall a desk with unexported notes.
