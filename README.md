@@ -1,6 +1,15 @@
-# Nth Nota 0.5.3
+# Nth Nota 0.6.0
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.6.0
+
+- Declares MODIFY_AUDIO_SETTINGS alongside RECORD_AUDIO for WebView microphone capture. Microphone grants remain limited to the bundled app origin. Recording failures now distinguish denied permission, busy microphones and unsupported capture.
+- Voice recording disables repeated Start taps, stops and releases the microphone on close or background, and provides playback before saving. Saved recordings expose Transcribe.
+- On-device speech-to-text for saved and imported audio uses ML Kit Speech Recognition 1.0.0-alpha1. Advanced mode is tried first, then Basic when unavailable. Supported devices/languages are checked before processing; no cloud audio or paid fallback is configured.
+- Audio is decoded locally to mono 16 kHz PCM and delivered through a real-time paced pipe. This preview accepts files up to two minutes for transcription. First use can download a speech model with visible byte progress.
+- Transcripts are reviewable and editable, persist with their source audio in backups, and can be saved as separate notes. Stop/close/background cancels transcription without deleting the audio.
+- Includes the Organize tool and responsive six-tool ribbon from 0.5.3.
 
 ## Added in 0.5.3
 

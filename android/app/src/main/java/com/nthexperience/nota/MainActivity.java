@@ -28,6 +28,7 @@ public class MainActivity extends Activity {
     private FrameLayout root; private WebView web; private ValueCallback<Uri[]> chooser; private PermissionRequest microphone;
     private LocalAI localAI;
     private CloudAI cloudAI;
+    private LocalTranscription transcription;
     private TextToSpeech tts; private volatile boolean ttsReady; private String pendingItem; private boolean webReady;
     private final ExportTransfer transfer=new ExportTransfer();
 
@@ -39,6 +40,7 @@ public class MainActivity extends Activity {
         WebSettings settings=web.getSettings();settings.setJavaScriptEnabled(true);settings.setDomStorageEnabled(true);settings.setAllowFileAccess(false);settings.setAllowContentAccess(true);settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);settings.setMediaPlaybackRequiresUserGesture(true);settings.setJavaScriptCanOpenWindowsAutomatically(false);settings.setSupportMultipleWindows(false);
         localAI=new LocalAI(data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
         cloudAI=new CloudAI(this,data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
+        transcription=new LocalTranscription(getCacheDir(),data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-transcription',{detail:"+data+"}))",null);}));
         web.addJavascriptInterface(new DeviceBridge(),"NotaAndroid");
         web.setWebViewClient(new WebViewClient(){
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){Uri uri=r.getUrl();if(!"https".equals(uri.getScheme())||!HOST.equals(uri.getHost())||uri.getPort()!=-1||!r.getMethod().equals("GET"))return blocked();String path=uri.getPath();if(path==null||!path.startsWith("/assets/www/")||path.contains("..")||path.contains("\\"))return blocked();try{String asset=path.substring("/assets/".length());String mime=mime(asset);WebResourceResponse res=new WebResourceResponse(mime,"UTF-8",getAssets().open(asset));Map<String,String> headers=new HashMap<>();headers.put("X-Content-Type-Options","nosniff");headers.put("Content-Security-Policy","default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' data: blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");res.setResponseHeaders(headers);return res;}catch(IOException e){return blocked();}}
@@ -47,7 +49,7 @@ public class MainActivity extends Activity {
         });
         web.setWebChromeClient(new WebChromeClient(){
             @Override public boolean onShowFileChooser(WebView v,ValueCallback<Uri[]> callback,FileChooserParams params){if(chooser!=null)chooser.onReceiveValue(null);chooser=callback;Intent i=new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,params.getMode()==FileChooserParams.MODE_OPEN_MULTIPLE);try{startActivityForResult(i,PICK);}catch(Exception e){chooser.onReceiveValue(null);chooser=null;notice("No file picker is available.");}return true;}
-            @Override public void onPermissionRequest(PermissionRequest p){runOnUiThread(()->{if(!("https://"+HOST).equals(p.getOrigin().toString().replaceAll("/$",""))||!Arrays.asList(p.getResources()).contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)){p.deny();return;}if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)p.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});else{if(microphone!=null)microphone.deny();microphone=p;requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},MIC);}});}
+            @Override public void onPermissionRequest(PermissionRequest p){runOnUiThread(()->{if(!WebMediaPermissions.trustedOrigin(p.getOrigin().toString())||!Arrays.asList(p.getResources()).contains(PermissionRequest.RESOURCE_AUDIO_CAPTURE)){p.deny();return;}if(checkSelfPermission(Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)p.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});else{if(microphone!=null)microphone.deny();microphone=p;requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},MIC);}});}
             @Override public void onPermissionRequestCanceled(PermissionRequest p){if(microphone==p)microphone=null;}
         });
         tts=new TextToSpeech(this,status->{ttsReady=status==TextToSpeech.SUCCESS;});
@@ -63,9 +65,9 @@ public class MainActivity extends Activity {
     @Override public void onRequestPermissionsResult(int req,String[] permissions,int[] grants){super.onRequestPermissionsResult(req,permissions,grants);if(req==MIC&&microphone!=null){if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)microphone.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});else microphone.deny();microphone=null;}if(req==NOTIFICATIONS)notice(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED?"Notifications enabled.":"Notifications are off. Enable them in Android settings to receive reminders.");}
     @Override public void onBackPressed(){handleBack();}
     private void handleBack(){web.evaluateJavascript("window.notaBack ? window.notaBack() : false",value->{if(!"true".equals(value))finish();});}
-    @Override protected void onResume(){super.onResume();if(localAI!=null)localAI.foreground(true);if(cloudAI!=null)cloudAI.foreground(true);}
-    @Override protected void onPause(){if(localAI!=null)localAI.foreground(false);if(cloudAI!=null)cloudAI.foreground(false);web.evaluateJavascript("typeof persistDesk==='function'&&persistDesk()",null);super.onPause();}
-    @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
+    @Override protected void onResume(){super.onResume();if(localAI!=null)localAI.foreground(true);if(cloudAI!=null)cloudAI.foreground(true);if(transcription!=null)transcription.foreground(true);}
+    @Override protected void onPause(){if(localAI!=null)localAI.foreground(false);if(cloudAI!=null)cloudAI.foreground(false);if(transcription!=null)transcription.foreground(false);web.evaluateJavascript("typeof persistDesk==='function'&&persistDesk()",null);super.onPause();}
+    @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();if(transcription!=null)transcription.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
 
     public class DeviceBridge {
         @JavascriptInterface public void setAppearance(boolean dark){setTheme(dark?"dark":"paper");}
@@ -81,6 +83,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void requestAI(String id,String action,String json){if(localAI!=null&&json!=null&&json.length()<=100000)localAI.request(id,action,json);}
         @JavascriptInterface public void cancelAI(String id){if(localAI!=null)localAI.cancel(id);if(cloudAI!=null)cloudAI.cancel(id);}
 
+        @JavascriptInterface public boolean beginTranscription(String id,long bytes){return transcription!=null&&transcription.begin(id,bytes);}
+        @JavascriptInterface public boolean appendTranscription(String id,String base64){return transcription!=null&&transcription.append(id,base64);}
+        @JavascriptInterface public boolean finishTranscription(String id,String locale){return transcription!=null&&transcription.finish(id,locale);}
+        @JavascriptInterface public void cancelTranscription(String id){if(transcription!=null)transcription.cancel(id);}
         @JavascriptInterface public String beginExport(String name,String mime,long size){return transfer.begin(name,mime,size);}
         @JavascriptInterface public boolean appendExport(String id,String base64){return transfer.append(id,base64);}
         @JavascriptInterface public boolean finishExport(String id){return transfer.finish(id);}

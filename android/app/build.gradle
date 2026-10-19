@@ -1,4 +1,4 @@
-plugins { id 'com.android.application' }
+plugins { id 'com.android.application'; id 'org.jetbrains.kotlin.android' }
 android {
     namespace 'com.nthexperience.nota'
     compileSdk 36
@@ -6,8 +6,8 @@ android {
         applicationId 'com.nthexperience.nota'
         minSdk 26
         targetSdk 36
-        versionCode 13
-        versionName '0.5.3'
+        versionCode 14
+        versionName '0.6.0'
         def gatewayDefaults = new Properties()
         rootProject.file('ai-gateway.properties').withInputStream { gatewayDefaults.load(it) }
         def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: gatewayDefaults.getProperty('url', '')
@@ -15,6 +15,7 @@ android {
         buildConfigField 'String', 'AI_GATEWAY_URL', '"' + gateway + '"'
     }
     buildFeatures { buildConfig true }
+    kotlinOptions { jvmTarget = "17" }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     signingConfigs { debug {
         def previewKey = System.getenv('NOTA_PREVIEW_KEYSTORE')
@@ -33,3 +34,5 @@ tasks.named('preBuild').configure { dependsOn(bundleWeb) }
 
 // Gemini Nano is executed by Android AICore, with no API key or cloud billing.
 dependencies { testImplementation 'junit:junit:4.13.2'; testImplementation 'org.json:json:20240303'; implementation 'com.google.mlkit:genai-prompt:1.0.0-beta4' }
+
+dependencies { implementation 'com.google.mlkit:genai-speech-recognition:1.0.0-alpha1'; implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2' }
