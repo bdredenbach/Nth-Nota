@@ -1,6 +1,6 @@
 # Free cloud activation for the app owner
 
-Status: code prepared and behavior tested; no Cloudflare/Groq account, credentials, deployed gateway, or live inference has been connected. The APK works independently with on-device assistance on supported phones. This gateway is for the Android prototype; the hosted browser app does not call it yet.
+Status on October 19, 2026: the owner confirmed Workers Free and manually deployed the gateway. A live dashboard HTTP proofreading test returned 200 with corrected text. No Groq account/key is connected, and the Android app path still needs device testing. The APK works independently with on-device assistance on supported phones. This gateway is for the Android prototype; the hosted browser app does not call it yet.
 
 ## Route and cost controls
 
@@ -33,11 +33,11 @@ The gateway also has conservative fixed limits: 50 requests/day for the whole ap
 
 Optional second provider: create a free [Groq account](https://console.groq.com/), verify its current Free plan and limits, and run `npx wrangler@4 secret put GROQ_API_KEY` in this folder. Enter the key at the terminal prompt. Never paste keys into chat, source code, the APK, or a GitHub repository variable. Use `npx wrangler@4 secret delete GROQ_API_KEY` to remove that provider. One Cloudflare account is enough to begin.
 
-`wrangler.jsonc`, local secrets and Wrangler state are ignored by git. The example file has cloud activation off. No deploy workflow runs automatically. `NOTA_AI_GATEWAY_URL` defaults to empty when building the APK, and cloud permission defaults to off even when an endpoint is configured.
+`wrangler.jsonc`, local secrets and Wrangler state are ignored by git. The example file has cloud activation off. No deploy workflow runs automatically. The repository now supplies the verified public endpoint through `android/ai-gateway.properties`. A nonempty `NOTA_AI_GATEWAY_URL` environment variable overrides it. Clear the properties-file URL to build with no gateway. Cloud permission defaults to off.
 
 ## Privacy and prototype limits
 
-Only the current request, selected passage/note context and recent conversation are sent, after opt-in. The Worker sends them to Cloudflare and optionally Groq for inference. D1 stores day, a salted daily IP hash, counters and provider cooldowns; it does not store prompts, replies, raw IPs, or keys. Old quota rows are deleted daily. Worker observability is disabled in the example. Provider processing/retention policies and infrastructure metadata still apply; this is not end-to-end encrypted cloud inference.
+Only the current request, selected passage/note context and recent conversation are sent, after opt-in. The Worker sends them to Cloudflare and optionally Groq for inference. D1 stores day, a salted daily IP hash, counters and provider cooldowns; it does not store prompts, replies, raw IPs, or keys. The scheduled handler deletes old quota rows daily when the Cron Trigger is configured. The manually deployed Worker still needs that trigger; confirmation is pending. Worker observability is disabled in the example. Provider processing/retention policies and infrastructure metadata still apply; this is not end-to-end encrypted cloud inference.
 
 This prototype endpoint is public and intentionally has no embedded shared secret (an APK cannot keep one). CORS is an origin filter, not authentication. Someone outside the app can consume the capped free allowance. Per-IP quotas can be shared by a household/network. Add proper per-install authentication/attestation and abuse protection before a public release. Do not remove global caps to compensate for abuse. No secret is returned to clients and clients cannot choose models, upstream URLs or paid options.
 
@@ -50,3 +50,11 @@ References:
 - https://developers.cloudflare.com/workers/wrangler/commands/
 - https://console.groq.com/docs/rate-limits
 - https://console.groq.com/docs/text-chat
+
+## Completing the manual dashboard deployment
+
+The owner has already completed Worker creation, free-plan verification, AI and DB bindings, schema creation, encrypted IP hash salt, `FREE_ONLY_CONFIRMED=yes`, disabled observability, code deployment and an HTTP proofreading test. The runtime currently has no Groq secret, so cloud inference uses Cloudflare alone.
+
+In the Worker’s **Settings**, scroll to **Trigger events → Cron triggers → Add**. Use the custom cron expression `7 0 * * *` (00:07 UTC daily) and save. The gateway’s scheduled handler then deletes quota rows older than two days. This is the dashboard equivalent of `triggers.crons` in the example Wrangler file. Do not alter any free-plan or billing setting.
+
+Install the 0.3.1 Android preview, open Settings, turn on **Allow free cloud assistance**, then try proofreading from a note’s writing companion. On-device assistance is attempted first, so a supported phone may answer locally. Cloud replies are labelled as processed with free cloud assistance. No in-app end-to-end result has yet been claimed.

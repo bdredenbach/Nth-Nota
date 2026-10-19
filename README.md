@@ -1,6 +1,6 @@
-# Nth Nota 0.3
+# Nth Nota 0.3.1
 
-An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or cloud key is configured.
+An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
 
 ## Build and test
 
@@ -32,7 +32,7 @@ Pushing app changes to `main` starts the Android preview workflow. Its APK and c
 - Android project in android/ with bundled editor, native file pickers and chunked export, offline TTS and inexact reminders. The first Android APK compiled successfully on GitHub Actions and passed APK v2 signature verification. Physical-device testing is still pending. See android/BUILDING.md.
 
 ## Intentional prototype limits
-The Gemini Nano integration compiles against the real ML Kit SDK, but inference quality and phone compatibility still need physical-device testing. Cloud gateway code is implemented and tested with simulated provider responses; no cloud account or live endpoint is connected. Cursive-to-text, device verification of notifications, background audio and cross-device sync remain future work. No model picker or user API-key input is exposed. Local text-to-task conversion is labeled as a built-in tool, not AI.
+The Gemini Nano integration compiles against the real ML Kit SDK, but inference quality and phone compatibility still need physical-device testing. The owner deployed the Cloudflare gateway on Workers Free and demonstrated an HTTP 200 proofreading response on October 19, 2026. The Android 0.3.1 build now includes that public endpoint. Native in-app cloud requests and local inference still need phone testing. Cursive-to-text, device verification of notifications, background audio and cross-device sync remain future work. No model picker or user API-key input is exposed. Local text-to-task conversion is labeled as a built-in tool, not AI.
 
 Document import extracts paragraphs, not full Word layout, tables, tracked changes or embedded media. Image attachments are placed on the workspace beside their parent item. PDF and attachment import has a 12 MB per-file prototype limit. PDF annotations on rotated/cropped pages need device testing. Backups are readable JSON and must be stored privately.
 
@@ -64,10 +64,17 @@ Nth Nota 0.2.0 built successfully in [GitHub Actions](https://github.com/bdreden
 - Android on-device writing assistance through ML Kit’s Gemini Nano Prompt API, with availability checks, first-use model preparation, progress, cancellation, short-request limits and foreground lifecycle handling. No API key is needed. Supported device/AICore configuration is required; unsupported phones show an honest status.
 - Proofread, polish, idea board, drafting and summarization tasks. Recent conversation and selected note context are carried between turns. Replies can be copied, read back, or saved as a separate note; original writing is not overwritten.
 - Optional HTTPS cloud gateway with server-held provider secrets, atomic global/per-connection daily caps, provider cooldowns, Cloudflare-to-Groq failover, and hard stop when free capacity is unavailable. No account rotation or paid fallback. Cloud calls require explicit opt-in, which is held in app-private native preferences rather than restored from a desk backup.
-- The default APK has no gateway URL and sends no writing to cloud providers. Owner activation instructions: [cloud/README.md](cloud/README.md). Ordinary app users never enter keys or select models.
+- Version 0.3.0 had no gateway URL. Version 0.3.1 includes the verified owner-operated gateway; cloud permission stays off until the user opts in. Owner activation instructions: [cloud/README.md](cloud/README.md). Ordinary app users never enter keys or select models.
 
 The local integration is not a continuously running background service: it checks and uses available engines when assistance is requested. Android’s on-device generation requires the app to be in the foreground. Automatic switching preserves context but different models can produce different quality or style.
 
 ## Verified 0.3 Android preview
 
 Version 0.3.0 built in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/actions/runs/39177629344). All 38 automated checks passed, APK v2 signing verified, and all 23 bundled web assets matched source. The corrected signing-key cache saved successfully. This preview's signing certificate differs from 0.2: export a full desk backup before any reinstall and restore it afterward. See [verification record](docs/android-build-verification-0.3.json). Physical-device AI and live cloud inference have not been tested; cloud activation still needs the owner's free account.
+
+## Added in 0.3.1
+
+- Bundles the public endpoint `https://nth-nota-free-ai.bdredenbach.workers.dev/v1/write` from `android/ai-gateway.properties`. No provider key is bundled. The existing `NOTA_AI_GATEWAY_URL` build override is still supported; clear the properties-file URL to build with no gateway.
+- The owner confirmed Workers Free, created the `quota` and `cooldown` tables, bound `AI` and `DB`, saved the private salt and free-plan flag, and disabled Worker logs. A live dashboard HTTP test returned 200 with corrected text. No Groq key has been configured.
+- Cloud assistance remains opt-in in the app's Settings. Automatic routing tries on-device assistance first; suitable availability failures can use the free gateway. Safety and invalid-input failures do not hop to another provider.
+- Daily quota cleanup requires the owner to add the `7 0 * * *` UTC Cron Trigger to the manually deployed Worker; this scheduling step is pending confirmation. Device-level installation, inference and end-to-end consent testing remain pending.

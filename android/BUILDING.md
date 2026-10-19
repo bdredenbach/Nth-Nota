@@ -1,4 +1,4 @@
-# Nth Nota Android project, 0.3.0
+# Nth Nota Android project, 0.3.1
 
 Status: the 0.2.0 preview APK compiled successfully on GitHub Actions, passed all 25 JavaScript checks, and passed APK v2 signature verification. It is not yet tested on a physical device. The working browser prototype is deployed separately.
 
@@ -26,7 +26,7 @@ Before installing a succession of test APKs, configure a persistent signing key 
 
 Gemini Nano is connected through `LocalAI.java` and ML Kit Prompt API 1.0.0-beta4. Compatibility and availability are queried at runtime; first use can download model assets through AICore. Requests pause/cancel when the Activity leaves the foreground. No physical-device inference has been verified.
 
-`CloudAI.java` connects only to an owner-fixed HTTPS gateway when the build includes `NOTA_AI_GATEWAY_URL` and the user explicitly enables cloud assistance. The default URL is empty. Redirects are rejected, request/response sizes and timeouts are bounded, and opt-out cancels in-flight client requests. A provider may finish a request it already received after cancellation. No provider key belongs in this app or source. See [cloud activation](../cloud/README.md).
+`CloudAI.java` connects only to an owner-fixed HTTPS gateway when the build includes `NOTA_AI_GATEWAY_URL` and the user explicitly enables cloud assistance. Version 0.3.1 reads the owner’s verified public URL from `android/ai-gateway.properties`; `NOTA_AI_GATEWAY_URL` can override it at build time. Clear the properties-file URL to build without a gateway. Cloud permission still defaults to off. Redirects are rejected, request/response sizes and timeouts are bounded, and opt-out cancels in-flight client requests. A provider may finish a request it already received after cancellation. No provider key belongs in this app or source. See [cloud activation](../cloud/README.md).
 
 ## Remaining device verification
 

@@ -6,9 +6,11 @@ android {
         applicationId 'com.nthexperience.nota'
         minSdk 26
         targetSdk 36
-        versionCode 3
-        versionName '0.3.0'
-        def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: ''
+        versionCode 4
+        versionName '0.3.1'
+        def gatewayDefaults = new Properties()
+        rootProject.file('ai-gateway.properties').withInputStream { gatewayDefaults.load(it) }
+        def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: gatewayDefaults.getProperty('url', '')
         if (gateway && !(gateway ==~ /https:\/\/[a-z0-9][a-z0-9.-]+\/v1\/write/)) throw new GradleException('NOTA_AI_GATEWAY_URL must be an HTTPS /v1/write endpoint')
         buildConfigField 'String', 'AI_GATEWAY_URL', '"' + gateway + '"'
     }
