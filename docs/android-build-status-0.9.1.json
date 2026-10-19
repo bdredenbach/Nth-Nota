@@ -1,0 +1,19 @@
+{
+  "version": "0.9.1",
+  "versionCode": 21,
+  "sourceCommit": "082c6dd6232072e863e3f46ec68f152d05358694",
+  "runId": 39335909411,
+  "artifactId": 12226114322,
+  "artifactSha256": "a6f55709d64ed50b75a19a8e5f92ef98b4e5217772348ef29d3f6a528ca940b4",
+  "apkSha256": "32bb1bd81df5a2d5f232dc87e5712ab4bcf601857e1a879ac0ac885a91efd5f8",
+  "apkBytes": 80414738,
+  "applicationId": "com.nthexperience.nota.preview",
+  "bundledSourceFilesVerified": 45,
+  "javascriptChecks": 84,
+  "browserChecks": 46,
+  "nativeUnitTests": 18,
+  "physicalDeviceTest": false,
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "cloudWorkerUpdateRequired": false,
+  "workflowUrl": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39335909411"
+}
