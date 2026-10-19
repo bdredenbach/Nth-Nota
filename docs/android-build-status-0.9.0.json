@@ -1,0 +1,21 @@
+{
+  "version": "0.9.0",
+  "versionCode": 20,
+  "sourceCommit": "a4906a544fd930e962eec1801c764e8f59c00cb9",
+  "runId": 39333836451,
+  "artifactId": 12225273305,
+  "artifactSha256": "16e8a3f8fb181fa38a7d8d90b085e4f47b80777f807b9223d99847aa44d9026c",
+  "apkSha256": "adac544a71d496d0414362f875e08355bc35d10690909f0c388f9c2c11d6b9be",
+  "apkBytes": 80414378,
+  "applicationId": "com.nthexperience.nota.preview",
+  "bundledSourceFilesVerified": 45,
+  "javascriptChecks": 84,
+  "browserChecks": 45,
+  "nativeUnitTests": 16,
+  "physicalDeviceTest": false,
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "cloudWorkerUpdateRequired": "Privacy page refresh only; writing/report logic unchanged",
+  "buildUrl": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39333836451",
+  "status": "success",
+  "photoTextModel": "Bundled Latin-script ML Kit Text Recognition 16.0.1"
+}
