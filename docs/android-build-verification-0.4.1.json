@@ -1,0 +1,28 @@
+{
+  "version": "0.4.1",
+  "versionCode": 8,
+  "sourceCommit": "e41ab3e1314d8ef363256f36fca6a90e37072535",
+  "workflowRun": 39253899603,
+  "workflowJob": 118064241903,
+  "artifactId": 12187330827,
+  "archiveSha256": "806bcc6cbc025ecb02710c8751e2593e22855ddc7c597ba42634549c5bbdab57",
+  "apkSha256": "81358c1bb43e398192198393fb54636fe4b9f89d71a56c5816a90988d17daeda",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "package": "com.nthexperience.nota.preview",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "compileSdk": 36,
+  "nodeChecksPassed": 41,
+  "browserChecksPassed": 9,
+  "newCoverage": [
+    "Blue and Rosy pink selection through Settings",
+    "Readable text and button contrast of at least 4.5:1 for both new palettes",
+    "Saved theme and native bridge selection after reload",
+    "Note content preserved across theme changes",
+    "Visual review of theme settings, workspace, and editor captures"
+  ],
+  "bundledAssetsMatchLocalDist": true,
+  "publicGatewayPresent": true,
+  "signatureVerifiedByAndroidApksigner": true,
+  "physicalAndroidDeviceTested": false
+}
