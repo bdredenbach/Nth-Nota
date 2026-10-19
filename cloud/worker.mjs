@@ -1,4 +1,4 @@
-/** Free-account gateway. Never stores prompts, keys or generated text in D1. */
+/** Writing requests are not stored. Explicitly submitted AI reports are retained separately. */
 export const CLAIM_SQL = `INSERT INTO quota (day, bucket, used) VALUES (?, ?, 1)
 ON CONFLICT(day,bucket) DO UPDATE SET used=used+1 WHERE used < ? RETURNING used`;
 const TASKS=new Set(['proofread','polish','brainstorm','generate','summarize']);
@@ -31,10 +31,15 @@ export async function handle(request,env,fetcher=fetch){
  const reply=(body,status=200)=>new Response(JSON.stringify(body),{status,headers});
  if(origin&&!allowed.has(origin))return reply({error:'INVALID_REQUEST',message:'Origin is not enabled.'},403);
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{...headers,'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'600'}});
- if(new URL(request.url).pathname!=='/v1/write'||request.method!=='POST')return reply({error:'INVALID_REQUEST',message:'Use the writing endpoint.'},404);
+ const path=new URL(request.url).pathname;
+ if(!['/v1/write','/v1/report'].includes(path)||request.method!=='POST')return reply({error:'INVALID_REQUEST',message:'Use the writing endpoint.'},404);
  if(env.FREE_ONLY_CONFIRMED!=='yes'||!env.DB||!env.AI||!env.IP_HASH_SALT)return reply({error:'UNAVAILABLE',message:'Cloud assistance is not activated by the owner yet.'},503);
  if(!request.headers.get('Content-Type')?.startsWith('application/json'))return reply({error:'INVALID_REQUEST',message:'JSON is required.'},415);
  let input;try{const reader=request.body?.getReader();if(!reader)throw Error();let total=0,chunks=[];for(;;){const {done,value}=await reader.read();if(done)break;total+=value.length;if(total>65536){await reader.cancel();return reply({error:'CONTEXT_TOO_LONG',message:'Select a shorter passage.'},413);}chunks.push(value);}const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}input=JSON.parse(new TextDecoder().decode(bytes));}catch{return reply({error:'INVALID_REQUEST',message:'The request could not be read.'},400);}
+ if(path==='/v1/report'){
+  if(!input||Object.keys(input).some(k=>!['id','reason','text','details','consentAccepted'].includes(k))||!/^[-\w]{1,100}$/.test(input.id||'')||!['Unsafe or offensive','Misleading or incorrect','Outside the app’s purpose','Other'].includes(input.reason)||typeof input.text!=='string'||!input.text.trim()||input.text.length>8000||typeof input.details!=='string'||input.details.length>2000||input.consentAccepted!==true)return reply({error:'INVALID_REQUEST',message:'Review and consent to the report before sending it.'},400);
+  try{const day=new Date().toISOString().slice(0,10),bucket=await ipBucket(request,env.IP_HASH_SALT,day);if(!await claim(env.DB,day,'report:'+bucket,5)||!await claim(env.DB,day,'reports-global',50))return reply({error:'RATE_LIMIT',message:'Reporting allowance reached. Keep the report and retry later.'},429);await env.DB.prepare('CREATE TABLE IF NOT EXISTS ai_reports (id TEXT PRIMARY KEY, created_ms INTEGER NOT NULL, reason TEXT NOT NULL, excerpt TEXT NOT NULL, details TEXT NOT NULL)').run();await env.DB.prepare('DELETE FROM ai_reports WHERE created_ms < ?').bind(Date.now()-30*86400000).run();await env.DB.prepare('INSERT INTO ai_reports (id,created_ms,reason,excerpt,details) VALUES (?,?,?,?,?) ON CONFLICT(id) DO NOTHING').bind(input.id,Date.now(),input.reason,input.text,input.details).run();return reply({ok:true,id:input.id});}catch{return reply({error:'UNAVAILABLE',message:'Report not received. Keep it on this device and retry later.'},503);}
+ }
  if(!input||Object.keys(input).some(k=>!['task','prompt','consentAccepted'].includes(k))||!TASKS.has(input.task)||typeof input.prompt!=='string'||!input.prompt.trim()||input.prompt.length>16000||input.consentAccepted!==true)return reply({error:'INVALID_REQUEST',message:'Choose a writing task and allow cloud assistance first.'},400);
  try{
   const day=new Date().toISOString().slice(0,10),bucket=await ipBucket(request,env.IP_HASH_SALT,day);
@@ -48,4 +53,4 @@ export async function handle(request,env,fetcher=fetch){
   return reply({error:'RATE_LIMIT',message:'Free cloud assistance is temporarily unavailable. Try again later; your notes are safe.',retryAt},429);
  }catch{return reply({error:'UNAVAILABLE',message:'Cloud assistance could not connect. Your notes are safe.',retryAt:Date.now()+60000},503);}
 }
-export default {fetch(request,env){return handle(request,env);},async scheduled(_event,env){const cutoff=new Date(Date.now()-2*86400000).toISOString().slice(0,10);await env.DB.prepare('DELETE FROM quota WHERE day < ?').bind(cutoff).run();}};
+export default {fetch(request,env){return handle(request,env);},async scheduled(_event,env){const cutoff=new Date(Date.now()-2*86400000).toISOString().slice(0,10);await env.DB.prepare('DELETE FROM quota WHERE day < ?').bind(cutoff).run();await env.DB.prepare('CREATE TABLE IF NOT EXISTS ai_reports (id TEXT PRIMARY KEY, created_ms INTEGER NOT NULL, reason TEXT NOT NULL, excerpt TEXT NOT NULL, details TEXT NOT NULL)').run();await env.DB.prepare('DELETE FROM ai_reports WHERE created_ms < ?').bind(Date.now()-30*86400000).run();}};

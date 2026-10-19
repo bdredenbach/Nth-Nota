@@ -19,9 +19,9 @@ final class CloudAI {
     private volatile boolean foreground=true,closed;
     private static final class Job {volatile HttpURLConnection connection;volatile Future<?> worker;volatile boolean cancelled;final java.util.concurrent.atomic.AtomicBoolean terminal=new java.util.concurrent.atomic.AtomicBoolean();}
     CloudAI(Context context,Consumer<JSONObject> emit){this.preferences=context.getSharedPreferences("nota-ai-privacy",Context.MODE_PRIVATE);this.emit=emit;String url=BuildConfig.AI_GATEWAY_URL;this.endpoint=url.matches("https://[a-z0-9][a-z0-9.-]+/v1/write")?url:"";}
-    String state(){try{return new JSONObject().put("configured",!endpoint.isEmpty()).put("allowed",allowed()).toString();}catch(Exception e){return "{}";}}
-    private boolean allowed(){return !endpoint.isEmpty()&&preferences.getBoolean("cloud-allowed",true);}
-    void allow(boolean value){preferences.edit().putBoolean("cloud-allowed",value).apply();if(!value)cancelAll();}
+    String state(){try{return new JSONObject().put("configured",!endpoint.isEmpty()).put("allowed",allowed()).put("decided",preferences.getInt("consent-version",0)>=1).toString();}catch(Exception e){return "{}";}}
+    private boolean allowed(){return CloudConsent.allowed(!endpoint.isEmpty(),preferences.getInt("consent-version",0),preferences.getBoolean("cloud-allowed",false));}
+    void allow(boolean value){preferences.edit().putBoolean("cloud-allowed",value).putInt("consent-version",1).putLong("consent-at",System.currentTimeMillis()).apply();if(!value)cancelAll();}
     void foreground(boolean value){foreground=value;if(!value)cancelAll();}
     void request(String id,String json){
         if(id==null||!id.matches("[A-Za-z0-9_-]{1,100}"))return;
@@ -43,6 +43,15 @@ final class CloudAI {
             else{String code=result.optString("error");if(!code.matches("RATE_LIMIT|BUSY|UNAVAILABLE|TIMEOUT|AUTH|SAFETY|INVALID_REQUEST|CONTEXT_TOO_LONG"))code="UNAVAILABLE";send(id,new JSONObject().put("error",code).put("message",result.optString("message","Free cloud assistance is temporarily unavailable.")).put("retryAt",result.optLong("retryAt",System.currentTimeMillis()+60000)));}
         }catch(Throwable e){if(job.cancelled||e instanceof CancellationException||e instanceof InterruptedException)error(id,"CANCELLED","Request cancelled. Your notes are unchanged.",0);else if(e instanceof SocketTimeoutException)error(id,"TIMEOUT","The free assistant took too long. Try again later.",60000);else error(id,"UNAVAILABLE","Cloud assistance could not connect. Your notes are safe.",60000);}
         finally{if(job.connection!=null)job.connection.disconnect();jobs.remove(id,job);}});
+    }
+    void report(String id,String json){
+        if(id==null||!id.matches("[A-Za-z0-9_-]{1,100}"))return;
+        if(endpoint.isEmpty()||closed||!foreground){error(id,"UNAVAILABLE","Reporting is unavailable. Your report stays on this device.",0);return;}
+        Job job=new Job();if(jobs.putIfAbsent(id,job)!=null)return;
+        job.worker=executor.submit(()->{try{
+            JSONObject body=new JSONObject(json);if(!body.optBoolean("consentAccepted")||!body.optString("id").matches("[A-Za-z0-9_-]{1,100}")||body.optString("text").length()>8000||body.optString("details").length()>2000)throw new IOException();
+            HttpURLConnection c=(HttpURLConnection)new URL(endpoint.substring(0,endpoint.length()-5)+"report").openConnection();job.connection=c;c.setInstanceFollowRedirects(false);c.setConnectTimeout(15000);c.setReadTimeout(20000);c.setRequestMethod("POST");c.setDoOutput(true);c.setRequestProperty("Content-Type","application/json");c.setRequestProperty("Origin","https://appassets.androidplatform.net");byte[] bytes=body.toString().getBytes(StandardCharsets.UTF_8);c.setFixedLengthStreamingMode(bytes.length);try(OutputStream out=c.getOutputStream()){out.write(bytes);}if(job.cancelled)throw new IOException();if(c.getResponseCode()!=200)throw new IOException();try(InputStream in=c.getInputStream()){ByteArrayOutputStream result=new ByteArrayOutputStream();byte[] chunk=new byte[1024];int count;while((count=in.read(chunk))!=-1){if(result.size()+count>10000)throw new IOException();result.write(chunk,0,count);}if(!new JSONObject(result.toString("UTF-8")).optBoolean("ok"))throw new IOException();}send(id,new JSONObject().put("ok",true));
+        }catch(Exception e){error(id,"UNAVAILABLE","Report not sent. You can retry from Privacy & data.",0);}finally{if(job.connection!=null)job.connection.disconnect();jobs.remove(id,job);}});
     }
     private void send(String id,JSONObject data){Job job=jobs.get(id);if(closed||job!=null&&!job.terminal.compareAndSet(false,true))return;try{emit.accept(data.put("id",id).put("event","result"));}catch(Exception ignored){}}
     private void error(String id,String code,String message,long delay){try{send(id,new JSONObject().put("error",code).put("message",message).put("retryAt",System.currentTimeMillis()+delay));}catch(Exception ignored){}}
