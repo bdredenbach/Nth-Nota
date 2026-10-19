@@ -29,6 +29,25 @@ implementing this milestone.
   deleted, or is restored; avoid duplicate alerts.
 - Request only the permissions needed for the reminder behavior actually chosen.
 
+## Writing companion scope and ambiguity
+
+- Prepared in source after the 0.6.0 APK: shared prompts keep both local and cloud
+  replies focused on writing, notes, tasks, planning, and Nth Nota workspaces.
+- Chat and drafting should ask one short clarification when a missing goal cannot
+  be resolved from the current note and conversation. They should not invent the
+  rest of an unfinished request or default to promoting other tools.
+- Preserve arbitrary note subjects: the purpose of the assistance, rather than
+  the subject of the writing, is what keeps the response in scope.
+- Suggestions do not execute app actions. Never claim a note, task, reminder, or
+  workspace change has happened unless the app has actually performed it.
+- Real-model acceptance checks for the next APK: unfinished idea-board request
+  asks its purpose; a follow-up answering that purpose produces useful note/card
+  suggestions without repeating the question; explicit requests for external-tool
+  comparisons remain allowed; proofreading an incomplete sentence still returns
+  corrected text, without switching into a planning interview.
+- Prompt guidance is not a guaranteed semantic validator. Verify these cases on
+  both the device model and enabled cloud providers before declaring them passed.
+
 ## Public-release readiness
 
 - Publish an accurate privacy policy and link it in the app and store listing.
