@@ -4,3 +4,7 @@
 @media(max-width:600px){.chat-modal{height:calc(100dvh - 16px)}.chat-modal .modal-body{padding:14px 16px}.chat-modal .ai-task-tabs button{font-size:11px;padding:8px 9px}.chat-modal .ai-message{font-size:14px;max-width:95%}.chat-modal .ai-conversation{min-height:100px}.chat-modal .ai-send-row{flex-wrap:wrap}.chat-modal .ai-send-row button{font-size:11px;padding:9px}.chat-modal .ai-send-row #ai-send{margin-left:auto}.chat-heading{margin-bottom:12px}.ai-progress-overlay{padding:22px}.ai-progress-box h3{font-size:21px}}
 @media(max-height:520px){.chat-modal{height:calc(100dvh - 8px)}.chat-modal .ai-conversation{min-height:100px}.ai-download-icon{width:48px;height:48px;margin-bottom:12px}.ai-download-icon svg{width:25px;height:25px}.ai-progress-box h3{font-size:18px}.ai-progress-box progress{margin-top:12px}.ai-progress-box>.hint{margin:10px 0}.ai-progress-box>p{font-size:12px;margin:8px 0}}
 @media(prefers-reduced-motion:reduce){.ai-typing b,.ai-download-icon,.chat-modal .ai-message{animation:none}}
+
+/* Keep every writing tool visible, with comfortable phone-sized targets. */
+.chat-modal .ai-task-tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.chat-modal .ai-task-tabs button{min-width:0;min-height:42px;padding:8px 6px}.chat-modal .ai-task-tabs button[aria-pressed=true]{background:var(--green);color:var(--on-green)}
+@media(max-width:600px){.chat-modal .ai-task-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.chat-modal .ai-task-tabs button{font-size:12px}}

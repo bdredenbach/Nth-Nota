@@ -1,6 +1,12 @@
-# Nth Nota 0.5.2
+# Nth Nota 0.5.3
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.5.3
+
+- Organize groups selected text or a note into headings, bullets and checklists. Suggestions appear in chat; Save as note creates a separate note and leaves the source unchanged.
+- All six tools stay visible in a three-column phone ribbon and a six-column wider layout.
+- Organize preserves the full task instructions while using the existing polish transport category for the native bridge and gateway. Existing deployed Cloudflare code and keys need no update.
 
 ## Added in 0.5.2
 
