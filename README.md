@@ -1,6 +1,13 @@
-# Nth Nota 0.5.0
+# Nth Nota 0.5.1
 
-An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
+An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.5.1
+
+- Note paper colors keep their fill and use a circular selection ring with larger touch targets.
+- Save to workspace retains an open card, switches to its workspace, and reveals it. The title-bar × still saves and closes the card.
+- Saved notes includes a trash button beside Restore. It moves the note to Recently deleted; permanent deletion remains a separate confirmed action there.
+- Settings combines the AI rows under Cloud AI while preserving the existing toggle and local-first routing.
 
 ## Added in 0.5.0
 
