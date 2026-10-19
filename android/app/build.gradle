@@ -6,8 +6,8 @@ android {
         applicationId 'com.nthexperience.nota'
         minSdk 26
         targetSdk 36
-        versionCode 19
-        versionName '0.8.2'
+        versionCode 20
+        versionName '0.9.0'
         def gatewayDefaults = new Properties()
         rootProject.file('ai-gateway.properties').withInputStream { gatewayDefaults.load(it) }
         def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: gatewayDefaults.getProperty('url', '')
@@ -38,3 +38,5 @@ dependencies { testImplementation 'junit:junit:4.13.2'; testImplementation 'org.
 dependencies { implementation 'com.google.mlkit:genai-speech-recognition:1.0.0-alpha1'; implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2' }
 
 dependencies { implementation 'com.google.mlkit:digital-ink-recognition:19.0.0' }
+
+dependencies { implementation 'com.google.mlkit:text-recognition:16.0.1' }
