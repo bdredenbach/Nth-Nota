@@ -1,0 +1,31 @@
+{
+  "version": "0.6.0",
+  "versionCode": 14,
+  "status": "waiting-for-github-runner",
+  "sourceCommit": "af01519ac1a19776b23dbd93d6e4f3fcb8bbea47",
+  "workflowRun": 39282638576,
+  "workflowJob": 118159926383,
+  "nodeChecksPassed": 58,
+  "browserChecksDefined": 22,
+  "browserChecksPassed": null,
+  "nativeUnitTestsPassed": null,
+  "nativeUnitTestsDefined": 7,
+  "apkProduced": false,
+  "physicalAndroidDeviceTested": false,
+  "liveSpeechRecognitionTested": false,
+  "changes": [
+    "Declare MODIFY_AUDIO_SETTINGS alongside RECORD_AUDIO; restrict WebView microphone grants to the bundled app origin",
+    "Improve recording retry, cleanup, playback and Android-specific errors",
+    "Local saved/imported audio transcription using ML Kit Speech Recognition with automatic advanced/basic availability selection",
+    "Decode on-device to mono 16 kHz signed PCM, stream through a paced cancellable pipe, reject incomplete audio processing",
+    "Visible model/download/transcription progress; review/edit transcript and save separately while retaining audio and backups",
+    "Includes Organize and phone ribbon layout"
+  ],
+  "remaining": [
+    "GitHub runner assignment",
+    "Chromium recording and transcription flow checks",
+    "Kotlin/Java compilation and native JUnit checks",
+    "Signed APK build, checksum and packaged asset verification",
+    "Phone recording and real on-device speech recognition testing"
+  ]
+}
