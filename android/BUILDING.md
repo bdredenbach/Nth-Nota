@@ -1,6 +1,6 @@
 # Nth Nota Android project, 0.3.1
 
-Status: the 0.2.0 preview APK compiled successfully on GitHub Actions, passed all 25 JavaScript checks, and passed APK v2 signature verification. It is not yet tested on a physical device. The working browser prototype is deployed separately.
+Status: the 0.3.1 preview APK compiled successfully on GitHub Actions, passed all 38 automated checks, and passed APK v2 signature verification. Its certificate matches 0.3.0, and its native code contains the verified Cloudflare gateway URL. A live HTTP dashboard test succeeded; native in-app cloud and local inference still need physical-device testing. The working browser prototype is deployed separately.
 
 This is an Android WebView application with the complete local editor bundled into its assets. It does not load the hosted prototype. Android notes use app-private WebView storage, separate from browser notes. Export a JSON backup from the browser and restore it in the Android app to transfer a desk.
 

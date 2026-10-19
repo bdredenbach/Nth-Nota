@@ -78,3 +78,7 @@ Version 0.3.0 built in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/
 - The owner confirmed Workers Free, created the `quota` and `cooldown` tables, bound `AI` and `DB`, saved the private salt and free-plan flag, and disabled Worker logs. A live dashboard HTTP test returned 200 with corrected text. No Groq key has been configured.
 - Cloud assistance remains opt-in in the app's Settings. Automatic routing tries on-device assistance first; suitable availability failures can use the free gateway. Safety and invalid-input failures do not hop to another provider.
 - Daily quota cleanup requires the owner to add the `7 0 * * *` UTC Cron Trigger to the manually deployed Worker; this scheduling step is pending confirmation. Device-level installation, inference and end-to-end consent testing remain pending.
+
+## Verified 0.3.1 Android preview
+
+The [0.3.1 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39245154789) completed successfully. All 38 checks passed; the APK v2 signature and all 23 bundled editor assets verified. Native bytecode contains the expected gateway URL. The signing certificate matches 0.3.0, so those two previews are compatible for normal in-place updates. See [verification record](docs/android-build-verification-0.3.1.json). The owner’s dashboard test proved live cloud proofreading; native in-app cloud and local inference still await phone testing.

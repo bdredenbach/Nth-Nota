@@ -1,0 +1,31 @@
+{
+  "version": "0.3.1",
+  "version_code": 4,
+  "source_commit": "04a8ab86c172337022a6fbb64bc6a4b61df5bb25",
+  "workflow_run": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39245154789",
+  "workflow_conclusion": "success",
+  "automated_checks_passed": 38,
+  "package": "com.nthexperience.nota.preview",
+  "min_sdk": 26,
+  "target_sdk": 36,
+  "apk_sha256": "a9ad7cbe777ff62205286972c9c8525fb2d3ba90793f22e1ac4401d762e40b7a",
+  "apk_v2_signature_verified": true,
+  "signing_certificate_sha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "same_signing_certificate_as_0_3_0": true,
+  "bundled_editor_assets_verified": 23,
+  "gateway_present_in_native_code": true,
+  "gateway_url": "https://nth-nota-free-ai.bdredenbach.workers.dev/v1/write",
+  "cloud_permission_defaults_to_off": true,
+  "live_gateway_proofreading_test": {
+    "verified_by": "owner-provided Cloudflare HTTP dashboard screenshot",
+    "http_status": 200,
+    "corrected_text_observed": true,
+    "date": "2026-10-19"
+  },
+  "free_plan_confirmed_by_owner_screenshot": true,
+  "groq_key_configured": false,
+  "cron_trigger_confirmation_pending": true,
+  "physical_device_tested": false,
+  "native_app_cloud_inference_tested": false,
+  "local_ai_inference_device_tested": false
+}
