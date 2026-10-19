@@ -1,16 +1,16 @@
 {
   "version": "0.6.0",
   "versionCode": 14,
-  "status": "waiting-for-github-runner",
-  "sourceCommit": "af01519ac1a19776b23dbd93d6e4f3fcb8bbea47",
-  "workflowRun": 39282638576,
-  "workflowJob": 118159926383,
+  "status": "built-and-verified-awaiting-phone-test",
+  "sourceCommit": "d91b8d9e8617f2a202540e2e26c74a677f59e631",
+  "workflowRun": 39290259323,
+  "workflowJob": 118188785065,
   "nodeChecksPassed": 58,
   "browserChecksDefined": 22,
-  "browserChecksPassed": null,
-  "nativeUnitTestsPassed": null,
+  "browserChecksPassed": 22,
+  "nativeUnitTestsPassed": 7,
   "nativeUnitTestsDefined": 7,
-  "apkProduced": false,
+  "apkProduced": true,
   "physicalAndroidDeviceTested": false,
   "liveSpeechRecognitionTested": false,
   "changes": [
@@ -22,10 +22,13 @@
     "Includes Organize and phone ribbon layout"
   ],
   "remaining": [
-    "GitHub runner assignment",
-    "Chromium recording and transcription flow checks",
-    "Kotlin/Java compilation and native JUnit checks",
-    "Signed APK build, checksum and packaged asset verification",
-    "Phone recording and real on-device speech recognition testing"
-  ]
+    "Phone microphone recording and playback test",
+    "Real on-device speech model download, transcription quality and Stop/retry test",
+    "After audio device test, implement approved tutorial, consent and task notification milestone in docs/release-readiness-next.md"
+  ],
+  "nativeUnitTestTask": "passed",
+  "artifactId": 12204098635,
+  "apkSha256": "3ca6f839fc91b6efc817e5a2fd4239d09e867dcff26dcafd991ab3940f117e36",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "bundledWebFilesVerified": 29
 }
