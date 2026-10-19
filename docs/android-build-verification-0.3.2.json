@@ -1,0 +1,23 @@
+{
+  "version": "0.3.2",
+  "version_code": 5,
+  "source_commit": "ddc9f3089db304f3d6ce09c0828fac5cb99b089b",
+  "workflow_run": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39246397637",
+  "workflow_conclusion": "success",
+  "automated_checks_passed": 38,
+  "apk_sha256": "ea9498119beec17db3307e2e6637b32a3c505d309c2fb50066f74a006e72390d",
+  "apk_v2_signature_verified": true,
+  "signing_certificate_sha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "same_signing_certificate_as_0_3_0_and_0_3_1": true,
+  "bundled_editor_assets_verified": 23,
+  "same_gateway_included": true,
+  "icon_style": "URW Z003 cursive shared-N with inset square green plate",
+  "adaptive_square_corners_fit_circular_mask": true,
+  "icon_xml_validated": true,
+  "standard_and_monochrome_icons_visually_inspected": true,
+  "comparison_is_code_rendered_not_device_screenshot": true,
+  "physical_device_tested": false,
+  "native_app_cloud_inference_tested": false,
+  "local_ai_inference_device_tested": false,
+  "cron_trigger_confirmation_pending": true
+}

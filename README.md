@@ -89,3 +89,7 @@ The [0.3.1 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/392451
 - The green icon plate is a square. Android still chooses the outer launcher mask; an inset square on paper keeps the green plate visibly square inside circular launchers. The themed icon uses a square with the script lettering cut out.
 - The previous italic mark is preserved in `artwork/icon-options/old-italic.svg` and `.png`. A code-rendered launcher comparison is in `artwork/icon-options/comparison.png`.
 - The writing assistant and verified free gateway configuration carry forward from 0.3.1. In-app phone testing and the daily cleanup schedule remain pending owner confirmation.
+
+## Verified 0.3.2 Android preview
+
+The [0.3.2 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39246397637) passed all 38 automated checks and APK v2 signature verification. All 23 bundled editor assets matched source. The certificate matches 0.3.0/0.3.1, and native code retains the verified free gateway address. The square plate fits Android's circular adaptive mask; standard and themed vector artwork were visually inspected. The comparison is a code-rendered approximation of launcher presentation, not a phone screenshot. See [verification record](docs/android-build-verification-0.3.2.json).
