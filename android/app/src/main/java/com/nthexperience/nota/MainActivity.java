@@ -25,17 +25,17 @@ import java.util.*;
 public class MainActivity extends Activity {
     static final String HOST="appassets.androidplatform.net", HOME="https://"+HOST+"/assets/www/index.html";
     private static final int PICK=101, SAVE=102, MIC=103, NOTIFICATIONS=104;
-    private WebView web; private ValueCallback<Uri[]> chooser; private PermissionRequest microphone;
+    private FrameLayout root; private WebView web; private ValueCallback<Uri[]> chooser; private PermissionRequest microphone;
     private LocalAI localAI;
     private CloudAI cloudAI;
     private TextToSpeech tts; private volatile boolean ttsReady; private String pendingItem; private boolean webReady;
     private final ExportTransfer transfer=new ExportTransfer();
 
     @Override public void onCreate(Bundle saved){super.onCreate(saved);
-        FrameLayout root=new FrameLayout(this);root.setBackgroundColor(Color.rgb(246,245,240));
-        if(Build.VERSION.SDK_INT>=30){getWindow().setDecorFitsSystemWindows(false);root.setOnApplyWindowInsetsListener((v,insets)->{android.graphics.Insets bars=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());android.graphics.Insets ime=insets.getInsets(WindowInsets.Type.ime());v.setPadding(bars.left,bars.top,bars.right,Math.max(bars.bottom,ime.bottom));return insets;});}
+        root=new FrameLayout(this);root.setBackgroundColor(Color.rgb(246,245,240));
+        if(Build.VERSION.SDK_INT>=30){getWindow().setDecorFitsSystemWindows(false);root.setOnApplyWindowInsetsListener((v,insets)->{android.graphics.Insets bars=insets.getInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout());android.graphics.Insets ime=insets.getInsets(WindowInsets.Type.ime());v.setPadding(bars.left,bars.top,bars.right,Math.max(bars.bottom,ime.bottom));return new WindowInsets.Builder(insets).setInsets(WindowInsets.Type.systemBars()|WindowInsets.Type.displayCutout()|WindowInsets.Type.ime(),android.graphics.Insets.NONE).build();});}
         if(Build.VERSION.SDK_INT>=33)getOnBackInvokedDispatcher().registerOnBackInvokedCallback(android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT,this::handleBack);
-        web=new WebView(this);root.addView(web,new FrameLayout.LayoutParams(-1,-1));setContentView(root);
+        web=new WebView(this);root.addView(web,new FrameLayout.LayoutParams(-1,-1));setContentView(root);root.requestApplyInsets();
         WebSettings settings=web.getSettings();settings.setJavaScriptEnabled(true);settings.setDomStorageEnabled(true);settings.setAllowFileAccess(false);settings.setAllowContentAccess(true);settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);settings.setMediaPlaybackRequiresUserGesture(true);settings.setJavaScriptCanOpenWindowsAutomatically(false);settings.setSupportMultipleWindows(false);
         localAI=new LocalAI(data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
         cloudAI=new CloudAI(this,data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
@@ -62,12 +62,18 @@ public class MainActivity extends Activity {
     @Override protected void onActivityResult(int req,int result,Intent data){super.onActivityResult(req,result,data);if(req==PICK&&chooser!=null){if(result==RESULT_OK&&data!=null&&data.getClipData()!=null){Uri[] uris=new Uri[data.getClipData().getItemCount()];for(int k=0;k<uris.length;k++)uris[k]=data.getClipData().getItemAt(k).getUri();chooser.onReceiveValue(uris);}else chooser.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result,data));chooser=null;}if(req==SAVE){Uri destination=result==RESULT_OK&&data!=null?data.getData():null;if(destination==null){transfer.clear();emitExport(false,"Save cancelled.");return;}new Thread(()->{try(InputStream in=new FileInputStream(transfer.file);OutputStream out=getContentResolver().openOutputStream(destination,"wt")){if(out==null)throw new IOException("No output stream");byte[] buffer=new byte[65536];int count;while((count=in.read(buffer))!=-1)out.write(buffer,0,count);out.flush();emitExport(true,"File saved.");}catch(Exception e){emitExport(false,"The file could not be saved. Please try another location.");}finally{transfer.clear();}},"nota-export").start();}}
     @Override public void onRequestPermissionsResult(int req,String[] permissions,int[] grants){super.onRequestPermissionsResult(req,permissions,grants);if(req==MIC&&microphone!=null){if(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED)microphone.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});else microphone.deny();microphone=null;}if(req==NOTIFICATIONS)notice(grants.length>0&&grants[0]==PackageManager.PERMISSION_GRANTED?"Notifications enabled.":"Notifications are off. Enable them in Android settings to receive reminders.");}
     @Override public void onBackPressed(){handleBack();}
-    private void handleBack(){web.evaluateJavascript("(function(){if(document.querySelector('.modal')){closeModal();return true;}if(document.querySelector('.desk.fullscreen')){document.querySelector('.desk').classList.remove('fullscreen');return true;}return false;})()",value->{if(!"true".equals(value))finish();});}
+    private void handleBack(){web.evaluateJavascript("window.notaBack ? window.notaBack() : false",value->{if(!"true".equals(value))finish();});}
     @Override protected void onResume(){super.onResume();if(localAI!=null)localAI.foreground(true);if(cloudAI!=null)cloudAI.foreground(true);}
     @Override protected void onPause(){if(localAI!=null)localAI.foreground(false);if(cloudAI!=null)cloudAI.foreground(false);web.evaluateJavascript("typeof persistDesk==='function'&&persistDesk()",null);super.onPause();}
     @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
 
     public class DeviceBridge {
+        @JavascriptInterface public void setAppearance(boolean dark){runOnUiThread(()->{
+            int color=Color.parseColor(dark?"#171f1c":"#f6f5f0");root.setBackgroundColor(color);web.setBackgroundColor(color);
+            getWindow().setStatusBarColor(color);getWindow().setNavigationBarColor(color);
+            if(Build.VERSION.SDK_INT>=30){android.view.WindowInsetsController controller=getWindow().getInsetsController();if(controller!=null){int mask=android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS|android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;controller.setSystemBarsAppearance(dark?0:mask,mask);}}
+            else{int flags=web.getSystemUiVisibility();int mask=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;web.setSystemUiVisibility(dark?flags&~mask:flags|mask);}
+        });}
         @JavascriptInterface public String getCloudAIState(){return cloudAI==null?"{}":cloudAI.state();}
         @JavascriptInterface public void allowCloudAI(boolean allowed){if(cloudAI!=null)cloudAI.allow(allowed);}
         @JavascriptInterface public void requestCloudAI(String id,String json){if(cloudAI!=null&&json!=null&&json.length()<=100000)cloudAI.request(id,json);}

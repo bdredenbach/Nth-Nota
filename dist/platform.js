@@ -5,6 +5,7 @@ function localRequest(action,input={},options={}){if(!native?.requestAI)return P
 
 function cloudState(){try{return JSON.parse(native?.getCloudAIState?.()||'{}');}catch{return {};}}
 window.NotaPlatform={cloudState,allowCloud:allowed=>native?.allowCloudAI?.(!!allowed),cloudRequest:(input,options)=>localRequest('cloud',input,options),isAndroid:!!native,hasLocalAI:!!native?.requestAI,localRequest,
+ appearance(dark){native?.setAppearance?.(!!dark);},
  read(text,rate){if(!native)return false;native.speak(String(text),Number(rate)||1);return true;},
  stopRead(){native?.stopSpeaking();window.speechSynthesis?.cancel();},
  syncReminders(items){if(!native)return;native.syncReminders(JSON.stringify(items.filter(n=>!n.deletedAt&&n.reminder).map(n=>({id:n.id,...n.reminder}))));},
