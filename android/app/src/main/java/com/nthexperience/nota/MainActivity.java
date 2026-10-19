@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
     private LocalAI localAI;
     private CloudAI cloudAI;
     private LocalTranscription transcription;
+    private LocalInk ink;
     private TextToSpeech tts; private volatile boolean ttsReady; private String pendingItem; private boolean webReady;
     private final ExportTransfer transfer=new ExportTransfer();
 
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
         localAI=new LocalAI(data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
         cloudAI=new CloudAI(this,data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ai',{detail:"+data+"}))",null);}));
         transcription=new LocalTranscription(getCacheDir(),data->runOnUiThread(()->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-transcription',{detail:"+data+"}))",null);}));
+        ink=new LocalInk(data->{if(web!=null)web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-ink',{detail:"+data+"}))",null);});
         web.addJavascriptInterface(new DeviceBridge(),"NotaAndroid");
         web.setWebViewClient(new WebViewClient(){
             @Override public WebResourceResponse shouldInterceptRequest(WebView v,WebResourceRequest r){Uri uri=r.getUrl();if(!"https".equals(uri.getScheme())||!HOST.equals(uri.getHost())||uri.getPort()!=-1||!r.getMethod().equals("GET"))return blocked();String path=uri.getPath();if(path==null||!path.startsWith("/assets/www/")||path.contains("..")||path.contains("\\"))return blocked();try{String asset=path.substring("/assets/".length());String mime=mime(asset);WebResourceResponse res=new WebResourceResponse(mime,"UTF-8",getAssets().open(asset));Map<String,String> headers=new HashMap<>();headers.put("X-Content-Type-Options","nosniff");headers.put("Content-Security-Policy","default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' data: blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");res.setResponseHeaders(headers);return res;}catch(IOException e){return blocked();}}
@@ -67,9 +69,9 @@ public class MainActivity extends Activity {
     @Override public void onWindowFocusChanged(boolean focused){super.onWindowFocusChanged(focused);if(focused&&web!=null&&webReady){emitPermissions();web.evaluateJavascript("window.notaRefreshTasks&&window.notaRefreshTasks()",null);}}
     @Override public void onBackPressed(){handleBack();}
     private void handleBack(){web.evaluateJavascript("window.notaBack ? window.notaBack() : false",value->{if(!"true".equals(value))finish();});}
-    @Override protected void onResume(){super.onResume();if(localAI!=null)localAI.foreground(true);if(cloudAI!=null)cloudAI.foreground(true);if(transcription!=null)transcription.foreground(true);}
-    @Override protected void onPause(){if(localAI!=null)localAI.foreground(false);if(cloudAI!=null)cloudAI.foreground(false);if(transcription!=null)transcription.foreground(false);web.evaluateJavascript("typeof persistDesk==='function'&&persistDesk()",null);super.onPause();}
-    @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();if(transcription!=null)transcription.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
+    @Override protected void onResume(){super.onResume();if(localAI!=null)localAI.foreground(true);if(cloudAI!=null)cloudAI.foreground(true);if(transcription!=null)transcription.foreground(true);if(ink!=null)ink.foreground(true);}
+    @Override protected void onPause(){if(localAI!=null)localAI.foreground(false);if(cloudAI!=null)cloudAI.foreground(false);if(transcription!=null)transcription.foreground(false);if(ink!=null)ink.foreground(false);web.evaluateJavascript("typeof persistDesk==='function'&&persistDesk()",null);super.onPause();}
+    @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();if(transcription!=null)transcription.close();if(ink!=null)ink.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
 
     public class DeviceBridge {
         @JavascriptInterface public void setAppearance(boolean dark){setTheme(dark?"dark":"paper");}
@@ -86,6 +88,8 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void requestAI(String id,String action,String json){if(localAI!=null&&json!=null&&json.length()<=100000)localAI.request(id,action,json);}
         @JavascriptInterface public void cancelAI(String id){if(localAI!=null)localAI.cancel(id);if(cloudAI!=null)cloudAI.cancel(id);}
 
+        @JavascriptInterface public void recognizeInk(String id,String json){if(ink!=null&&json!=null&&json.length()<=1200000)runOnUiThread(()->ink.request(id,json));}
+        @JavascriptInterface public void cancelInk(String id){if(ink!=null)runOnUiThread(()->ink.cancel(id));}
         @JavascriptInterface public boolean beginTranscription(String id,long bytes){return transcription!=null&&transcription.begin(id,bytes);}
         @JavascriptInterface public boolean appendTranscription(String id,String base64){return transcription!=null&&transcription.append(id,base64);}
         @JavascriptInterface public boolean finishTranscription(String id,String locale){return transcription!=null&&transcription.finish(id,locale);}

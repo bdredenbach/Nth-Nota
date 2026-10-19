@@ -11,12 +11,12 @@ const areas={
   tip('#taskbar-layout','Your desk, two ways.','The app opens in Canvas. Use this switch to browse a list or return to freely movable notes. A toast confirms the view you choose.'),
   tip('#canvas-snap','A little order, whenever you need it.','Snap to grid arranges open notes in a left-aligned column on the canvas. You can still drag them wherever they belong.'),
   tip('.page-heading [data-action=note]','Start with one thought.','New note opens your writing space. Notes save as you type. When you open a tool for the first time, a short tip will show you its controls.'),
-  tip('#window-dock','Your notes stay close.','Drag a note by its title bar to arrange it. Minimize puts it in this dock. Close saves it in Saved notes, where Restore brings it back.'),
+  tip('.desk-taskbar [data-action=saved]','Your notes stay close.','Drag a note by its title bar to arrange it. Minimize puts it below the canvas. Close saves it in Saved notes; use this button to restore it.'),
   tip('.desk-taskbar [data-action=assistant]','Help, when you want it.','The writing companion can proofread, organize or explore an idea with you. Next, choose permissions. You can keep everything optional and change your choices later.')
  ]},
  note:{label:'Writing a note',tips:[
   tip('#note-title','Make this thought yours.','Give your note a title, then write below. Your changes save as you type. Bold, lists, highlighting and readback are just above the page.'),
-  tip('.editor-ribbon','More than a page.','Type, Sketch, Ink, Task, Import and Voice create another item on this workspace. Your current note stays saved.'),
+  tip('.editor-ribbon','More than a page.','Type, Sketch, Ink, Words, Task, Import and Voice create another item on this workspace. Your current note stays saved.'),
   tip('#note-done','Keep it open on your desk.','Save to workspace returns to the canvas with this note open. Minimize keeps it in the dock. The × saves and closes it in Saved notes.',{tryLabel:'Let me write'})
  ]},
  tasks:{label:'Tasks & reminders',tips:[
@@ -39,6 +39,10 @@ const areas={
   tip('#ai-message','Your words, your choice.','Local AI is tried first. With your consent, Cloudflare or configured Groq can receive your request, selected text or current note context, and recent chat when local AI is unavailable. No message is sent by taking this tour.',{permission:'cloud',tryLabel:'Let me try the companion'})
  ]},
  audio:{label:'Audio & transcript',tips:[tip('#audio-player','Keep the sound and the words together.','Play your recording here. Convert to text creates a transcript inside this same note on supported phones. You can review and edit the words below.',{tryLabel:'Explore this audio note'})]},
+ handwriting:{label:'Handwrite to text',tips:[
+  tip('#handwrite-pad','A word from your fingertips.','Write one word or a short line. Convert to text downloads a language pack on first use and reads your strokes on this device.'),
+  tip('#handwrite-result','Check the words.','Choose a reading or correct it, then Add words. Clear the pad for the next word. Your note and unfinished strokes save automatically.',{tryLabel:'Let me write'})
+ ]},
  saved:{label:'Saved notes',tips:[
   tip('#saved-list,#saved-search','Closed does not mean gone.','Search your saved notes here. Restore brings a note back to its workspace. The trash button moves it to Recently deleted, where you can recover it.',{tryLabel:'Browse my notes'})
  ]},
@@ -55,7 +59,7 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s){seen=new Set((s.
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({enabled,seen:[...seen]}));remembered=true;}catch{remembered=false;}}
 function currentArea(){
  if($('#permissions-done')||$('#privacy-policy')||$('#report-send')||$('#report-consent')||$('#transcript-text'))return null;
- if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
+ if($('#handwrite-pad'))return 'handwriting';if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
 }
 function blocked(){return !!$('.choice-overlay')||!!$('#ai-progress-dialog:not([hidden])')||!!$('#record-stop:not(:disabled)')||!!$('#record-start:disabled')||!!$('#ai-stop:not(:disabled)')||document.hidden;}
 function visible(el){if(!el||!el.getClientRects().length||el.closest('[hidden]')||getComputedStyle(el).visibility==='hidden')return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}
