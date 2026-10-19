@@ -6,8 +6,8 @@ android {
         applicationId 'com.nthexperience.nota'
         minSdk 26
         targetSdk 36
-        versionCode 9
-        versionName '0.4.2'
+        versionCode 10
+        versionName '0.5.0'
         def gatewayDefaults = new Properties()
         rootProject.file('ai-gateway.properties').withInputStream { gatewayDefaults.load(it) }
         def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: gatewayDefaults.getProperty('url', '')
@@ -32,4 +32,4 @@ android.sourceSets.main.assets.srcDir(webAssets)
 tasks.named('preBuild').configure { dependsOn(bundleWeb) }
 
 // Gemini Nano is executed by Android AICore, with no API key or cloud billing.
-dependencies { implementation 'com.google.mlkit:genai-prompt:1.0.0-beta4' }
+dependencies { testImplementation 'junit:junit:4.13.2'; testImplementation 'org.json:json:20240303'; implementation 'com.google.mlkit:genai-prompt:1.0.0-beta4' }

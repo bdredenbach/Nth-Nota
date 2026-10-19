@@ -1,6 +1,14 @@
-# Nth Nota 0.4.2
+# Nth Nota 0.5.0
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
+
+## Added in 0.5.0
+
+- Chat-style AI conversations with genuine Sent/Received/Replied states, working dots, saved history, and Retry for stopped messages. Recent context is passed automatically; original notes remain unchanged.
+- Download/preparation dialog uses Android byte counts and a real percentage when a total is available. Unknown sizes stay indeterminate. The dialog can be dismissed while work continues.
+- Stop detaches the request and discards late results instead of force-cancelling AICore futures or interrupting its download thread. Pending native work blocks overlapping local inference until it settles.
+- Local AI is automatic when requested. Free cloud defaults to enabled for a new preference, with a visible switch; explicit previous opt-outs are respected. Cloudflare and optional configured Groq remain the only cloud providers. Grok/xAI is not a verified free API and is not connected. Groq still needs the owner’s server-held free-plan key.
+- The shared monogram lowers th again across launcher densities, themed icon and in-app artwork.
 
 ## Added in 0.4.2
 

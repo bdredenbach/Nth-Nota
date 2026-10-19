@@ -18,7 +18,7 @@ def text(value,x,y,size,color):
   parts.append((pen.getCommands(),color));x+=glyph.width*scale
 
 text('N',95,745,760,'#f8f5e8')
-text('th',615,440,230,'#d7e7a8')
+text('th',615,505,230,'#d7e7a8')
 text('ota',620,738,240,'#f8f5e8')
 body=''.join(f'<path d="{d}" fill="{color}"/>' for d,color in parts)
 square='<path d="M0 0H1024V1024H0Z" fill="#30483a"/>'
