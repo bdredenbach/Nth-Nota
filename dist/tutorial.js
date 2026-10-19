@@ -4,6 +4,8 @@
 const KEY='nota-tour-v2', $=s=>document.querySelector(s);
 const tip=(target,title,text,extra={})=>({target,title,text,...extra});
 const areas={
+ budget:{label:'Budget planner',tips:[tip('#budget-rows','Give each amount a place.','Compare planned and actual income and expenses. Set aside protects a little room before the remaining amount is calculated.'),tip('#budget-summary','Check your room to spend.','Totals use the amounts you enter. Nothing connects to a bank. Choose the destination canvas above, then save or press ×.',{tryLabel:'Let me plan'})]},
+ calendar:{label:'Calendar',tips:[tip('#calendar-days','A day with room for a thought.','Choose a day, then Add a plan. Entries save as you type; a time is optional.'),tip('#calendar-entries,#calendar-add','Let a plan become a next step.','Make an entry a task, then choose notification options with its bell. Journal for this day opens a dated page on the same canvas.',{tryLabel:'Let me plan a day'})]},
  desk:{label:'Your desk',tips:[
   tip('#desk-menu-toggle','A little room to think.','This is your Desk menu. It opens from the bottom, keeping your notes and tools within reach.'),
   tip('.launcher-tools','Your tools live here.','Create a note, sketch, task list or voice note. Find a saved thought with search. The same creation tools also appear inside each note.',{menu:true}),
@@ -11,13 +13,13 @@ const areas={
   tip('#taskbar-layout','Your desk, two ways.','The app opens in Canvas. Use this switch to browse a list or return to freely movable notes. A toast confirms the view you choose.'),
   tip('#canvas-snap','A little order, whenever you need it.','Snap to grid arranges open notes in a left-aligned column on the canvas. You can still drag them wherever they belong.'),
   tip('.page-heading [data-action=note]','Start with one thought.','New note opens your writing space. Notes save as you type. When you open a tool for the first time, a short tip will show you its controls.'),
-  tip('.desk-taskbar [data-action=saved]','Your notes stay close.','Drag a note by its title bar to arrange it. Minimize puts it below the canvas. Close saves it in Saved notes; use this button to restore it.'),
+  tip('.desk-taskbar [data-action=saved]','Your notes stay close.','Drag a note by its title bar to arrange it. Minimize puts it below the canvas. A canvas card’s × puts it away in Saved notes; this button brings it back.'),
   tip('.desk-taskbar [data-action=assistant]','Help, when you want it.','The writing companion can proofread, organize or explore an idea with you. Next, choose permissions. You can keep everything optional and change your choices later.')
  ]},
  note:{label:'Writing a note',tips:[
   tip('#note-title','Make this thought yours.','Give your note a title, then write below. Your changes save as you type. Bold, lists, highlighting and readback are just above the page.'),
   tip('.editor-ribbon','More than a page.','Type, Sketch, Ink, Handwrite, Task, Import and Voice create another item on this workspace. Your current note stays saved.'),
-  tip('#note-done','Keep it open on your desk.','Save to workspace returns to the canvas with this note open. Minimize keeps it in the dock. The × saves and closes it in Saved notes.',{tryLabel:'Let me write'})
+  tip('#note-done','Keep it open on your desk.','Save to workspace returns to the canvas with this note open. Minimize keeps it in the dock. The editor’s × also saves it to the canvas. Choose its destination with the Canvas picker above.',{tryLabel:'Let me write'})
  ]},
  tasks:{label:'Tasks & reminders',tips:[
   tip('#add-task','Turn a thought into a next step.','Add a task, type what needs doing, and tick it when complete. Each task has its own bell for notification choices.'),
@@ -63,7 +65,7 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s){seen=new Set((s.
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({enabled,seen:[...seen]}));remembered=true;}catch{remembered=false;}}
 function currentArea(){
  if($('#permissions-done')||$('#privacy-policy')||$('#report-send')||$('#report-consent')||$('#transcript-text'))return null;
- if($('#photo-text'))return 'photo';if($('#journal-date'))return 'journal';if($('#map-stage'))return 'mindmap';if($('#math-rows'))return 'math';if($('#handwrite-pad'))return 'handwriting';if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
+ if($('#budget-rows'))return 'budget';if($('#calendar-days'))return 'calendar';if($('#photo-text'))return 'photo';if($('#journal-date'))return 'journal';if($('#map-stage'))return 'mindmap';if($('#math-rows'))return 'math';if($('#handwrite-pad'))return 'handwriting';if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
 }
 function blocked(){return !!$('#photo-stop:not([hidden])')||!!$('#handwrite-stop:not([hidden])')||!!$('.choice-overlay')||!!$('#ai-progress-dialog:not([hidden])')||!!$('#record-stop:not(:disabled)')||!!$('#record-start:disabled')||!!$('#ai-stop:not(:disabled)')||document.hidden;}
 function visible(el){if(!el||!el.getClientRects().length||el.closest('[hidden]')||getComputedStyle(el).visibility==='hidden')return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}

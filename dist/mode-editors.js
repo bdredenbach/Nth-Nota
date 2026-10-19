@@ -42,5 +42,5 @@ function photo(n,c){const p=n.photo;let alive=true,busy=false,controller=null;
  $('#photo-stop').onclick=()=>controller?.abort();$('#photo-use').onclick=()=>{const text=p.blocks.filter(b=>b.selected).map(b=>b.text).join('\n\n');if(!text){c.toast('Select at least one text block.');return;}$('#photo-text').value=text.slice(0,100000);persist();c.toast('Selected blocks copied into your note.');};$('#photo-export-source').onclick=()=>c.downloadPhoto(p.data,n.title);source();blocks();controls();c.icons();
 }
 
-window.NotaModeEditors={journal,math,mindmap,photo};
+window.NotaModeEditors={journal,math,mindmap,photo,shell,common};
 })();
