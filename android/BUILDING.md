@@ -1,6 +1,6 @@
-# Nth Nota Android project, 0.3.2
+# Nth Nota Android project, 0.3.3
 
-Status: the 0.3.2 preview APK compiled successfully on GitHub Actions, passed all 38 automated checks, and passed APK v2 signature verification. Its certificate matches 0.3.0, and its native code contains the verified Cloudflare gateway URL. A live HTTP dashboard test succeeded; native in-app cloud and local inference still need physical-device testing. The working browser prototype is deployed separately.
+Status: the 0.3.3 preview APK compiled successfully on GitHub Actions, passed all 38 automated checks, and passed APK v2 signature verification. Its certificate matches 0.3.0, and its native code contains the verified Cloudflare gateway URL. A live HTTP dashboard test succeeded; native in-app cloud and local inference still need physical-device testing. The working browser prototype is deployed separately.
 
 This is an Android WebView application with the complete local editor bundled into its assets. It does not load the hosted prototype. Android notes use app-private WebView storage, separate from browser notes. Export a JSON backup from the browser and restore it in the Android app to transfer a desk.
 
@@ -45,3 +45,5 @@ ML Kit reference: https://developers.google.com/ml-kit/genai/prompt/android/get-
 The first 0.2 key was not retained by the runner's default path. Version 0.3 explicitly uses a generated key at `NOTA_PREVIEW_KEYSTORE` and caches that exact path. This improves continuity while the cache survives; production requires a securely backed-up owner key. The 0.3 certificate differs from 0.2, so Android may reject an in-place update. Export a full desk backup first. If a reinstall is needed, restore that backup afterward. Never uninstall a desk with unexported notes.
 
 Version 0.3.2 changes the shared-N icon to cursive lettering on a square green plate, inset inside the launcher-controlled outer mask. Previous artwork and a launcher comparison are preserved in `artwork/icon-options/`. AI behavior and gateway configuration carry forward from 0.3.1.
+
+Version 0.3.3 lowers the cursive th and fills the complete adaptive background with the centre’s green, removing the cream surround. It uses the same signing certificate and AI configuration as 0.3.2.

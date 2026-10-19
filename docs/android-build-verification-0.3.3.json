@@ -1,0 +1,19 @@
+{
+  "version": "0.3.3",
+  "version_code": 6,
+  "source_commit": "3222162f49ec107bc4d4c958a8ad0de047905b08",
+  "workflow_run": "https://github.com/bdredenbach/Nth-Nota/actions/runs/39248015008",
+  "workflow_conclusion": "success",
+  "automated_checks_passed": 38,
+  "apk_sha256": "a088f9c98a433f9421738a5e6fab12e706e24b318a355a5ce8c2031b3dc1e2e7",
+  "apk_v2_signature_verified": true,
+  "signing_certificate_sha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "same_signing_certificate_as_0_3_2": true,
+  "bundled_editor_assets_verified": 23,
+  "gateway_included": true,
+  "icon_change": "Lower th by 80 design units; full forest-green adaptive background, no cream surround",
+  "physical_device_tested": false,
+  "native_app_cloud_inference_tested": false,
+  "local_ai_inference_device_tested": false,
+  "cron_trigger_confirmation_pending": true
+}

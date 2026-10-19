@@ -100,3 +100,7 @@ The [0.3.2 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/392463
 - Fills the complete Android adaptive-icon background with the centre's same forest green, removing the cream surround visible in the owner's launcher screenshot. The launcher still chooses its outer shape. The themed asset uses the cursive lettering without a separate square plate.
 - Preserves the previous cursive-square mark in `artwork/icon-options/cursive-square-0.3.2.svg` and `.png`. The updated comparison approximates the owner's rounded-square launcher mask.
 - Carries forward the existing AI connection. Phone inference testing and daily-counter cleanup schedule confirmation remain pending.
+
+## Verified 0.3.3 Android preview
+
+The [0.3.3 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39248015008) passed all 38 checks and APK v2 signature verification. All 23 web assets match source; native code retains the same gateway address. The certificate matches 0.3.2 for normal in-place updates. The icon background now matches the centre's forest green throughout, with the th lowered. See [verification record](docs/android-build-verification-0.3.3.json). Phone AI testing and cleanup-trigger confirmation remain pending.
