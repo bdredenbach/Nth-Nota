@@ -55,7 +55,7 @@ function currentArea(){
  if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
 }
 function blocked(){return !!$('.choice-overlay')||!!$('#ai-progress-dialog:not([hidden])')||!!$('#record-stop:not(:disabled)')||!!$('#record-start:disabled')||!!$('#ai-stop:not(:disabled)')||document.hidden;}
-function visible(el){return el&&el.getClientRects().length&&!el.closest('[hidden]')&&getComputedStyle(el).visibility!=='hidden';}
+function visible(el){if(!el||!el.getClientRects().length||el.closest('[hidden]')||getComputedStyle(el).visibility==='hidden')return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}
 function target(selector){return [...document.querySelectorAll(selector)].find(visible)||null;}
 function position(scroll=false){
  if(!area||!dialog.open)return;anchor=target(areas[area].tips[index].target);
