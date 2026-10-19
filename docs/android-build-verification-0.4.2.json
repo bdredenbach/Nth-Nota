@@ -1,0 +1,30 @@
+{
+  "version": "0.4.2",
+  "versionCode": 9,
+  "sourceCommit": "d67550d2c37e8cee5fb1a710dfe85d76ec47b54b",
+  "workflowRun": 39255509538,
+  "workflowJob": 118069671211,
+  "artifactId": 12187877178,
+  "archiveSha256": "244b3583d3b775cf647faf14d04417d4cff2ac7616a7cc6b1507eea244308da3",
+  "apkSha256": "96622bda30751a715c61599d205da8e01cfe410b2ebef6eaf89a25327b46de79",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "package": "com.nthexperience.nota.preview",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "compileSdk": 36,
+  "nodeChecksPassed": 41,
+  "browserChecksPassed": 11,
+  "newCoverage": [
+    "Bottom dock and upward-opening Desk menu bounds on phone, desktop, narrow phone and landscape",
+    "Local note/tool search, workspace switching and task editor launch",
+    "Keyboard focus containment and restored focus on dismissal",
+    "Escape, outside tap, second tap and native Back handler hook",
+    "Reduced-motion animation behavior",
+    "Theme inheritance across launcher and workspace",
+    "Visual review of Paper, Dark paper, Blue and Rosy pink captures"
+  ],
+  "bundledAssetsMatchLocalDist": true,
+  "publicGatewayPresent": true,
+  "signatureVerifiedByAndroidApksigner": true,
+  "physicalAndroidDeviceTested": false
+}
