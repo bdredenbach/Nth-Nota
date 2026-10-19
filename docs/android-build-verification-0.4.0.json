@@ -1,0 +1,40 @@
+{
+  "version": "0.4.0",
+  "versionCode": 7,
+  "sourceCommit": "7a2decd40ce61ec823b0c6bd86e9e1cda50cb114",
+  "workflowRun": 39253158639,
+  "workflowJob": 118061720237,
+  "artifactId": 12186640617,
+  "archiveSha256": "09ab64722ebc1c1571ebad85116e78b0cb9ac0d814eb065cf20c53c2c9b54b32",
+  "apkSha256": "d4e1b0fc29b1dbbf76aa7dd3a2fcb37f24eed55a1eff82bb604e5acfffec3225",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "package": "com.nthexperience.nota.preview",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "compileSdk": 36,
+  "nodeChecksPassed": 41,
+  "browserChecksPassed": 8,
+  "browserEngine": "Chromium 141 through Playwright 1.56.1",
+  "browserCoverage": [
+    "412px phone",
+    "320px phone",
+    "824x412 landscape",
+    "1280px and 1440px desktop",
+    "touch title-bar drag without Focus view",
+    "minimize/restore/maximize/save-close and reopen",
+    "note content and sidebar preference persistence",
+    "dark theme inheritance and contrasting surfaces",
+    "navigation dismissal and hidden APK web install entry",
+    "no JavaScript runtime errors"
+  ],
+  "bundledAssetsMatchLocalDist": true,
+  "publicGatewayPresent": true,
+  "signatureVerifiedByAndroidApksigner": true,
+  "physicalAndroidDeviceTested": false,
+  "api38Tested": false,
+  "pending": [
+    "Phone verification of status/navigation bars and keyboard insets",
+    "Local inference and native cloud requests",
+    "Cloudflare daily cleanup cron setup"
+  ]
+}
