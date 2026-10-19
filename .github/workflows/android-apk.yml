@@ -68,6 +68,7 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.4.0.apk
           sha256sum artifacts/Nth-Nota-0.4.0.apk > artifacts/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: Nth-Nota-0.4.0-preview
           path: artifacts/*
