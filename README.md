@@ -1,4 +1,4 @@
-# Nth Nota 0.3.1
+# Nth Nota 0.3.2
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
 
@@ -82,3 +82,10 @@ Version 0.3.0 built in [GitHub Actions](https://github.com/bdredenbach/Nth-Nota/
 ## Verified 0.3.1 Android preview
 
 The [0.3.1 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39245154789) completed successfully. All 38 checks passed; the APK v2 signature and all 23 bundled editor assets verified. Native bytecode contains the expected gateway URL. The signing certificate matches 0.3.0, so those two previews are compatible for normal in-place updates. See [verification record](docs/android-build-verification-0.3.1.json). The owner’s dashboard test proved live cloud proofreading; native in-app cloud and local inference still await phone testing.
+
+## Added in 0.3.2
+
+- All letters in the shared-N mark now use URW Z003 calligraphic cursive outlines. No font binary is embedded.
+- The green icon plate is a square. Android still chooses the outer launcher mask; an inset square on paper keeps the green plate visibly square inside circular launchers. The themed icon uses a square with the script lettering cut out.
+- The previous italic mark is preserved in `artwork/icon-options/old-italic.svg` and `.png`. A code-rendered launcher comparison is in `artwork/icon-options/comparison.png`.
+- The writing assistant and verified free gateway configuration carry forward from 0.3.1. In-app phone testing and the daily cleanup schedule remain pending owner confirmation.
