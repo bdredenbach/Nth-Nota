@@ -3,6 +3,9 @@ package com.nthexperience.nota
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
+import android.system.Os
+import android.system.OsConstants
+import android.system.ErrnoException
 import com.google.mlkit.genai.common.DownloadStatus
 import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.common.audio.AudioSource
@@ -20,6 +23,7 @@ import java.io.FileInputStream
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.AtomicLong
 import java.util.function.Consumer
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
@@ -60,6 +64,7 @@ class LocalTranscription(directory: File, private val emit: Consumer<JSONObject>
     private suspend fun transcribe(s: Session, tag: String) {
         var feeder: Job? = null
         val feedFailure = AtomicReference<Throwable?>(null)
+        val fed = AtomicLong(0)
         try {
             withTimeout(840_000) {
                 if (s.cancelled.get() || closed || !foreground) throw CancellationException()
@@ -95,6 +100,8 @@ class LocalTranscription(directory: File, private val emit: Consumer<JSONObject>
                 if (status != FeatureStatus.AVAILABLE) error("On-device speech recognition is not ready. Try again shortly.")
                 currentCoroutineContext().ensureActive()
                 val pipe = ParcelFileDescriptor.createPipe(); s.pipe = pipe
+                val descriptor = pipe[1].fileDescriptor
+                Os.fcntlInt(descriptor, OsConstants.F_SETFL, Os.fcntlInt(descriptor, OsConstants.F_GETFL, 0) or OsConstants.O_NONBLOCK)
                 val request = speechRecognizerRequest { audioSource = AudioSource.fromPfd(pipe[0]) }
                 val text = StringBuilder()
                 var completed = false
@@ -108,7 +115,13 @@ class LocalTranscription(directory: File, private val emit: Consumer<JSONObject>
                                 while (true) {
                                     ensureActive(); if (s.cancelled.get()) throw CancellationException()
                                     val count = input.read(buffer); if (count < 0) break
-                                    output.write(buffer, 0, count); output.flush(); sent += count
+                                    var offset = 0
+                                    while (offset < count) {
+                                        ensureActive()
+                                        try { val wrote = Os.write(descriptor, buffer, offset, count - offset); if (wrote > 0) offset += wrote else delay(10) }
+                                        catch (e: ErrnoException) { if (e.errno == OsConstants.EAGAIN || e.errno == OsConstants.EINTR) delay(10) else throw e }
+                                    }
+                                    sent += count; fed.set(sent)
                                     progress(s, "transcribing", "Transcribing on this phone…", sent, s.file.length())
                                     delay((started + sent * 1000 / 32000 - SystemClock.elapsedRealtime()).coerceAtLeast(0))
                                 }
@@ -130,7 +143,7 @@ class LocalTranscription(directory: File, private val emit: Consumer<JSONObject>
                         }
                     }
                 }
-                if (feedFailure.get() != null) error("On-device audio processing stopped before the file finished. Please try again.")
+                if (feedFailure.get() != null || fed.get() < s.file.length()) error("On-device audio processing stopped before the file finished. Please try again.")
                 if (!completed || text.isBlank()) error("No speech was recognized. Try a clearer recording or another language.")
                 message(s, "result", JSONObject().put("text", text.toString().take(100000)).put("local", true))
             }
