@@ -68,8 +68,9 @@ public class MainActivity extends Activity {
     @Override protected void onDestroy(){if(chooser!=null)chooser.onReceiveValue(null);if(microphone!=null)microphone.deny();if(tts!=null){tts.stop();tts.shutdown();}if(localAI!=null)localAI.close();if(cloudAI!=null)cloudAI.close();transfer.clear();web.removeJavascriptInterface("NotaAndroid");web.destroy();web=null;super.onDestroy();}
 
     public class DeviceBridge {
-        @JavascriptInterface public void setAppearance(boolean dark){runOnUiThread(()->{
-            int color=Color.parseColor(dark?"#171f1c":"#f6f5f0");root.setBackgroundColor(color);web.setBackgroundColor(color);
+        @JavascriptInterface public void setAppearance(boolean dark){setTheme(dark?"dark":"paper");}
+        @JavascriptInterface public void setTheme(String theme){final boolean dark="dark".equals(theme);final String background=dark?"#171f1c":"blue".equals(theme)?"#eff5fb":"rose".equals(theme)?"#fbf1f3":"#f6f5f0";runOnUiThread(()->{
+            int color=Color.parseColor(background);root.setBackgroundColor(color);web.setBackgroundColor(color);
             getWindow().setStatusBarColor(color);getWindow().setNavigationBarColor(color);
             if(Build.VERSION.SDK_INT>=30){android.view.WindowInsetsController controller=getWindow().getInsetsController();if(controller!=null){int mask=android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS|android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;controller.setSystemBarsAppearance(dark?0:mask,mask);}}
             else{int flags=web.getSystemUiVisibility();int mask=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;web.setSystemUiVisibility(dark?flags&~mask:flags|mask);}

@@ -1,6 +1,10 @@
-# Nth Nota 0.4.0
+# Nth Nota 0.4.1
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
+
+## Added in 0.4.1
+
+Blue and Rosy pink join Paper and Dark paper in Settings → Theme. Each includes matching navigation, workspace, note chrome, buttons and Android system bars. Theme preferences persist on this device and travel with desk backups; existing dark-paper preferences remain supported.
 
 ## Added in 0.4.0
 
