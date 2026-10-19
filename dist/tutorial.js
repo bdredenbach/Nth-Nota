@@ -16,7 +16,7 @@ const areas={
  ]},
  note:{label:'Writing a note',tips:[
   tip('#note-title','Make this thought yours.','Give your note a title, then write below. Your changes save as you type. Bold, lists, highlighting and readback are just above the page.'),
-  tip('.editor-ribbon','More than a page.','Type, Sketch, Ink, Words, Task, Import and Voice create another item on this workspace. Your current note stays saved.'),
+  tip('.editor-ribbon','More than a page.','Type, Sketch, Ink, Handwrite, Task, Import and Voice create another item on this workspace. Your current note stays saved.'),
   tip('#note-done','Keep it open on your desk.','Save to workspace returns to the canvas with this note open. Minimize keeps it in the dock. The × saves and closes it in Saved notes.',{tryLabel:'Let me write'})
  ]},
  tasks:{label:'Tasks & reminders',tips:[
@@ -61,7 +61,7 @@ function currentArea(){
  if($('#permissions-done')||$('#privacy-policy')||$('#report-send')||$('#report-consent')||$('#transcript-text'))return null;
  if($('#handwrite-pad'))return 'handwriting';if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;
 }
-function blocked(){return !!$('.choice-overlay')||!!$('#ai-progress-dialog:not([hidden])')||!!$('#record-stop:not(:disabled)')||!!$('#record-start:disabled')||!!$('#ai-stop:not(:disabled)')||document.hidden;}
+function blocked(){return !!$('#handwrite-stop:not([hidden])')||!!$('.choice-overlay')||!!$('#ai-progress-dialog:not([hidden])')||!!$('#record-stop:not(:disabled)')||!!$('#record-start:disabled')||!!$('#ai-stop:not(:disabled)')||document.hidden;}
 function visible(el){if(!el||!el.getClientRects().length||el.closest('[hidden]')||getComputedStyle(el).visibility==='hidden')return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0;}
 function target(selector){return [...document.querySelectorAll(selector)].find(visible)||null;}
 function position(scroll=false){
