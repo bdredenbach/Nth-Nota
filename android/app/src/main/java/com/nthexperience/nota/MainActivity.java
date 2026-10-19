@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         tts=new TextToSpeech(this,status->{ttsReady=status==TextToSpeech.SUCCESS;});
         pendingItem=getIntent().getStringExtra("item_id");web.loadUrl(HOME);
     }
-    static String mime(String path){String p=path.toLowerCase(Locale.ROOT);if(p.endsWith(".js")||p.endsWith(".mjs"))return "text/javascript";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".html"))return "text/html";if(p.endsWith(".png"))return "image/png";if(p.endsWith(".json")||p.endsWith(".webmanifest"))return "application/json";if(p.endsWith(".svg"))return "image/svg+xml";return "application/octet-stream";}
+    static String mime(String path){String p=path.toLowerCase(Locale.ROOT);if(p.endsWith(".mp3"))return "audio/mpeg";if(p.endsWith(".js")||p.endsWith(".mjs"))return "text/javascript";if(p.endsWith(".css"))return "text/css";if(p.endsWith(".html"))return "text/html";if(p.endsWith(".png"))return "image/png";if(p.endsWith(".json")||p.endsWith(".webmanifest"))return "application/json";if(p.endsWith(".svg"))return "image/svg+xml";return "application/octet-stream";}
     private static WebResourceResponse blocked(){return new WebResourceResponse("text/plain","UTF-8",403,"Blocked",Collections.emptyMap(),new ByteArrayInputStream(new byte[0]));}
     void notice(String text){runOnUiThread(()->Toast.makeText(this,text,Toast.LENGTH_LONG).show());}
     void emitExport(boolean ok,String message){runOnUiThread(()->{try{JSONObject d=new JSONObject().put("type","export").put("ok",ok).put("message",message);web.evaluateJavascript("window.dispatchEvent(new CustomEvent('nota-native-event',{detail:"+d+"}))",null);}catch(Exception ignored){}});}

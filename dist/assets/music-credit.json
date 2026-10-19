@@ -1,0 +1,13 @@
+{
+  "artist": "Nastelbom",
+  "title": "No Copyright Music",
+  "source": "https://pixabay.com/music/corporate-no-copyright-music-617081/",
+  "license": "https://pixabay.com/service/license-summary/",
+  "originalFilename": "nastelbom-no-copyright-music-617081.mp3",
+  "originalSha256": "bdfd08ded6f61fe14974fdb3b3e46200b05e10d8809979f38ad7c7146f3a8d37",
+  "previewSha256": "496d3450c16ef94d1617a6a63541f8e647a70e7683c316572375f81c299076ba",
+  "previewSeconds": 30,
+  "modification": "First 30 seconds; two-second fade-out; MP3 96 kbps stereo.",
+  "use": "Editable project-note example inside Nth Nota, with playback context and attribution.",
+  "provenance": "Original file supplied by the app owner on October 19, 2026."
+}
