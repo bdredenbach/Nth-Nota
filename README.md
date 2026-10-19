@@ -1,6 +1,13 @@
-# Nth Nota 0.5.1
+# Nth Nota 0.5.2
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.5.2
+
+- Digital ink supports fingers automatically: slower strokes grow thicker and faster strokes become finer. This is a speed-based effect, not a claim of measured finger force.
+- Stylus ink retains hardware pressure, including genuine zero values. Sketch/handwriting, highlighter and eraser retain even widths.
+- One pointer owns each stroke; secondary touches cannot splice into it. Cancellation and lost capture save the current stroke safely.
+- Point widths are stored with the drawing for reopening, backups, undo/redo and PNG/PDF export.
 
 ## Added in 0.5.1
 

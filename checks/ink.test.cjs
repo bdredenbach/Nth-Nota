@@ -1,0 +1,8 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const {createSampler,widthFactor}=require('../dist/ink-pressure.js');
+function finger(stepTime){let time=100;const sample=createSampler('touch',{x:0,y:0,time});return Array.from({length:30},(_,i)=>sample({x:(i+1)*20,y:0,time:time+=(stepTime),pressure:.5}));}
+test('slow finger writing is thicker than fast writing without a pressure sensor',()=>{const slow=finger(35),fast=finger(2);assert(widthFactor(slow.at(-1))>widthFactor(fast.at(-1))*1.5);assert([...slow,...fast].every(p=>p>=.2&&p<=.9));});
+test('finger response smooths a change of speed instead of jumping widths',()=>{const sample=createSampler('touch',{x:0,y:0,time:0});let p;for(let i=1;i<=20;i++)p=sample({x:i*10,y:0,time:i*40});const next=sample({x:300,y:0,time:802});assert(next<p);assert(p-next<.1);});
+test('stylus pressure includes true zero, clamps bounds, and does not depend on speed',()=>{const sample=createSampler('pen');for(const p of [0,.15,.8,1])assert.equal(sample({pressure:p}),p);assert.equal(sample({pressure:-1}),0);assert.equal(sample({pressure:2}),1);assert.equal(widthFactor(0),.45);});
+test('invalid or duplicate timestamps cannot produce non-finite ink',()=>{const sample=createSampler('touch',{x:0,y:0,time:100});for(const time of [100,99,NaN,1000])assert(Number.isFinite(sample({x:10,y:4,time})));});
+test('mouse ink remains even and a fresh finger stroke starts independently',()=>{const mouse=createSampler('mouse');assert.equal(mouse({pressure:1}),.5);assert.equal(mouse({pressure:0}),.5);finger(2);assert.equal(createSampler('touch')({x:0,y:0,time:1}),.55);});
