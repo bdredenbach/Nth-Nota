@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='nth-nota-shell-0.3.2';
+const VERSION='nth-nota-shell-0.3.3';
 const FILES=['./','./index.html','./style.css','./app.js','./core.js','./desk-store.js','./ai-prompts.js','./ai-router.js','./platform.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./vendor/lucide.js','./vendor/jszip.js','./vendor/docx.js','./vendor/pdf-lib.js','./vendor/pdf.mjs','./vendor/pdf.worker.min.mjs'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{const cache=await caches.open(VERSION);await cache.addAll(FILES);})()));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('nth-nota-shell-')&&key!==VERSION)await caches.delete(key);await self.clients.claim();})()));

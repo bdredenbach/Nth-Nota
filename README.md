@@ -1,4 +1,4 @@
-# Nth Nota 0.3.2
+# Nth Nota 0.3.3
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
 
@@ -93,3 +93,10 @@ The [0.3.1 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/392451
 ## Verified 0.3.2 Android preview
 
 The [0.3.2 workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39246397637) passed all 38 automated checks and APK v2 signature verification. All 23 bundled editor assets matched source. The certificate matches 0.3.0/0.3.1, and native code retains the verified free gateway address. The square plate fits Android's circular adaptive mask; standard and themed vector artwork were visually inspected. The comparison is a code-rendered approximation of launcher presentation, not a phone screenshot. See [verification record](docs/android-build-verification-0.3.2.json).
+
+## Added in 0.3.3
+
+- Lowers the cursive “th” by 80 units in the 1024-unit artwork while keeping the shared-N layout and existing lettering scale.
+- Fills the complete Android adaptive-icon background with the centre's same forest green, removing the cream surround visible in the owner's launcher screenshot. The launcher still chooses its outer shape. The themed asset uses the cursive lettering without a separate square plate.
+- Preserves the previous cursive-square mark in `artwork/icon-options/cursive-square-0.3.2.svg` and `.png`. The updated comparison approximates the owner's rounded-square launcher mask.
+- Carries forward the existing AI connection. Phone inference testing and daily-counter cleanup schedule confirmation remain pending.
