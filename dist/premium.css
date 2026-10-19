@@ -18,3 +18,5 @@ main{padding:22px 28px 16px}.page-heading{margin-bottom:16px}.eyebrow{font-size:
 @media(max-height:540px) and (max-width:1000px){.page-heading,.bottom-row{display:none}main{padding-top:8px}.workspace-strip{margin-bottom:8px}.desk-toolbar{flex-wrap:nowrap;min-height:48px}.tools{width:auto}.tools button{flex-direction:row;min-height:44px}.tools button span{display:none}.view-tools{width:auto;border-top:0;min-height:44px}.view-tools button span{display:none}.board-scroll{height:calc(100dvh - 213px);min-height:120px}.desk.fullscreen .desk-toolbar{min-height:48px}.note-window .editor{min-height:100px}.backdrop{padding:4px}.modal{max-height:calc(100dvh - 8px)}.modal-body{padding:12px 18px}.modal-foot{padding:6px 14px}}
 @media(min-width:851px){body:not(.menu-collapsed) #sidebar{transform:none}.sidebar-close{display:none}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+@media(max-width:600px){.card{max-width:calc(100vw - 60px)}.list-view .card{max-width:none}}
