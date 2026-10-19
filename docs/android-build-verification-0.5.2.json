@@ -1,0 +1,29 @@
+{
+  "version": "0.5.2",
+  "versionCode": 12,
+  "sourceCommit": "ca43d77c8de1ab55e94005a71e5cae695b6eefab",
+  "workflowRun": 39270134493,
+  "workflowJob": 118119948034,
+  "artifactId": 12194373547,
+  "archiveSha256": "9a856e64525eaefeb9a411d6e28dd995b6fc0cef49197e8bd68bf199071acecd",
+  "apkSha256": "40a63753d5987d29e4bacf0defbd257972cb546348ffa1640b04b205db8fd1be",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "package": "com.nthexperience.nota.preview",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "compileSdk": 36,
+  "nodeChecksPassed": 49,
+  "browserChecksPassed": 17,
+  "nativeUnitTestTaskPassed": true,
+  "bundledAssetsMatchLocalDist": true,
+  "publicGatewayPresent": true,
+  "signatureVerifiedByAndroidApksigner": true,
+  "physicalAndroidDeviceTested": false,
+  "newCoverage": [
+    "Speed-based finger ink produces thicker slow strokes than fast strokes without a pressure sensor",
+    "Stylus pressure preserves zero and bounds",
+    "Secondary touches cannot splice points into an active stroke",
+    "Finger widths retained through undo/redo, backup serialization and page reload",
+    "PNG export via native bridge fixture matches the rendered canvas bytes"
+  ]
+}
