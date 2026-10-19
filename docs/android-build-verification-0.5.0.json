@@ -1,0 +1,41 @@
+{
+  "version": "0.5.0",
+  "versionCode": 10,
+  "sourceCommit": "1557bd99ea2badecd5beabe722a415cfb023b218",
+  "workflowRun": 39259993301,
+  "workflowJob": 118084829508,
+  "artifactId": 12188294645,
+  "archiveSha256": "063a048e59174dce2daa119aef37ffd1c0f215523e03248ad3e861844ef3000f",
+  "apkSha256": "c91cff40fa62eb583ad3f3083393f755b1796607fd6c93823b9e75946f64fe00",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "package": "com.nthexperience.nota.preview",
+  "minSdk": 26,
+  "targetSdk": 36,
+  "compileSdk": 36,
+  "nodeChecksPassed": 44,
+  "browserChecksPassed": 14,
+  "nativeUnitTestTaskPassed": true,
+  "nativeCancellationRegressionsDefined": 4,
+  "newCoverage": [
+    "Stop during pending native download without calling Future.cancel or starting generation",
+    "Stop during native generation discards late reply and defers client close",
+    "Pending stopped local inference is BUSY until it settles; subsequent retry succeeds",
+    "Real SDK byte/total fields reach UI",
+    "JS cancellation survives native bridge errors and ignores late responses",
+    "Known-size progress is measured; unknown-size progress stays indeterminate",
+    "Download dialog dismissal, reopening and Back",
+    "Chat retry, replies, follow-up context and persistence",
+    "Automatic configured cloud fallback tested with a bridge fixture"
+  ],
+  "bundledAssetsMatchLocalDist": true,
+  "publicGatewayPresent": true,
+  "signatureVerifiedByAndroidApksigner": true,
+  "physicalAndroidCrashReproduced": false,
+  "physicalAndroidDeviceTested": false,
+  "liveGroqVerified": false,
+  "pending": [
+    "Phone confirmation of Stop crash resolution and real AICore download",
+    "Groq free-plan key must be saved as server secret GROQ_API_KEY to activate optional provider",
+    "Cloudflare daily cleanup cron setup"
+  ]
+}
