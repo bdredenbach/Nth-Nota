@@ -1,6 +1,10 @@
-# Nth Nota 0.4.1
+# Nth Nota 0.4.2
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
+
+## Added in 0.4.2
+
+The original Nth Nota Desk menu opens upward from the bottom dock. It includes local search for tools, workspaces and saved note content, quick creation tools, workspace switching, favorites, saved/recent notes, settings and backups. It uses Nth Nota artwork and the active app palette. Escape, Android Back, the close button, a second tap on Desk and clicking outside dismiss it. Keyboard focus stays inside the panel while open. Existing sidebar preferences remain available on larger screens.
 
 ## Added in 0.4.1
 
