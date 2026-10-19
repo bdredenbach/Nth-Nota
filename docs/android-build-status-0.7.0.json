@@ -1,0 +1,28 @@
+{
+  "version": "0.7.0",
+  "versionCode": 15,
+  "status": "built-and-verified-awaiting-phone-test",
+  "apkSourceCommit": "7f9a9a6e21d25d7e59ef40b3ab4fabec2b94e502",
+  "workflowRun": 39297070006,
+  "workflowJob": 118212229716,
+  "artifactId": 12209716624,
+  "ciJavaScriptChecksPassed": 64,
+  "localJavaScriptAndDatabaseChecksPassed": 65,
+  "browserChecksPassed": 27,
+  "nativeUnitTestsPassed": 11,
+  "bundledWebFilesVerified": 34,
+  "apkProduced": true,
+  "apkSha256": "5f88fbef9e962b3107c854aad209017fbb8947e80537128743d6b87486dbda30",
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "phoneRecordingConfirmedInVersion": "0.6.0",
+  "physicalAndroidNotificationTested": false,
+  "liveTranscriptionQualityVerified": false,
+  "liveReportEndpointDeployed": false,
+  "publicPolicyEndpointVerified": false,
+  "remaining": [
+    "Phone test: voice Save immediately reveals its canvas card; B&W, rotate, crop and ink undo/redo",
+    "Phone test: tutorial/permissions, task reminders, ongoing notification dismissal, Complete and Stop showing, reboot",
+    "Deploy updated Cloudflare Worker, configure daily cleanup, verify report receipt and public /privacy URL",
+    "Real-model ambiguity/safety evaluation, broader device/accessibility testing, final Play Data safety declaration"
+  ]
+}

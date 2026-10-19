@@ -1,3 +1,5 @@
+Implementation update: see `docs/0.7.0-release-pass.md` and `docs/android-build-status-0.7.0.json` for the completed coordinated pass and remaining device/server release gates.
+
 # Next milestone after the 0.6.0 audio device test
 
 Approved scope, October 19, 2026. Ship the audio test APK first; verify microphone
