@@ -169,7 +169,8 @@ class LocalTranscription(directory: File, private val emit: Consumer<JSONObject>
         val s = active?.takeIf { it.id == id } ?: return
         if (!s.cancelled.compareAndSet(false, true)) return
         s.pipe?.forEach { runCatching { it.close() } }
-        runCatching { s.recognizer?.stopRecognition() }
+        // The SDK stop method suspends. Cancelling the job reaches its
+        // NonCancellable cleanup, which stops and closes the recognizer.
         s.job?.cancel()
     }
     fun foreground(value: Boolean) { foreground = value; if (!value) { transfer.clear(); active?.let { cancel(it.id) } } }
