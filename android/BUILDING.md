@@ -47,3 +47,11 @@ The first 0.2 key was not retained by the runner's default path. Version 0.3 exp
 Version 0.3.2 changes the shared-N icon to cursive lettering on a square green plate, inset inside the launcher-controlled outer mask. Previous artwork and a launcher comparison are preserved in `artwork/icon-options/`. AI behavior and gateway configuration carry forward from 0.3.1.
 
 Version 0.3.3 lowers the cursive th and fills the complete adaptive background with the centre’s green, removing the cream surround. It uses the same signing certificate and AI configuration as 0.3.2.
+
+## Version 0.4.0 workspace
+
+Native layout applies status-bar, display-cutout, and keyboard insets to the root once, then forwards zero values for those types to the WebView. This avoids duplicate safe-area padding while still notifying WebView when the keyboard hides. The appearance bridge updates the root background and system-bar icon colors when Dark paper changes. This build continues to compile and target API 36; an API 38 device is not claimed as verified.
+
+The Chromium workflow exercises the exact bundled HTML/CSS/JS using a minimal Android bridge stub. It verifies touch dragging outside Focus view, window minimize/restore/maximize/save-close, persistence after reload, dark text inheritance, navigation preferences, 320px/412px phones, landscape and desktop layouts. These checks do not substitute for testing real Android inset dispatch, keyboard animations, launcher behavior or inference.
+
+Android inset reference: https://developer.android.com/develop/ui/views/layout/webapps/understand-window-insets

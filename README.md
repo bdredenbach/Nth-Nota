@@ -1,6 +1,15 @@
-# Nth Nota 0.3.3
+# Nth Nota 0.4.0
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway after explicit user opt-in.
+
+## Added in 0.4.0
+
+- Compact Android layout with native inset handling and system bars that follow the app theme.
+- A visible Menu button, dismissible navigation drawer, and a saved sidebar preference for larger screens.
+- Readable dark paper, a lighter workspace, and contrasting note colors.
+- Title-bar controls to minimize, maximize, or save and close notes. Minimized notes appear in a dock; closed notes remain in Saved notes. Closing never deletes content.
+- Canvas is the default on every screen size. Drag title bars to move notes without entering Focus view; List view remains available in Settings.
+- The APK hides web installation controls. Settings and descriptions use shorter copy.
 
 ## Build and test
 
@@ -9,7 +18,7 @@ Use Node.js 22 or later. Run `npm install --ignore-scripts`, `npm run prepare:ve
 Pushing app changes to `main` starts the Android preview workflow. Its APK and checksum appear in the successful Actions run’s artifacts. Open the Android project in Android Studio or use Gradle 8.13 with SDK 36/JDK 17 for a local build. See [android/BUILDING.md](android/BUILDING.md).
 
 ## Working features
-- Separate workspaces with individual card arrangements; desktop canvas and responsive list layout.
+- Separate workspaces with individual card arrangements; touch-draggable canvas on phones and desktops, plus an optional list view.
 - Movable, resizable notes, tasks, images, drawings, PDF documents and audio cards.
 - Rich text with basic formatting, local autosave via IndexedDB, favorites, search across workspaces and comparison.
 - Sketch, handwriting/cursive capture, highlighting, erasing, pressure-sensitive digital ink on supported styluses, undo and redo.
@@ -48,7 +57,7 @@ The pure JavaScript checks run with Node.js. Storage checks additionally need fa
 `node checks/exports.test.cjs`
 `node --test checks/router.test.cjs checks/offline.test.cjs checks/storage.test.cjs`
 
-The exports smoke test exercises the same locally bundled libraries served to the browser. Browser/device QA was unavailable during the initial build; verify rendering, microphone permission, stylus behavior and downloads on target devices.
+The exports smoke test exercises the same locally bundled libraries served to the browser. The Android workflow also runs real Chromium checks of phone, narrow-phone, landscape, and desktop layouts, touch dragging, note window controls, saved-note recovery, dark themes, and menu preferences. Run `node tools/ui-smoke.cjs` after installing Playwright Chromium to repeat them locally. Native keyboard insets, microphone permission, stylus behavior, and downloads still need target-device testing.
 
 Third-party browser libraries and their licenses are in dist/vendor. All runtime assets are local; there are no external CDN dependencies.
 
