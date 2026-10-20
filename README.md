@@ -1,6 +1,15 @@
-# Nth Nota 0.13.0
+# Nth Nota 0.13.1
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.13.1
+
+- Tutorial → Watch the tour plays demonstrations in the actual editors, using a temporary practice desk.
+- Twenty-five chapters show writing, tasks, drawings, calculations, calendars, reference tools, scans, and more. Each tool’s contextual tour also has Show me.
+- Play/Pause, Back/Next, a chapter picker, pace controls and Try it let people watch or explore at their own speed. Exit restores the original open editor and draft.
+- Practice data is never written to the saved desk. Prepared AI replies demonstrate review and replacement without sending requests; recordings, permissions, file pickers and real device scanning require leaving the practice tour.
+
+See [automated walkthrough notes](docs/0.13.1-automated-tour.md).
 
 ## Added in 0.13.0
 
