@@ -16,7 +16,6 @@ function requestAction(signal,{kind,selector,suggestion='',key,index,choiceValue
   const el=$(selector);if(!el){reject(Error('The highlighted control is not available.'));return;}
   const p={kind,selector,suggestion,key,index,choiceValue,el,points:points.map(point=>[...point]),resolve,reject,signal,abort:null};
   p.abort=()=>{if(pending===p)pending=null;reject(abortError());};signal.addEventListener('abort',p.abort,{once:true});pending=p;actionIndex=index;actionCount=index+1;ready=true;
-  if(kind==='type'&&suggestion){el.setAttribute(el.isContentEditable?'data-placeholder':'placeholder',suggestion);}
   renderCoach();position(true);
  });
 }
