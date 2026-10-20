@@ -10,7 +10,7 @@ function wait(ms,signal){return new Promise((resolve,reject)=>{if(signal.aborted
 function check(signal){if(signal.aborted||!sandboxed())throw abortError();}
 const valueOf=el=>el?.isContentEditable?el.innerText:el?.value??'';
 function write(selector,value){const el=$(selector);if(!el)throw Error('The practice field is not available.');if(el.isContentEditable)el.textContent=value;else el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return $(selector)||el;}
-function label(el){return (el?.getAttribute('aria-label')||el?.labels?.[0]?.textContent||el?.closest('label')?.textContent||el?.innerText||'the highlighted field').trim().replace(/\s+/g,' ').slice(0,100);}
+function label(el){const named=el?.getAttribute('aria-label')||el?.labels?.[0]?.textContent||el?.closest('label')?.textContent;const writing=el?.matches('input,textarea,[contenteditable=true]');return (named||(writing?(el.id==='note-editor'?'the note body':'the highlighted field'):el?.innerText)||'the highlighted control').trim().replace(/\s+/g,' ').slice(0,100);}
 function requestAction(signal,{kind,selector,suggestion='',key,index,choiceValue=''}){
  check(signal);return new Promise((resolve,reject)=>{
   const el=$(selector);if(!el){reject(Error('The highlighted control is not available.'));return;}
@@ -35,7 +35,7 @@ function context(signal,instant=false,interactive=false,startAt=0,stepNumber=ste
    check(signal);const i=count++,key=keyFor(i),saved=answers.get(key);let el=$(selector);if(!el)throw Error('The writing field is not available.');
    if(!interactive||i<startAt){write(selector,saved?.value??'');return;}
    if(saved)el=write(selector,saved.value);
-   else if(!edited.has(el)&&![...answers].some(([k,a])=>k.startsWith(current().id+':')&&a.selector===selector))el=write(selector,'');
+   else if(el.type!=='number'&&!edited.has(el)&&![...answers].some(([k,a])=>k.startsWith(current().id+':')&&a.selector===selector))el=write(selector,'');
    await requestAction(signal,{kind:'type',selector,suggestion,key,index:i});
   },
   async choose(selector,choiceValue){
