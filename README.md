@@ -1,6 +1,14 @@
-# Nth Nota 0.13.4
+# Nth Nota 0.13.5
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Interactive tutor in 0.13.5
+
+Both tutorial panels are see-through and movable using their three-line grip, touch, or keyboard arrows. The first practice slide explains how to move the tutor. A persistent green double circle marks the current field or control. Practice now starts with blank writing fields and suggests wording outside them; you type and choose the real controls yourself. Back keeps your wording. Existing saved writing is restored when you leave.
+
+New items use hints in place of starter wording in titles, reminders, map labels, math rows, snippets and similar entry fields. Useful dates, numeric settings and schema labels remain available.
+
+See [interactive tutor notes](docs/0.13.5-interactive-tutor.md).
 
 ## Web preview in 0.13.4
 

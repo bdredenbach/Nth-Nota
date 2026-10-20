@@ -9,9 +9,9 @@ function indexCards(book){return book.tabs.flatMap(tab=>tab.cards.map(card=>({ta
 function indexMatches(book,{query='',tag='',tabId=null}={}){return indexCards(book).filter(({tab,card})=>(!tabId||tab.id===tabId)&&(!tag||card.tags.split(',').some(v=>v.trim().toLowerCase()===tag.toLowerCase()))&&[tab.name,card.title,card.tags,card.body,...Object.values(card.values)].join(' ').toLowerCase().includes(query.toLowerCase()));}
 function removeIndexCard(book,cardId){for(const tab of book.tabs){tab.cards=tab.cards.filter(c=>c.id!==cardId);for(const c of tab.cards)c.links=c.links.filter(l=>l.cardId!==cardId);}if(book.selectedCard===cardId)book.selectedCard=null;}
 function indexHTML(book){return book.tabs.map(tab=>`<h2>${esc(tab.name)}</h2>`+tab.cards.map(c=>`<h3>${esc(c.title)}</h3><p>${esc(c.tags)}</p>`+tab.fields.map(f=>`<p>${esc(f.label)}: ${esc(c.values[f.id]||'')}</p>`).join('')+`<p>${esc(c.body).replace(/\n/g,'<br>')}</p>`).join('')).join('');}
-function shelf(uid){const e={id:uid(),title:'A reusable block',tags:'',text:''};return {entries:[e],selected:e.id};}
+function shelf(uid){const e={id:uid(),title:'',tags:'',text:''};return {entries:[e],selected:e.id};}
 function shelfHTML(s){return s.entries.map(e=>`<h2>${esc(e.title)}</h2><p>${esc(e.tags)}</p><pre>${esc(e.text)}</pre>`).join('');}
-function streak(uid){const h={id:uid(),name:'One small step',unit:'sessions',goal:30,dailyTarget:1,logs:{}};return {habits:[h],selected:h.id};}
+function streak(uid){const h={id:uid(),name:'',unit:'',goal:30,dailyTarget:1,logs:{}};return {habits:[h],selected:h.id};}
 function progress(h){const total=Object.values(h.logs).reduce((a,b)=>a+b,0);return {total,percent:Math.min(100,Math.max(0,100*total/h.goal))};}
 function streaks(h,today=localDate()){const days=Object.keys(h.logs).filter(d=>h.logs[d]>=h.dailyTarget&&d<=today).sort();let best=0,run=0,previous;for(const d of days){run=previous&&shiftDate(previous,1)===d?run+1:1;best=Math.max(best,run);previous=d;}let current=0,d=h.logs[today]>=h.dailyTarget?today:shiftDate(today,-1);while(h.logs[d]>=h.dailyTarget){current++;d=shiftDate(d,-1);}return {current,best};}
 function heatDays(today=localDate()){return Array.from({length:364},(_,i)=>shiftDate(today,i-363));}
