@@ -1,7 +1,7 @@
 /* A manual practice tutor: the person writes and operates the real controls. */
 (function(){'use strict';
 const $=s=>document.querySelector(s),abortError=()=>new DOMException('Walkthrough stopped','AbortError');
-let phase='idle',source=null,dialog=null,chapter=0,step=0,trying=false,ready=false,complete=false,intro=false,error='',generation=0,controller=null,onFinish=null,methods=[],pace=1,exampleClick=false,pending=null,mover=null,actionIndex=-1,actionCount=0,follower=null,recoveryMode='';
+let phase='idle',source=null,dialog=null,chapter=0,step=0,trying=false,ready=false,complete=false,intro=false,error='',generation=0,controller=null,onFinish=null,methods=[],pace=1,exampleClick=false,pending=null,mover=null,actionIndex=-1,actionCount=0,follower=null,recoveryMode='',instructionKey='';
 const answers=new Map(),totals=new Map(),finished=new Set(),edited=new WeakSet();
 const resolve=id=>({audio:'voice',alerts:'tasks'})[id]||id;
 const chapters=()=>window.NotaTourScenes||[],active=()=>phase!=='idle',sandboxed=()=>phase==='running';
@@ -113,6 +113,7 @@ function renderCoach(){
  $('#demo-task').textContent=recoveryText[view.mode]||(!p?'':p.kind==='type'?'Write in '+label($(p.selector)||p.el)+', then choose Next.':p.kind==='choose'?'Choose an option in '+label($(p.selector)||p.el)+', then choose Next.':p.kind==='stroke'?'Make your own mark, then choose Next.':'Tap '+label($(p.selector)||p.el)+'.');
  $('#demo-example').textContent=!view.mode&&p?.suggestion?(p.kind==='type'?'Try typing: ':p.kind==='choose'?'Try choosing: ':'')+p.suggestion:'';
  $('#demo-state').textContent=phase==='preparing'?'Keeping your current work in place.':error?'Choose Retry step to try again.':intro?'Move the tutor, then choose Next to begin.':trying?'Practice freely · Back to tour restores these instructions.':p?'Your words and choices · no automatic typing.':ready?'Take your time · choose Next when you’re ready':'Preparing the next interaction…';
+ const nextInstruction=[chapter,step,intro,complete,error,p?.key||'',view.mode].join('|');if(nextInstruction!==instructionKey){$('#demo-scroll').scrollTop=0;instructionKey=nextInstruction;}
  $('#demo-next').textContent=error?'Retry step':recoveryLabel[view.mode]||'Next';$('#demo-next').disabled=phase==='preparing'||!ready||complete;
  $('#demo-back').disabled=phase==='preparing'||intro||chapter===0&&step===0&&actionIndex<=0;
  $('#demo-try').disabled=phase==='preparing'||intro;$('#demo-try').textContent=trying?'Back to tour':'Try it';$('#demo-exit').textContent=complete?'Finish tour':'Exit tour';$('#demo-pace').textContent=pace+'×';
@@ -148,7 +149,7 @@ async function seek(id,index=0){
 async function start({chapter:id='desk',onFinish:finishedCallback}={}){
  id=resolve(id);if(active()||!chapters().some(c=>c.id===id))return false;
  if(document.hidden||document.querySelector('.choice-overlay')||editorLoading||$('#record-start:disabled')||$('#record-stop:not(:disabled)')||$('#ai-stop:not(:disabled)')||$('#photo-stop:not([hidden])')||$('#handwrite-stop:not([hidden])')||$('#scan-cancel:not([hidden])')||$('#mode-done:disabled')){toast('Finish the current recording, reply or document preparation, then open the tutor.');return false;}
- wire();mover.reset();answers.clear();totals.clear();finished.clear();phase='preparing';chapter=chapters().findIndex(c=>c.id===id);step=0;trying=false;complete=false;intro=true;error='';onFinish=finishedCallback;const token=++generation;source=capture();document.body.classList.add('tour-demo-active');renderCoach();
+ wire();mover.reset();instructionKey='';answers.clear();totals.clear();finished.clear();phase='preparing';chapter=chapters().findIndex(c=>c.id===id);step=0;trying=false;complete=false;intro=true;error='';onFinish=finishedCallback;const token=++generation;source=capture();document.body.classList.add('tour-demo-active');renderCoach();
  try{await persistDesk();if(token!==generation||!active())return false;source.saveHTML=$('#save-state').innerHTML;releaseInert();containServices();phase='running';makeDesk();ready=true;renderCoach();position();return true;}catch(e){stop({notify:false});toast('The tutor could not start. Your work is still here.');return false;}
 }
 function wire(){
