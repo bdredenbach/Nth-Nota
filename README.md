@@ -1,6 +1,16 @@
-# Nth Nota 0.6.0
+# Nth Nota 0.12.0
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.12.0
+
+- New and restored items share non-overlapping placement and automatically reveal themselves on the canvas or in the list.
+- Writing Companion can replace or add to selected writing in the current editor, preserving the item and its structured fields. Saving a separate note remains an explicit option.
+- Handwriting Auto adds recognized batches after a pause, with alternate readings and an undo action that restores ink.
+- New reminders create canvas notes when saved. Independent persistent notifications pin an existing item without requiring a schedule.
+- Desk Menu tools use expandable, borderless categories, with matching tools revealed by search.
+
+See [0.12.0 release notes](docs/0.12.0-connected-editors.md) for behavior and verification.
 
 ## Added in 0.6.0
 

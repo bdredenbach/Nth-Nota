@@ -1,0 +1,18 @@
+{
+  "version": "0.12.0",
+  "versionCode": 24,
+  "sourceCommit": "950d1bd3be0de67611b5e0202cb4b93ca6223bcd",
+  "runId": 39449255369,
+  "artifactId": 12277439510,
+  "artifactSha256": "ca40833f6b131dcf56d86309c3267cec7e9a5b9f181665eefc410bcbf9910525",
+  "apkSha256": "6b441e272be0af487ec5c645f2ff378e81d66098c70606bd3308f1197ec4d724",
+  "apkBytes": 80454046,
+  "applicationId": "com.nthexperience.nota.preview",
+  "bundledSourceFilesVerified": 51,
+  "javascriptChecks": 113,
+  "browserChecks": 69,
+  "nativeUnitTests": 18,
+  "physicalDeviceTest": false,
+  "signingCertificateSha256": "21cdc33006a9f3c462c03e09fe3bbd696491409d6223410e7ccfad8dda7c6ce6",
+  "cloudWorkerUpdateRequired": false
+}
