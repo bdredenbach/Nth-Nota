@@ -1,6 +1,12 @@
-# Nth Nota 0.13.5
+# Nth Nota 0.13.6
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Tour action fixes in 0.13.6
+
+Highlights follow real controls throughout menu animations, scrolling and changes in layout. Closing Desk redirects the search instruction to the Desk button; reopening it restores your wording. Hidden or inert controls cannot leave a stray ring. Closing an editor offers a way back to the current instruction, and Back retains unfinished writing and separate drawing strokes. Pop-up choices can be finished or canceled without losing the draft.
+
+The tour checks exercise all 25 chapters with normal and reduced motion, real field clicks, repeated menu detours, editor recovery, draft restoration, drawing replay, hidden controls and keyboard access. Chromium and WebKit run the same action audit. See [tour action notes](docs/0.13.6-tour-actions.md).
 
 ## Interactive tutor in 0.13.5
 

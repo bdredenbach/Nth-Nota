@@ -4,7 +4,7 @@ const step=(target,title,copy,run=()=>{})=>({target,title,copy,run}),scene=(id,l
 window.NotaTourScenes=[
  scene('desk','Your desk',async()=>{closeModal();},[
   step('#desk-menu-toggle','Everything starts at Desk.','Open the real menu and try a search. Search narrows the tools and your saved thoughts.',async c=>{await c.click('#desk-menu-toggle');await c.type('#launcher-search','calendar');}),
-  step('#taskbar-layout','See the same notes another way.','Switch to List for a quick overview, then back to Canvas for room to arrange your ideas.',async c=>{NotaDeskMenu.close(false);await c.click('#taskbar-layout');await c.wait(500);await c.click('#taskbar-layout');})]),
+  step('#taskbar-layout','See the same notes another way.','Switch to List for a quick overview, then back to Canvas for room to arrange your ideas.',async c=>{closeModal();NotaDeskMenu.close(false);await c.click('#taskbar-layout');await c.wait(500);await c.click('#taskbar-layout');})]),
  scene('note','Write a note',open('note'),[
   step('#note-editor','A thought becomes a note.','The title and page below are the real writing fields. Try the suggested wording, or use your own.',async c=>{await c.type('#note-title','A weekend with room to think');await c.type('#note-editor','Pack a notebook. Take a quiet walk. Keep one small thought from the day.');}),
   step('.card.selected','Back on the canvas.','Save to workspace returns this note to the canvas. In your own notes, the editor’s × saves it here too.',async c=>{await c.click('#note-done');const n=state.items.at(-1);document.querySelector(`.card[data-id="${n.id}"]`)?.scrollIntoView({block:'center',inline:'center'});})]),
