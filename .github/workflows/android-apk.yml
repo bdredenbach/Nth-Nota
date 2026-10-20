@@ -68,12 +68,12 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           mkdir -p artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.12.0.apk
-          sha256sum artifacts/Nth-Nota-0.12.0.apk > artifacts/SHA256SUMS.txt
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.13.0.apk
+          sha256sum artifacts/Nth-Nota-0.13.0.apk > artifacts/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Nth-Nota-0.12.0-preview
+          name: Nth-Nota-0.13.0-preview
           path: artifacts/*
           if-no-files-found: error
           retention-days: 30
