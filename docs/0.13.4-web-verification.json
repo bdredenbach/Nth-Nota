@@ -1,0 +1,28 @@
+{
+  "browserReport": {
+    "version": "0.13.4",
+    "basePath": "/Nth-Nota/",
+    "checks": [
+      "chromium: index and every local dependency load under the GitHub project path",
+      "chromium: iPhone installation instructions and offline preparation are available",
+      "chromium: a note survives online reload and an offline app launch",
+      "webkit: index and every local dependency load under the GitHub project path",
+      "webkit: iPhone installation instructions and offline preparation are available",
+      "webkit: a note survives online reload and an offline app launch"
+    ],
+    "physicalIPhoneTest": false,
+    "outageMethods": {
+      "chromium": "offline emulation and stopped origin",
+      "webkit": "stopped origin; offline emulation bypasses service worker handling in Playwright WebKit"
+    }
+  },
+  "websiteFilesVerified": 60,
+  "websiteArchiveSha256": "a8253a63e6321d2733cd95472d15c4893da7b496c7d96932a5ce7ddd9d1fcf0b",
+  "websiteArtifactId": 12299279999,
+  "version": "0.13.4",
+  "sourceCommit": "cc0767a0ccde8f7455de251d972f2a6b562f8b03",
+  "webRunId": 39501650405,
+  "javascriptTests": 129,
+  "deploymentStatus": "Requires GitHub Pages source to be enabled",
+  "expectedUrl": "https://bdredenbach.github.io/Nth-Nota/"
+}
