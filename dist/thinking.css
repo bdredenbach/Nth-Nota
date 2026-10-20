@@ -9,3 +9,5 @@
 .calendar-card-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 10px;color:var(--muted)}
 
 .tour-card header>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+.tour-card header{position:sticky;top:-12px;background:var(--paper);z-index:1;padding-block:4px}.thinking-table-scroll th:first-child{position:sticky;left:0;z-index:1;min-width:100px}
