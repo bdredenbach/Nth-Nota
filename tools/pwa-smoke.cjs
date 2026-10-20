@@ -12,10 +12,12 @@ const server=http.createServer((req,res)=>{
  if(!file.startsWith(root+path.sep)){res.writeHead(404).end();return;}
  try{res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream','Cache-Control':'no-cache'});res.end(fs.readFileSync(file));}catch{res.writeHead(404).end();}
 });
-const report={version:require('../package.json').version,basePath:prefix,checks:[],physicalIPhoneTest:false};
+const report={version:require('../package.json').version,basePath:prefix,checks:[],physicalIPhoneTest:false,outageMethods:{chromium:'offline emulation and stopped origin',webkit:'stopped origin; offline emulation bypasses service worker handling in Playwright WebKit'}};
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
- const base=`http://127.0.0.1:${server.address().port}${prefix}`;
+ const port=server.address().port,base=`http://127.0.0.1:${port}${prefix}`;
+ const stopOrigin=()=>new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});
+ const startOrigin=()=>new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));
  try{
   for(const [name,engine]of [['chromium',chromium],['webkit',webkit]]){
    const browser=await engine.launch();let page;
@@ -41,8 +43,14 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
      await page.locator('#desk-menu-toggle').click();const tool=page.locator('[data-launch-action="note"]'),category=tool.locator('xpath=ancestor::section[contains(@class,"launcher-category")]').locator('[data-launch-category]');if(await category.getAttribute('aria-expanded')==='false')await category.click();await tool.click();
      await page.locator('#note-title').fill('An iPhone testing note');await page.locator('#note-editor').fill('These words stay on this phone, including offline.');await page.locator('#note-done').click();await page.waitForFunction(()=>document.querySelector('#save-state')?.textContent.includes('Saved on device'));
      await page.reload();await page.waitForFunction(()=>state?.items.some(n=>n.title==='An iPhone testing note'&&n.html.includes('These words stay on this phone')));
-     await context.setOffline(true);assert((await page.reload()).ok());await page.waitForSelector('.card');assert(await page.evaluate(()=>state.items.some(n=>n.title==='An iPhone testing note'&&n.html.includes('These words stay on this phone'))));
-     await page.screenshot({path:path.join(out,name+'-offline-desk.png')});await context.setOffline(false);assert.deepEqual(errors,[]);
+     // Playwright WebKit rejects SW requests under setOffline (upstream #42775).
+     // Stop the actual origin for both engines, and require an uncached context to fail.
+     if(name==='chromium')await context.setOffline(true);await stopOrigin();assert.equal(server.listening,false);
+     try{
+      const response=await page.reload();assert(response.ok());assert(response.fromServiceWorker(),'The offline document comes from the service worker');await page.waitForSelector('.card');assert(await page.evaluate(()=>state.items.some(n=>n.title==='An iPhone testing note'&&n.html.includes('These words stay on this phone'))));
+      const uncached=await browser.newContext({serviceWorkers:'block'});try{const probe=await uncached.newPage();let refused=false;try{await probe.goto(base,{timeout:10000});}catch{refused=true;}assert(refused,'The origin is unavailable to a browser without the cached app');}finally{await uncached.close();}
+      await page.screenshot({path:path.join(out,name+'-offline-desk.png')});assert.deepEqual(errors,[]);
+     }finally{await context.setOffline(false);await startOrigin();}
     });
    }catch(e){if(page)await page.screenshot({path:path.join(out,name+'-failure.png')}).catch(()=>{});throw e;}finally{await browser.close();}
   }
