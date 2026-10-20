@@ -95,14 +95,14 @@ const recoveryText={
 const recoveryLabel={'open-menu':'Open Desk','close-menu':'Close Desk','close-editor':'Close editor',choice:'Cancel choice','return-step':'Return to step'};
 function position(scroll=false){
  if(!active()||!dialog?.open)return;
- const view=guidance();if(view.mode!==recoveryMode)renderCoach();const card=$('#demo-card'),spot=$('#demo-spot'),anchor=view.anchor,v=NotaTourPanel.viewport(),pad=10,selfTarget=anchor&&card.contains(anchor);
+ const view=guidance();if(view.mode!==recoveryMode)renderCoach();const scroll=$('#demo-scroll'),scrollTop=scroll.scrollTop,card=$('#demo-card'),spot=$('#demo-spot'),anchor=view.anchor,v=NotaTourPanel.viewport(),pad=10,selfTarget=anchor&&card.contains(anchor);
  card.style.maxHeight=Math.max(130,v.h-pad*2)+'px';
  if(scroll&&anchor&&!intro&&!selfTarget)anchor.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
  const r=anchor?.getBoundingClientRect();let ch=card.offsetHeight,left=v.x+(v.w-card.offsetWidth)/2,top=v.y+v.h-ch-pad;
  if(r&&!intro&&!selfTarget){const above=r.top-v.y-pad*2,below=v.y+v.h-r.bottom-pad*2,available=Math.max(above,below);if(available>=160&&available<ch){card.style.maxHeight=available+'px';ch=card.offsetHeight;}if(above>=ch)top=r.top-ch-pad;else if(below>=ch)top=r.bottom+pad;
  }
  NotaTourPanel.outline(spot,anchor);
- ({left,top}=NotaTourPanel.avoid(card,anchor,mover,left,top));mover.place(left,top);NotaTourPanel.point($('#demo-pointer'),anchor);
+ ({left,top}=NotaTourPanel.avoid(card,anchor,mover,left,top));mover.place(left,top);NotaTourPanel.point($('#demo-pointer'),anchor);if(scroll.scrollTop!==scrollTop)scroll.scrollTop=scrollTop;
 }
 function renderCoach(){
  wire();const scene=current(),page=scene?.steps[step],p=pending,view=guidance();recoveryMode=view.mode;
@@ -169,7 +169,7 @@ function wire(){
  const strokePoint=e=>{const p=pending;if(p?.kind!=='stroke')return;const el=$(p.selector);if(!el)return;const r=el.getBoundingClientRect();p.points.push([Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)),e.type,e.pointerType,e.pressure]);};
  let drawingPointer=null;document.addEventListener('pointerdown',e=>{if(pending?.kind==='stroke'&&e.target.matches(pending.selector)){drawingPointer=e.pointerId;strokePoint(e);}},true);document.addEventListener('pointermove',e=>{if(e.pointerId===drawingPointer)strokePoint(e);},true);document.addEventListener('pointerup',e=>{if(e.pointerId===drawingPointer){strokePoint(e);drawingPointer=null;}},true);document.addEventListener('pointercancel',e=>{if(e.pointerId===drawingPointer){strokePoint(e);drawingPointer=null;}},true);
  document.addEventListener('keydown',e=>{if(active()&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();stop();}},true);
- window.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('scroll',()=>position());document.addEventListener('scroll',()=>position(),true);
+ window.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('scroll',()=>position());document.addEventListener('scroll',e=>{if(!e.target.closest?.('#nota-demo'))position();},true);
  let queued=false;const refresh=()=>{if(queued||!active())return;queued=true;requestAnimationFrame(()=>{queued=false;position();});};const observer=new MutationObserver(refresh);observer.observe($('#modal-root'),{childList:true,subtree:true});observer.observe($('#board'),{childList:true,subtree:true});
 }
 window.NotaTourDemo={start,stop,pause,next,previous,seek,has:id=>chapters().some(c=>c.id===resolve(id)),get active(){return active();},get sandboxed(){return sandboxed();},get state(){return {phase,active:active(),chapter:current()?.id,chapterIndex:chapter,step,intro,trying,ready,complete,error,recovery:recoveryMode,interaction:pending?{kind:pending.kind,selector:pending.selector,suggestion:pending.suggestion,choiceValue:pending.choiceValue,index:pending.index}:null};}};
