@@ -1,6 +1,6 @@
 {
   "name": "nth-nota",
-  "version": "0.13.1",
+  "version": "0.13.2",
   "private": true,
   "description": "Nth Nota Android and offline browser prototype",
   "scripts": {

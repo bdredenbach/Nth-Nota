@@ -1,6 +1,12 @@
-# Nth Nota 0.13.1
+# Nth Nota 0.13.2
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Refined in 0.13.2
+
+Automatic tour steps pause for four additional seconds before advancing. Demonstration animations and manual controls retain their existing speed.
+
+See [tour timing notes](docs/0.13.2-tour-timing.md).
 
 ## Added in 0.13.1
 
