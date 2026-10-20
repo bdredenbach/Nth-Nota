@@ -34,7 +34,7 @@ function point(marker,anchor){const p=aim(anchor);marker.hidden=!p;if(p)Object.a
 function avoid(card,anchor,mover,left,top){
  const p=aim(anchor),v=viewport(),gap=26,pad=10;if(!p||mover.moved||card.contains(anchor))return {left,top};let h=card.offsetHeight;const w=card.offsetWidth;
  if(p.x<left-gap||p.x>left+w+gap||p.y<top-gap||p.y>top+h+gap)return {left,top};
- const above=p.y-v.y-gap-pad,below=v.y+v.h-p.y-gap-pad,room=Math.max(above,below);if(room>=120){card.style.maxHeight=Math.min(parseFloat(card.style.maxHeight)||v.h,room)+'px';h=card.offsetHeight;top=above>=below?p.y-gap-h:p.y+gap;}return {left,top};
+ const above=p.y-v.y-gap-pad,below=v.y+v.h-p.y-gap-pad,room=Math.max(above,below);if(room>=180){card.style.maxHeight=Math.min(parseFloat(card.style.maxHeight)||v.h,room)+'px';h=card.offsetHeight;top=above>=below?p.y-gap-h:p.y+gap;}return {left,top};
 }
 const examples={
  'note-title':'A weekend with room to think','note-editor':'Pack a notebook. Take a quiet walk. Keep one small thought from the day.',

@@ -60,7 +60,7 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
       await page.screenshot({path:path.join(out,name+'-offline-desk.png')});assert.deepEqual(errors,[]);
      }finally{await context.setOffline(false);await startOrigin();}
     });
-   }catch(e){if(page)await page.screenshot({path:path.join(out,name+'-failure.png')}).catch(()=>{});throw e;}finally{await browser.close();}
+   }catch(e){if(page){await page.screenshot({path:path.join(out,name+'-failure.png')}).catch(()=>{});const diagnostics=await page.evaluate(()=>{const box=id=>{const el=document.getElementById(id);if(!el)return null;const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight,scrollTop:el.scrollTop};};return {tour:window.NotaTourDemo?.state,card:box('demo-card'),scroll:box('demo-scroll'),next:box('demo-next')};}).catch(()=>null);fs.writeFileSync(path.join(out,name+'-diagnostics.json'),JSON.stringify(diagnostics,null,2));}throw e;}finally{await browser.close();}
   }
   fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('Passed '+report.checks.length+' PWA browser checks.');
  }catch(e){fs.writeFileSync(path.join(out,'failure.json'),JSON.stringify({...report,error:e.stack},null,2)+'\n');throw e;}finally{server.close();}

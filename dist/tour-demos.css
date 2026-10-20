@@ -18,3 +18,6 @@
 .tour-demo-active #save-state{font-size:11px}.tour-actions #tour-demo{flex-basis:100%;background:var(--green);color:var(--on-green)}.tour-card h2{font-size:23px}.tour-card p{font-size:12px;line-height:1.55;margin-bottom:10px}.tour-collapsed #tour-input-hint{display:none}
 @media(max-height:520px){.demo-card,.tour-card{padding:9px 12px;width:min(340px,calc(100vw - 20px))}.demo-card h2,.tour-card h2{font-size:20px}.demo-card p{font-size:11px;margin:5px 0}.demo-practice-label{margin-top:5px}.demo-actions{margin-top:6px}}
 @media(prefers-reduced-motion:reduce){.tutor-target::after{animation:none}}
+
+/* Keep manual navigation outside the scrolling explanation on Safari too. */
+.demo-card{display:flex;flex-direction:column;overflow:hidden}.demo-card header{position:static;flex-shrink:0}.demo-scroll{min-height:0;flex:1 1 auto;overflow:auto;overscroll-behavior:contain}.demo-actions,.demo-practice-label{flex-shrink:0}
