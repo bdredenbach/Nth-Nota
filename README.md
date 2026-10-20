@@ -1,6 +1,14 @@
-# Nth Nota 0.13.3
+# Nth Nota 0.13.4
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Web preview in 0.13.4
+
+The complete PWA can publish from GitHub Actions to **https://bdredenbach.github.io/Nth-Nota/**. Enable GitHub Actions in the repository’s Pages settings, then run **Nth Nota web preview**. The workflow restores all browser libraries, tests project paths and offline saved notes in Chromium and WebKit, and publishes `index.html` at the site root.
+
+On iPhone, open the site in Safari and choose **Share → Add to Home Screen**. Keep **Open as Web App** enabled if shown, then tap **Add**. Notes stay in that browser or installed app; use Backup & restore to keep a copy.
+
+See [web preview setup and testing](docs/0.13.4-web-preview.md).
 
 ## Refined in 0.13.3
 

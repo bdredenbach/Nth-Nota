@@ -1,0 +1,59 @@
+name: Nth Nota web preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['dist/**', 'tools/**', 'checks/**', 'package.json', '.github/workflows/pages.yml']
+permissions:
+  contents: read
+concurrency:
+  group: nota-pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned libraries
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Prepare the complete browser app
+        run: npm run prepare:vendor
+      - name: Check JavaScript and local data behavior
+        run: |
+          for file in dist/*.js; do node --check "$file"; done
+          npm test
+      - name: Install mobile browser engines
+        run: npx playwright install chromium webkit --with-deps
+      - name: Check project paths, iPhone guidance, offline use and saved notes
+        run: npm run test:pwa
+      - name: Keep web verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nth-Nota-web-verification
+          path: artifacts/pwa/
+          if-no-files-found: ignore
+      - name: Package the website with index.html at its root
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Publish Nth Nota
+        id: deployment
+        uses: actions/deploy-pages@v4

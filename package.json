@@ -1,11 +1,12 @@
 {
   "name": "nth-nota",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "private": true,
   "description": "Nth Nota Android and offline browser prototype",
   "scripts": {
     "prepare:vendor": "node tools/prepare-vendor.cjs",
-    "test": "node --test checks/*.test.cjs"
+    "test": "node --test checks/*.test.cjs",
+    "test:pwa": "node tools/pwa-smoke.cjs"
   },
   "dependencies": {
     "docx": "9.6.1",
