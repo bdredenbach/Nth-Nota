@@ -128,7 +128,7 @@ function wire(){
 }
 window.NotaTour={
  start(replay=false){wire();if(busy)return;if(area){area=null;hide();}closeModal();dismissMenu();enabled=true;if(replay)seen.clear();persist();open('desk',{first:true,force:true});},
- guide(id){wire();if(area){area=null;hide();}enabled=true;open(id,{force:true});},
+ guide(id){wire();if(area){area=null;hide();}open(id,{force:true});},
  queue,wire,skip:()=>finish({skip:true}),get active(){return !!area;},get enabled(){return enabled;},setEnabled(value){enabled=!!value;persist();if(!enabled&&area)finish();},
  get state(){return {area,index,enabled,seen:[...seen]};}
 };

@@ -7,3 +7,5 @@
 @media(max-width:440px){.choice-criterion{grid-template-columns:minmax(90px,1fr) 60px;gap:8px}.choice-criterion label:nth-child(3){grid-column:1}.choice-pros-cons{grid-template-columns:1fr}.reference-list{grid-template-columns:1fr}.thinking-panel{padding:14px}.tour-card header{gap:5px}.tour-card #tour-fold{font-size:10px;padding-inline:4px}.tour-card{padding-inline:12px}.calc-display{padding:14px}.thinking-table-scroll th,.thinking-table-scroll td{padding:8px}}
 
 .calendar-card-name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 10px;color:var(--muted)}
+
+.tour-card header>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
