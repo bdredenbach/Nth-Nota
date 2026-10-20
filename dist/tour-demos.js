@@ -74,8 +74,8 @@ function guidance(){
  if(intro)return {anchor:$('#demo-grip'),mode:''};if(complete)return {anchor:$('#demo-exit'),mode:''};if(error)return {anchor:$('#demo-next'),mode:''};
  if(pending){
   if(pending.activating)return {anchor:null,mode:''};
-  if(choice)return {anchor:choice,mode:'choice'};
   const raw=$(pending.selector),anchor=found(pending.selector),inMenu=raw?.closest('#desk-launcher');
+  if(choice){if(anchor?.closest('.choice-overlay'))return {anchor,mode:''};return {anchor:choice,mode:'choice'};}
   if(menu&&!inMenu&&raw?.id!=='desk-menu-toggle')return {anchor:found('#desk-menu-toggle'),mode:'close-menu'};
   if(modal&&!raw?.closest('.modal')&&!(menu&&(inMenu||raw?.id==='desk-menu-toggle')))return {anchor:found('#close-modal'),mode:'close-editor'};
   if(inMenu&&!menu)return {anchor:found('#desk-menu-toggle'),mode:'open-menu'};
