@@ -81,7 +81,7 @@ function installEditorCompanion(item){
 function isWritingField(el){return el?.matches('textarea:not(:disabled):not([readonly]),input:not(:disabled):not([readonly]):is([type=text],:not([type])),[contenteditable=true]');}
 function suspendWritingEditor(item,excerpt){
  activeEditor?.();
- const fields=$$('.modal-body textarea,.modal-body input,.modal-body [contenteditable=true]').filter(isWritingField),targets=fields.map((element,index)=>({element,label:element.labels?.[0]?.textContent?.trim()||element.getAttribute('aria-label')||element.placeholder||(element.isContentEditable?'Note text':element.classList.contains('editor-title')?'Title':'Writing '+(index+1))}));
+ const fields=$$('.modal-body textarea,.modal-body input,.modal-body [contenteditable=true]').filter(el=>isWritingField(el)&&el.getClientRects().length),targets=fields.map((element,index)=>({element,label:element.labels?.[0]?.textContent?.trim()||element.getAttribute('aria-label')||element.placeholder||(element.isContentEditable?'Note text':element.classList.contains('editor-title')?'Title':'Writing '+(index+1))}));
  let index=fields.indexOf(editorField);if(index<0)index=fields.findIndex(el=>el.isContentEditable||el.tagName==='TEXTAREA');if(index<0)index=fields.findIndex(el=>!el.classList.contains('editor-title'));if(index<0)index=0;
  if(!targets.length)return null;
  const element=targets[index].element,selection=window.getSelection(),range=element.isContentEditable&&selection?.rangeCount&&element.contains(selection.anchorNode)&&element.contains(selection.focusNode)?selection.getRangeAt(0).cloneRange():null;
