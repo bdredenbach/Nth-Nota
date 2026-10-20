@@ -1,6 +1,18 @@
-# Nth Nota 0.12.0
+# Nth Nota 0.13.0
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Added in 0.13.0
+
+- Scanner turns camera scans or imported pictures into PDFs, with page order, rotation, paper appearance, trimming and a saved preview.
+- Index Builder provides multiple tabs, custom fields, linked reference entries, and tag and text filters.
+- Snippet Shelf keeps literal reusable text, code and Markdown. Its shared editor button inserts a block at the selected field or passage.
+- Streak Board records daily amounts, heat maps, current and best streaks, and personal progress goals.
+- Flash Cards supports tagged decks, question/answer editing, shuffled practice, and self-ratings that survive reloads.
+- Writing Companion adds a Send this writing button above an ornamental “or” divider. Reminder composition now includes the shared writing controls and a persistent-notification action that needs no schedule.
+- Explicit dates in writing offer Remember suggestions. Accepted suggestions become real calendar events, with dots and event details in the canvas month widget.
+
+See [0.13.0 release notes](docs/0.13.0-desk-tools.md) for behavior, bounds and verification.
 
 ## Added in 0.12.0
 
