@@ -76,21 +76,21 @@ function installEditorCompanion(item){
  const body=$('.modal-body');
  if(['sketch','image','pdf'].includes(item.type)){body.insertAdjacentHTML('beforeend',`<label class="field">Notes about this ${item.type==='pdf'?'document':item.type==='image'?'image':'drawing'}<textarea id="editor-caption" rows="3" maxlength="100000">${esc(item.caption||'')}</textarea></label>`);$('#editor-caption').oninput=e=>{item.caption=e.target.value;touch(item);};}
  if(!$('#note-ai')&&!$('#mode-ai')){body.insertAdjacentHTML('beforeend','<button id="editor-companion" class="secondary mode-assist"><i data-lucide="sparkles"></i> '+(item.inputMode==='handwriting'?'Proofread with Writing Companion':'Writing companion')+'</button>');$('#editor-companion').onclick=()=>assistant(item);}
- body.addEventListener('focusin',e=>{if(isWritingField(e.target))editorField=e.target;});
+ body.addEventListener('input',e=>{if(isWritingField(e.target))editorField=e.target;});body.addEventListener('focusin',e=>{if(isWritingField(e.target)&&!e.target.classList.contains('editor-title'))editorField=e.target;});
 }
 function isWritingField(el){return el?.matches('textarea:not(:disabled):not([readonly]),input:not(:disabled):not([readonly]):is([type=text],:not([type])),[contenteditable=true]');}
 function suspendWritingEditor(item,excerpt){
  activeEditor?.();
  const fields=$$('.modal-body textarea,.modal-body input,.modal-body [contenteditable=true]').filter(isWritingField),targets=fields.map((element,index)=>({element,label:element.labels?.[0]?.textContent?.trim()||element.getAttribute('aria-label')||element.placeholder||element.id||'Writing '+(index+1)}));
- let index=fields.indexOf(editorField);if(index<0)index=fields.findIndex(el=>el.isContentEditable||el.tagName==='TEXTAREA');if(index<0)index=0;
+ let index=fields.indexOf(editorField);if(index<0)index=fields.findIndex(el=>el.isContentEditable||el.tagName==='TEXTAREA');if(index<0)index=fields.findIndex(el=>!el.classList.contains('editor-title'));if(index<0)index=0;
  if(!targets.length)return null;
  const element=targets[index].element,selection=window.getSelection(),range=element.isContentEditable&&selection?.rangeCount&&element.contains(selection.anchorNode)&&element.contains(selection.focusNode)?selection.getRangeAt(0).cloneRange():null;
- const start=element.selectionStart,end=element.selectionEnd,text=element.isContentEditable?element.innerText:element.value,context=excerpt.trim()||(start!==end&&start!==null?text.slice(start,end):text);
+ const start=element.selectionStart,end=element.selectionEnd,text=element.isContentEditable?plain(element.innerHTML):element.value,context=excerpt.trim()||(start!==end&&start!==null?text.slice(start,end):text);
  const focus=document.activeElement,fragment=document.createElement('div');fragment.hidden=true;fragment.inert=true;const aliases=[...document.querySelectorAll('#modal-root #close-modal,#modal-root #minimize-modal,#modal-root #maximize-modal')].map(el=>[el,el.id]);const classes=[...document.querySelectorAll('#modal-root .modal,#modal-root .backdrop')].map(el=>[el,el.className]);aliases.forEach(([el,id])=>el.id='suspended-'+id);classes.forEach(([el])=>{el.classList.remove('modal','backdrop');});fragment.append(...$('#modal-root').childNodes);document.body.append(fragment);const saved={item,targets,index,element,range,start,end,context,original:text,fragment,aliases,classes,persist:activeEditor,cleanup:mediaCleanup,focus};activeEditor=null;mediaCleanup=null;editorItem=null;editorField=null;return saved;
 }
 function resumeWritingEditor(){const saved=suspendedEditor;if(!saved)return; suspendedEditor=null;closeModal();saved.aliases.forEach(([el,id])=>el.id=id);saved.classes.forEach(([el,name])=>el.className=name);$('#modal-root').append(...saved.fragment.childNodes);saved.fragment.remove();editorItem=saved.item;editorField=saved.element;activeEditor=saved.persist;mediaCleanup=saved.cleanup;saved.focus?.focus({preventScroll:true});icons();return saved;}
 function applyCompanionReply(saved,reply,append){
- if(!reply.trim())return;const el=saved.element,old=el.isContentEditable?el.innerText:el.value,limit=el.maxLength>0?el.maxLength:100000;
+ if(!reply.trim())return;const el=saved.element,old=el.isContentEditable?plain(el.innerHTML):el.value,limit=el.maxLength>0?el.maxLength:100000;
  if(old!==saved.original){toast('This writing changed while the companion was open. Choose its writing field again to refresh the context.');return;}const replacingSelection=!append&&saved.start!==null&&saved.start!==saved.end,estimate=append?old.length+reply.length+2:replacingSelection?old.length-(saved.end-saved.start)+reply.length:reply.length;
  if(estimate>limit){toast('This reply is too long for the selected writing. Copy a shorter passage instead.');return;}
  resumeWritingEditor();
