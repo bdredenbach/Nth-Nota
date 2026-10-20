@@ -1,0 +1,82 @@
+/* Each scene opens the same tool used outside the practice tour. */
+(function(){'use strict';
+const step=(target,title,copy,run=()=>{})=>({target,title,copy,run}),scene=(id,label,enter,steps)=>({id,label,enter,steps}),open=id=>async c=>{c.open(id);},mode=id=>state.items.findLast(n=>n.inputMode===id),picture=()=>{const canvas=document.createElement('canvas');canvas.width=620;canvas.height=820;const x=canvas.getContext('2d');x.fillStyle='#fffefa';x.fillRect(0,0,620,820);x.fillStyle='#3a5e55';x.fillRect(35,40,550,105);x.fillStyle='#fff';x.font='bold 32px sans-serif';x.fillText('A little room for ideas',60,105);x.fillStyle='#29352f';x.font='25px sans-serif';['Pack a notebook.','Take the long way home.','Keep one small thought.'].forEach((s,i)=>x.fillText(s,60,225+i*70));return canvas.toDataURL('image/png');};
+window.NotaTourScenes=[
+ scene('desk','Your desk',async()=>{closeModal();},[
+  step('#desk-menu-toggle','Everything starts at Desk.','Watch the real menu open. Search narrows the tools and your saved thoughts.',async c=>{NotaDeskMenu.open();await c.type('#launcher-search','calendar');}),
+  step('#taskbar-layout','See the same notes another way.','Switch to List for a quick overview, then back to Canvas for room to arrange your ideas.',async c=>{NotaDeskMenu.close(false);await c.click('#taskbar-layout');await c.wait(500);await c.click('#taskbar-layout');})]),
+ scene('note','Write a note',open('note'),[
+  step('#note-editor','A thought becomes a note.','The title and page below are the real writing fields. Watch an example take shape.',async c=>{await c.type('#note-title','A weekend with room to think');await c.type('#note-editor','Pack a notebook. Take a quiet walk. Keep one small thought from the day.');}),
+  step('.card','Back on the canvas.','Save to workspace returns this note to the canvas. In your own notes, the editor’s × saves it here too.',async c=>{await c.click('#note-done');const n=state.items.at(-1);document.querySelector(`.card[data-id="${n.id}"]`)?.scrollIntoView({block:'center',inline:'center'});})]),
+ scene('tasks','Tasks & reminders',async()=>{editTask(state.items.find(n=>n.type==='task'));},[
+  step('#task-rows','One small step at a time.','Add a task, write what needs doing, and tick it off. The checkmark changes the actual practice list.',async c=>{await c.click('#add-task');await c.type('[data-ttext="2"]','Bring a pen');await c.click('[data-ti="0"]');}),
+  step('.task-alert-options','An alert belongs to its task.','A task’s bell opens these choices. Choose a time, an ongoing card, or both when you use your own tasks.',async c=>{await c.click('[data-task-alert="1"]');})]),
+ scene('assistant','Writing companion',async c=>{c.open('note');c.set('#note-title','A sentence to polish');c.set('#note-editor','Please bring the notebook it helps keep ideas close');await c.click('#note-ai');},[
+  step('.ai-task-tabs','Choose the kind of help.','Polish works with the current writing. This tour uses a prepared example reply so you can see the editing flow.',async c=>{await c.click('[data-writing-task="polish"]');await c.click('#ai-send-context');}),
+  step('#note-editor','Review, then apply it in place.','Replace writing puts the reviewed reply back into the same note. Your original work outside the tour stays in place.',async c=>{await c.click('#ai-apply');})]),
+ scene('drawing','Drawing & markup',open('sketch'),[
+  step('#draw-canvas','Make a mark on the real page.','The pen follows the same drawing surface you use for sketches and markup.',async c=>{await c.stroke('#draw-canvas',[[.12,.65],[.2,.45],[.3,.3],[.4,.45],[.5,.65],[.6,.4],[.7,.3],[.82,.5]]);}),
+  step('.drawing-history','You can step back.','Undo and Redo work with your marks. Try a pen or highlighter whenever you pause the example.',async c=>{const buttons=document.querySelectorAll('.drawing-history button');buttons[0]?.click();await c.wait(400);buttons[1]?.click();})]),
+ scene('handwriting','Handwrite to text',open('handwrite'),[
+  step('#handwrite-pad','Words can begin with a stroke.','Write on this pad with a finger or stylus. With your own writing, Convert reads the strokes on your device.',async c=>{await c.stroke('#handwrite-pad',[[.16,.25],[.17,.45],[.18,.7],[.18,.5],[.3,.42],[.32,.68]]);}),
+  step('#handwrite-text','The words stay editable.','This prepared phrase shows where reviewed words go. You can correct, extend or proofread the text inside this item.',async c=>{await c.type('#handwrite-text','Remember to bring the notebook.');})]),
+ scene('journal','Daily journal',open('journal'),[
+  step('#journal-fields','A little space for this day.','A dated journal keeps its morning, evening and free writing together. Start with a sentence.',async c=>{const el=document.querySelector('#journal-fields textarea');if(el)await c.type('#'+el.id,'A quiet walk and a small idea worth keeping.');}),
+  step('#journal-next','Let reflection become a next step.','One small step can become a linked task. The journal stays here when the task is created.',async c=>{await c.type('#journal-next','Take the notebook on tomorrow’s walk.');await c.click('#journal-task');})]),
+ scene('mindmap','Mind map',open('mindmap'),[
+  step('#map-stage','Follow a connected thought.','A branch gives the idea another direction. These are the real map controls.',async c=>{await c.type('#map-label','A weekend outside');await c.click('#map-add');await c.type('#map-label','Walk a new route');}),
+  step('.map-detail','Give the connection a meaning.','The relation and notes explain why the thoughts belong together. Arrange branches gives them room.',async c=>{await c.type('#map-relation','A simple place to start');await c.type('#map-body','Bring a notebook and notice one new thing.');await c.click('#map-arrange');})]),
+ scene('math','Math sheet',open('math'),[
+  step('#math-rows','Watch one value change the total.','Guests × cost begins at 100. Changing guests to 10 updates the dependent total to 125.',async c=>{await c.type('#math-rows .math-line:first-child [data-math-field="expression"]','10');}),
+  step('#math-scenario','Keep the original and try a what-if.','What if? compares an alternative alongside the original. Names make the relationship readable.',async c=>{await c.click('#math-scenario');const el=document.querySelector('[data-math-field="whatIf"]');if(el)c.set('[data-math-field="whatIf"]','12');})]),
+ scene('calculator','Calculator',open('calculator'),[
+  step('#calc-expression','A quick calculation, with a home.','Type an expression and press Enter. The calculator keeps the expression with its result.',async c=>{await c.type('#calc-expression','8 * 12.5');document.querySelector('#calc-expression').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));}),
+  step('#calc-history','Come back to the working.','History keeps recent calculations inside this calculator item. The Math box also works with equations on their own lines.')]),
+ scene('budget','Budget planner',open('budget'),[
+  step('#budget-rows','Give an amount a purpose.','Planned and actual amounts feed the same totals you see in your own budget.',async c=>{const fields=[...document.querySelectorAll('[data-budget-field="planned"]')];if(fields[0])c.set('[data-budget-field="planned"]','1200');}),
+  step('#budget-summary','Keep a little room aside.','Set aside protects part of your total. The summary updates immediately as the example changes.',async c=>{await c.type('#budget-reserve','100');})]),
+ scene('calendar','Calendar',open('calendar'),[
+  step('#mode-title','A date can become something to remember.','Write an explicit date in the title or writing. Remember offers a calendar entry for it.',async c=>{const date=NotaDeskTools.localDate();await c.type('#mode-title',date+' – A birthday lunch');await c.until(()=>document.querySelector('.date-memory button'));}),
+  step('.calendar-card-grid','A remembered date has a dot.','Choosing Remember adds the entry. The same date is marked in the canvas month view.',async c=>{const n=c.item();await c.click('.date-memory button');n.calendar.cardView='month';await c.click('#mode-done');document.querySelector(`.card[data-id="${n.id}"]`)?.scrollIntoView({block:'center',inline:'center'});})]),
+ scene('reminders','Reminders',async()=>{remindersHub();},[
+  step('#rem-body','A reminder in your own words.','Write the title and message here. A schedule is optional when you choose a persistent notification.',async c=>{await c.click('#reminders-new');await c.type('#rem-title','Keep a thought nearby');await c.type('#rem-body','Take the notebook on the next walk.');}),
+  step('.card','Keep it on the canvas too.','Create persistent notification keeps this message as a canvas item. Practice alerts are kept inside the tour.',async c=>{await c.click('#rem-persistent');})]),
+ scene('reference','Reference Lab',open('reference'),[
+  step('#reference-editor','Keep a useful answer close.','A reference holds its title, tags and details. These fields work like your own cards.',async c=>{await c.click('#reference-add');await c.type('#reference-title','A useful packing list');await c.type('#reference-tags','weekend, outdoors');await c.type('#reference-body','Notebook, pen, water, and a little room for something unexpected.');}),
+  step('#reference-browser','Browse it another way.','Table view gathers reference values together. Search narrows the cards by their saved wording and tags.',async c=>{await c.click('#reference-view');})]),
+ scene('choice','Choice Weaver',open('choice'),[
+  step('#choice-options','Start with the tradeoffs.','Pros and cons give each possibility a place. Weighted view adds ratings when a structured comparison helps.'),
+  step('#choice-weighted','Make priorities visible.','Weights and ratings shape the comparison. Missing ratings stay visible rather than turning into made-up answers.',async c=>{await c.click('[data-choice-view="weighted"]');})]),
+ scene('index','Index Builder',open('index'),[
+  step('#index-editor','Build a small custom rulebook.','Tabs collect related entries. Give the first entry its own tags, stats and details.',async c=>{await c.click('#index-add-entry');await c.type('#index-title','The careful scout');await c.type('#index-tags','characters, woodland');await c.type('[data-index-value]','Dexterity 17 · Perception 14');}),
+  step('#index-tabs','A second tab keeps the rules nearby.','Entries can link across tabs, so a character and a rule can point to one another.',async c=>{const first=c.item().index.selectedCard;await c.type('#index-new-tab','Rules');await c.click('#index-add-tab');await c.click('#index-add-entry');await c.type('#index-title','Move quietly');await c.type('#index-body','Roll against the observer’s perception.');c.set('#index-link',first);})]),
+ scene('snippets','Snippet Shelf',open('snippets'),[
+  step('#snippet-text','Write it once, reuse it later.','A shelf holds wording, Markdown or code as reusable text.',async c=>{await c.type('#snippet-title','A friendly sign-off');await c.type('#snippet-text','Thanks for your time.\nI look forward to hearing your thoughts.');}),
+  step('#note-editor','Tap a block into the real note.','The shared Snippet Shelf button inserts a saved block into the writing field you were using.',async c=>{c.open('note');c.set('#note-title','A message to reuse');c.set('#note-editor','Hello!\n');document.querySelector('#note-editor').focus();await c.click('#editor-snippets');await c.click('[data-paste-snippet]');})]),
+ scene('streak','Streak Board',open('streak'),[
+  step('#habit-progress','Give consistency a shape.','Set a personal goal, then mark today. The heat map and progress bar update together.',async c=>{await c.type('#habit-name','Read a chapter');c.set('#habit-goal','7');await c.click('#habit-today');}),
+  step('#habit-heatmap','Each square holds a day.','Daily amounts let you record pages, minutes or sessions. Change one amount and see the personal total respond.',async c=>{c.set('#habit-amount','3');await c.click('#habit-log');})]),
+ scene('flash','Flash Cards',open('flash'),[
+  step('#flash-editor','A question on one side, an answer on the other.','Cards can have tags for smaller practice sessions.',async c=>{await c.type('#flash-front','What is the capital of France?');await c.type('#flash-back','Paris');await c.type('#flash-tags','geography');}),
+  step('.flash-study-card','Try to recall, then reveal.','Study cards shows the question first. Show answer turns the real practice card over.',async c=>{await c.click('#flash-study');await c.wait(400);await c.click('#flash-flip');}),
+  step('#flash-study-view','Keep a personal study record.','I knew it or Needs practice records your rating and moves the session forward.',async c=>{await c.click('#flash-known');})]),
+ scene('scanner','Scanner',open('scanner'),[
+  step('#scan-pdf-preview','Pictures become a real PDF.','This prepared page uses the same picture import path. With your own paper, Scan with camera opens document capture.',async c=>{const file=new File([dataBytes(picture())],'Practice-page.png',{type:'image/png'}),transfer=new DataTransfer();transfer.items.add(file);const input=document.querySelector('#scan-files');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));await c.until(()=>mode('scanner')?.scanner.pdfPages===1&&!document.querySelector('#scan-export').disabled);}),
+  step('#scan-pages','Turn, trim and clean up a page.','Rotating or changing the appearance rebuilds the PDF. Export is ready after the new page is prepared.',async c=>{await c.click('[data-scan-rotate]');await c.until(()=>!document.querySelector('#scan-export').disabled);c.set('[data-scan-filter]','clean');await c.until(()=>!document.querySelector('#scan-export').disabled);})]),
+ scene('photo','Photo to text',async()=>{const data=picture();creativeModal(addItem('note',{title:'Words from a picture',inputMode:'photo',photo:{data,preview:data,rotation:0,blocks:[]},html:'<p>Pack a notebook. Keep one small thought.</p>'}));},[
+  step('#photo-source','Keep the source beside the words.','This prepared example shows a source image and reviewed words together. Extract text reads your own photos on supported devices.'),
+  step('#photo-text','Make the reviewed text yours.','The extracted words are ordinary editable writing. Correct them, add a thought, or use the Writing Companion.',async c=>{await c.type('#photo-text','Pack a notebook. Keep one small thought. Bring a pen, too.');})]),
+ scene('voice','Voice notes',open('voice'),[
+  step('#record-start','Catch a thought out loud.','Your own recording starts when you press Start recording. This walkthrough leaves your microphone off.',async c=>{await c.type('#voice-title','A thought from the walk');}),
+  step('#audio-player','Keep the sound within reach.','Here is the app’s saved music sample. Your spoken recordings use this same player and can keep an editable transcript.',async c=>{const response=await fetch('./assets/project-music-preview.mp3'),data=await readData(await response.blob());c.check();editItem(addItem('audio',{title:'A saved audio example',data,sampleId:'project-audio',audioKind:'music'}));})]),
+ scene('saved','Saved notes',async()=>{const n=state.items.find(n=>n.type==='note');NotaCore.setWindowState(n,'closed');savedNotesModal();},[
+  step('#saved-list','Put away, and come back to it.','Saved notes keeps closed items close. Search finds the practice thought by its title.',async c=>{await c.type('#saved-search','A little room');}),
+  step('#saved-list','Restore returns it to its canvas.','Your work stays available when you close a card. Minimized cards have a separate dock below the canvas.')]),
+ scene('settings','Make it yours',async()=>{settingsModal();},[
+  step('.theme-picker','A desk that feels like yours.','Paper, Dark paper, Blue and Rosy pink change the same workspace and editor surfaces.'),
+  step('#layout-setting','Your choices stay within reach.','Canvas and List offer two ways to browse. Permission and cloud choices remain yours to make outside the practice tour.')]),
+ scene('backup','Backup & restore',async()=>{backupModal();},[
+  step('#save-backup','Keep a copy you can return to.','Download backup includes your saved workspaces and items. Restore previews the replacement before you choose it.'),
+  step('#save-backup','Ready to explore at your own pace.','Use the chapter menu to replay an area, or finish the walkthrough and return to your own work.')])
+];
+})();
