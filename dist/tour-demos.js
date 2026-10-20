@@ -135,7 +135,7 @@ function wire(){
  document.addEventListener('click',e=>{
   if(!sandboxed()||dialog.contains(e.target))return;
   if(e.target.closest(forbidden)){e.preventDefault();e.stopImmediatePropagation();toast('Finish the practice tour to use this with your own work.');return;}
-  const p=pending;if(!exampleClick&&p?.kind==='click'&&e.composedPath().some(el=>el.matches?.(p.selector)))queueMicrotask(()=>finishAction(p));
+  const p=pending;if(!exampleClick&&p?.kind==='click'&&e.composedPath().some(el=>el.matches?.(p.selector)))setTimeout(()=>finishAction(p),0);
  },true);
  document.addEventListener('input',e=>{if(e.isTrusted&&sandboxed()&&!dialog.contains(e.target)){edited.add(e.target);position();}},true);
  const strokePoint=e=>{const p=pending;if(p?.kind!=='stroke')return;const el=$(p.selector);if(!el)return;const r=el.getBoundingClientRect();p.points.push([Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))]);};
