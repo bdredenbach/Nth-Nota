@@ -95,14 +95,14 @@ const recoveryText={
 const recoveryLabel={'open-menu':'Open Desk','close-menu':'Close Desk','close-editor':'Close editor',choice:'Cancel choice','return-step':'Return to step'};
 function position(scroll=false){
  if(!active()||!dialog?.open)return;
- const view=guidance();if(view.mode!==recoveryMode)renderCoach();const scroll=$('#demo-scroll'),scrollTop=scroll.scrollTop,card=$('#demo-card'),spot=$('#demo-spot'),anchor=view.anchor,v=NotaTourPanel.viewport(),pad=10,selfTarget=anchor&&card.contains(anchor);
+ const view=guidance();if(view.mode!==recoveryMode)renderCoach();const explanation=$('#demo-scroll'),explanationTop=explanation.scrollTop,card=$('#demo-card'),spot=$('#demo-spot'),anchor=view.anchor,v=NotaTourPanel.viewport(),pad=10,selfTarget=anchor&&card.contains(anchor);
  card.style.maxHeight=Math.max(130,v.h-pad*2)+'px';
  if(scroll&&anchor&&!intro&&!selfTarget)anchor.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
  const r=anchor?.getBoundingClientRect();let ch=card.offsetHeight,left=v.x+(v.w-card.offsetWidth)/2,top=v.y+v.h-ch-pad;
  if(r&&!intro&&!selfTarget){const above=r.top-v.y-pad*2,below=v.y+v.h-r.bottom-pad*2,available=Math.max(above,below);if(available>=160&&available<ch){card.style.maxHeight=available+'px';ch=card.offsetHeight;}if(above>=ch)top=r.top-ch-pad;else if(below>=ch)top=r.bottom+pad;
  }
  NotaTourPanel.outline(spot,anchor);
- ({left,top}=NotaTourPanel.avoid(card,anchor,mover,left,top));mover.place(left,top);NotaTourPanel.point($('#demo-pointer'),anchor);if(scroll.scrollTop!==scrollTop)scroll.scrollTop=scrollTop;
+ ({left,top}=NotaTourPanel.avoid(card,anchor,mover,left,top));mover.place(left,top);NotaTourPanel.point($('#demo-pointer'),anchor);if(explanation.scrollTop!==explanationTop)explanation.scrollTop=explanationTop;
 }
 function renderCoach(){
  wire();const scene=current(),page=scene?.steps[step],p=pending,view=guidance();recoveryMode=view.mode;
