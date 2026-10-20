@@ -10,3 +10,5 @@
 @media(max-width:600px){.chat-modal .ai-task-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.chat-modal .ai-task-tabs button{font-size:12px}}
 
 .transcript-progress{padding:18px;background:var(--control);border-radius:12px;margin:16px 0}.transcript-progress h3{font-size:18px;margin:0 0 12px}.transcript-progress progress{width:100%;height:12px;accent-color:var(--green)}.transcript-preview{white-space:pre-wrap;max-height:120px;overflow:auto;font-size:14px}#transcript-text{min-height:150px;white-space:pre-wrap}#record-status{min-height:24px;color:var(--muted);font-size:13px}
+
+.companion-editing{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:0 0 14px}.companion-editing svg{width:17px;height:17px;color:var(--green)}.companion-editing strong{color:var(--ink)}
