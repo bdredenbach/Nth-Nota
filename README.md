@@ -1,6 +1,12 @@
-# Nth Nota 0.13.2
+# Nth Nota 0.13.3
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Refined in 0.13.3
+
+The practice tour is fully manual. Explore the tour opens a prepared example; Next demonstrates only the chosen step and waits for you. Back, chapter selection, demonstration speed, Try it, and Exit remain available. Back to tour returns from practice without losing your practice changes. Automatic playback and the Play/Pause button have been removed.
+
+See [manual tour notes](docs/0.13.3-manual-tour.md).
 
 ## Refined in 0.13.2
 

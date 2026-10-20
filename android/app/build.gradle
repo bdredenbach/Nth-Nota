@@ -6,8 +6,8 @@ android {
         applicationId 'com.nthexperience.nota'
         minSdk 26
         targetSdk 36
-        versionCode 27
-        versionName '0.13.2'
+        versionCode 28
+        versionName '0.13.3'
         def gatewayDefaults = new Properties()
         rootProject.file('ai-gateway.properties').withInputStream { gatewayDefaults.load(it) }
         def gateway = System.getenv('NOTA_AI_GATEWAY_URL') ?: gatewayDefaults.getProperty('url', '')

@@ -16,7 +16,7 @@ window.NotaTourScenes=[
   step('#note-editor','Review, then apply it in place.','Replace writing puts the reviewed reply back into the same note. Your original work outside the tour stays in place.',async c=>{await c.click('#ai-apply');})]),
  scene('drawing','Drawing & markup',open('sketch'),[
   step('#draw-canvas','Make a mark on the real page.','The pen follows the same drawing surface you use for sketches and markup.',async c=>{await c.stroke('#draw-canvas',[[.12,.65],[.2,.45],[.3,.3],[.4,.45],[.5,.65],[.6,.4],[.7,.3],[.82,.5]]);}),
-  step('.drawing-history','You can step back.','Undo and Redo work with your marks. Try a pen or highlighter whenever you pause the example.',async c=>{const buttons=document.querySelectorAll('.drawing-history button');buttons[0]?.click();await c.wait(400);buttons[1]?.click();})]),
+  step('.drawing-history','You can step back.','Undo and Redo work with your marks. Choose Try it to use a pen or highlighter yourself.',async c=>{const buttons=document.querySelectorAll('.drawing-history button');buttons[0]?.click();await c.wait(400);buttons[1]?.click();})]),
  scene('handwriting','Handwrite to text',open('handwrite'),[
   step('#handwrite-pad','Words can begin with a stroke.','Write on this pad with a finger or stylus. With your own writing, Convert reads the strokes on your device.',async c=>{await c.stroke('#handwrite-pad',[[.16,.25],[.17,.45],[.18,.7],[.18,.5],[.3,.42],[.32,.68]]);}),
   step('#handwrite-text','The words stay editable.','This prepared phrase shows where reviewed words go. You can correct, extend or proofread the text inside this item.',async c=>{await c.type('#handwrite-text','Remember to bring the notebook.');})]),
