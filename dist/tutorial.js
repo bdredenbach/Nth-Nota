@@ -6,8 +6,8 @@ const FULL_TOURS_ENABLED=false;
 const KEY='nota-tour-v2', $=s=>document.querySelector(s);
 const tip=(target,title,text,extra={})=>({target,title,text,...extra});
 const areas={
- spinner:{label:'Fidget Spinner',tips:[tip('#spinner-widget','A little room to unwind.','Tap to spin, or flick and drag the shape. Choose a shape and palette below. Stop brings it to rest. You can spin it right on the canvas, too.',{tryLabel:'Let me spin'})]},
- dice:{label:'Dice Tray',tips:[tip('#dice-widget','Roll for your next adventure.','Choose quantities for any of the seven dice types, or pick Classic seven. Roll dice shows every result and a total. Your last 20 rolls stay with this tray.',{tryLabel:'Let me roll'})]},
+ spinner:{label:'Fidget Spinner',tips:[tip('#spinner-widget [data-spinner-touch]','A little room to unwind.','Tap to spin, or flick and drag the shape. Choose a shape and palette below. Stop brings it to rest. You can spin it right on the canvas, too.',{tryLabel:'Let me spin'})]},
+ dice:{label:'Dice Tray',tips:[tip('#dice-widget [data-dice-roll]','Roll for your next adventure.','Choose quantities for any of the seven dice types, or pick Classic seven. Roll dice shows every result and a total. Your last 20 rolls stay with this tray.',{tryLabel:'Let me roll'})]},
  scanner:{label:'Scanner',tips:[tip('#scan-import','Turn paper into pages.','Scan a document or import pictures, then rotate, trim and export a PDF.',{tryLabel:'Let me scan'})]},
  index:{label:'Index Builder',tips:[tip('#index-tabs','A custom reference, in tabs.','Create entries with their own tags and fields. Link an entry to another tab to keep the relationships close.',{tryLabel:'Let me build an index'})]},
  snippets:{label:'Snippet Shelf',tips:[tip('#snippet-editor','Save it once, use it again.','Keep reusable text here. The Snippet Shelf button in a writing editor inserts a block at your cursor.',{tryLabel:'Let me make a block'})]},
