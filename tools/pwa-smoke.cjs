@@ -39,6 +39,8 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
      const worker=await page.evaluate(async()=>{const r=await navigator.serviceWorker.ready;return {scope:r.scope,script:r.active.scriptURL};});assert.equal(worker.scope,base);assert.equal(worker.script,base+'sw.js');
      await page.evaluate(()=>installModal());await page.waitForFunction(()=>document.querySelector('#offline-status')?.textContent==='Prepared');assert((await page.locator('.modal-body').innerText()).includes('Safari'));assert((await page.locator('.modal-body').innerText()).includes('Add to Home Screen'));await page.screenshot({path:path.join(out,name+'-iphone-install.png')});await page.locator('#close-modal').click();
     });
+    const fullTours=await page.evaluate(()=>NotaTour.fullToursEnabled);
+    if(fullTours){
     await check('the movable tutor leaves blank writing fields usable and restores the desk',async()=>{
      const before=await page.evaluate(()=>structuredClone(state.items));await page.evaluate(()=>NotaTourDemo.start({chapter:'note'}));await page.waitForFunction(()=>NotaTourDemo.state.intro&&NotaTourDemo.state.ready);assert((await page.locator('#demo-copy').innerText()).includes('Drag the three lines'));await page.locator('#demo-next').click();await page.waitForFunction(()=>NotaTourDemo.state.interaction?.selector==='#note-title');assert.equal(await page.locator('#note-title').inputValue(),'');assert.equal(await page.locator('#note-editor').innerText(),'');
      await page.locator('#demo-grip').focus();const old=await page.locator('#demo-card').boundingBox();await page.keyboard.press('ArrowUp');assert((await page.locator('#demo-card').boundingBox()).y<=old.y);await page.keyboard.press('Home');await page.locator('#note-title').click();await page.locator('#note-title').fill('My own web practice');await page.locator('#demo-next').click();await page.waitForFunction(()=>NotaTourDemo.state.interaction?.selector==='#note-editor');assert.equal(await page.locator('#note-title').inputValue(),'My own web practice');await page.locator('#note-editor').fill('Typed by the person using the tutor.');await page.screenshot({path:path.join(out,name+'-interactive-tutor.png')});await page.locator('#demo-exit').click();assert.deepEqual(await page.evaluate(()=>state.items),before);
@@ -49,6 +51,11 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
     await check('Desk search follows real animation and resumes after menu detours',async()=>{await audit.menuRegression();});
     await check('every tour chapter uses its real highlighted controls with normal motion',async()=>{await audit.walkAll();});
     await check('unfinished writing and drawings survive backward navigation and recovery',async()=>{await audit.draftRegression();});
+    }else{
+     const audit=require('./tour-audit.cjs')({page,shot:async label=>page.screenshot({path:path.join(out,name+'-'+label+'.png')})});
+     await check('full walkthroughs stay disabled and first-visit tool tips remain usable',async()=>{await audit.tipsOnlyRegression();});
+     await check('all Desk categories open by default and search respects manual collapses',async()=>{await audit.expandedMenuRegression();});
+    }
     await check('a note survives online reload and an offline app launch',async()=>{
      await page.locator('#desk-menu-toggle').click();const tool=page.locator('[data-launch-action="note"]'),category=tool.locator('xpath=ancestor::section[contains(@class,"launcher-category")]').locator('[data-launch-category]');if(await category.getAttribute('aria-expanded')==='false')await category.click();await tool.click();
      await page.locator('#note-title').fill('An iPhone testing note');await page.locator('#note-editor').fill('These words stay on this phone, including offline.');await page.locator('#note-done').click();await page.waitForFunction(()=>document.querySelector('#save-state')?.textContent.includes('Saved on device'));

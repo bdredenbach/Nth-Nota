@@ -68,12 +68,85 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           mkdir -p artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.13.7.apk
-          sha256sum artifacts/Nth-Nota-0.13.7.apk > artifacts/SHA256SUMS.txt
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.13.8.apk
+          sha256sum artifacts/Nth-Nota-0.13.8.apk > artifacts/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Nth-Nota-0.13.7-preview
+          name: Nth-Nota-0.13.8-preview
           path: artifacts/*
           if-no-files-found: error
           retention-days: 30
+  release:
+    needs: preview
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Require the matching web checks to pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          passed=false
+          for attempt in {1..60}; do
+            status=$(gh api "repos/$GH_REPO/actions/workflows/pages.yml/runs?head_sha=$GITHUB_SHA&per_page=10" --jq '.workflow_runs[0] | (.status // "waiting") + ":" + (.conclusion // "")')
+            if test "$status" = completed:success; then
+              passed=true
+              break
+            fi
+            case "$status" in completed:*) echo "Web checks did not pass: $status"; exit 1;; esac
+            echo "Waiting for the matching web checks: $status"
+            sleep 10
+          done
+          test "$passed" = true
+      - name: Download the verified Android build
+        uses: actions/download-artifact@v4
+        with:
+          name: Nth-Nota-0.13.8-preview
+          path: release-build
+      - name: Publish the verified APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=v0.13.8
+          apk=Nth-Nota-0.13.8.apk
+          read -r expected ignored < release-build/SHA256SUMS.txt
+          test "${#expected}" = 64
+          printf '%s  %s\n' "$expected" "release-build/$apk" | sha256sum --check --strict
+          mkdir -p publish
+          cp "release-build/$apk" publish/
+          (cd publish && sha256sum "$apk" > SHA256SUMS.txt)
+          cat > release-notes.md <<'NOTES'
+          Android preview of Nth Nota 0.13.8.
+
+          Download **Nth-Nota-0.13.8.apk** below to install or update the Android app.
+
+          - Full walkthroughs are disabled for now, with their code retained.
+          - First-visit tool tips remain available; closing one area's tips keeps other tips enabled.
+          - All Desk menu categories start expanded, with manual collapse and search still available.
+
+          [Open the web app for iPhone or desktop](https://bdredenbach.github.io/Nth-Nota/).
+          NOTES
+          printf '\nVerified build commit: %s. SHA256SUMS.txt contains the APK checksum.\n' "$GITHUB_SHA" >> release-notes.md
+          if ! gh release view "$tag" > /dev/null 2>&1; then
+            test "$(gh api "repos/$GH_REPO/branches/main" --jq .commit.sha)" = "$GITHUB_SHA"
+            gh release create "$tag" --target "$GITHUB_SHA" --draft --prerelease --title 'Nth Nota 0.13.8 · Android preview' --notes-file release-notes.md
+          fi
+          if gh release download "$tag" --pattern "$apk" --dir existing-apk 2>/dev/null; then
+            printf '%s  %s\n' "$expected" "existing-apk/$apk" | sha256sum --check --strict
+          else
+            gh release upload "$tag" "publish/$apk"
+          fi
+          if gh release download "$tag" --pattern SHA256SUMS.txt --dir existing-checksum 2>/dev/null; then
+            cmp publish/SHA256SUMS.txt existing-checksum/SHA256SUMS.txt
+          else
+            gh release upload "$tag" publish/SHA256SUMS.txt
+          fi
+          gh release edit "$tag" --draft=false --prerelease --notes-file release-notes.md
+          gh release view "$tag" --json url --jq .url

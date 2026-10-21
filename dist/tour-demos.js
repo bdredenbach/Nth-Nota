@@ -164,6 +164,7 @@ async function seek(id,index=0){
  for(let i=0;i<step;i++)if(!finished.has(id+':'+i)){step=0;break;}run({rebuild:true});return true;
 }
 async function start({chapter:id='desk',onFinish:finishedCallback}={}){
+ if(!window.NotaTour?.fullToursEnabled)return false;
  id=resolve(id);if(active()||!chapters().some(c=>c.id===id))return false;
  if(document.hidden||document.querySelector('.choice-overlay')||editorLoading||$('#record-start:disabled')||$('#record-stop:not(:disabled)')||$('#ai-stop:not(:disabled)')||$('#photo-stop:not([hidden])')||$('#handwrite-stop:not([hidden])')||$('#scan-cancel:not([hidden])')||$('#mode-done:disabled')){toast('Finish the current recording, reply or document preparation, then open the tutor.');return false;}
  wire();mover.reset();instructionKey='';answers.clear();totals.clear();finished.clear();phase='preparing';chapter=chapters().findIndex(c=>c.id===id);step=0;trying=false;complete=false;intro=true;error='';onFinish=finishedCallback;const token=++generation;source=capture();document.body.classList.add('tour-demo-active');renderCoach();
@@ -195,5 +196,5 @@ function wire(){
  window.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('scroll',()=>position());document.addEventListener('scroll',e=>{if(!e.target.closest?.('#nota-demo'))position();},true);
  let queued=false;const refresh=()=>{if(queued||!active())return;queued=true;requestAnimationFrame(()=>{queued=false;position();});};const observer=new MutationObserver(refresh);observer.observe($('#modal-root'),{childList:true,subtree:true});observer.observe($('#board'),{childList:true,subtree:true});
 }
-window.NotaTourDemo={start,stop,pause,next,previous,seek,has:id=>chapters().some(c=>c.id===resolve(id)),get active(){return active();},get sandboxed(){return sandboxed();},get state(){return {phase,active:active(),chapter:current()?.id,chapterIndex:chapter,step,intro,trying,ready,complete,error,recovery:recoveryMode,interaction:pending?{kind:pending.kind,selector:pending.selector,suggestion:pending.suggestion,choiceValue:pending.choiceValue,index:pending.index}:null};}};
+window.NotaTourDemo={start,stop,pause,next,previous,seek,has:id=>!!window.NotaTour?.fullToursEnabled&&chapters().some(c=>c.id===resolve(id)),get active(){return active();},get sandboxed(){return sandboxed();},get state(){return {phase,active:active(),chapter:current()?.id,chapterIndex:chapter,step,intro,trying,ready,complete,error,recovery:recoveryMode,interaction:pending?{kind:pending.kind,selector:pending.selector,suggestion:pending.suggestion,choiceValue:pending.choiceValue,index:pending.index}:null};}};
 })();

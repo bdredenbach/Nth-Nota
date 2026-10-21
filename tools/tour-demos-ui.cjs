@@ -1,6 +1,11 @@
 const assert=require('node:assert/strict');
 module.exports=async({page,check,tool,shot})=>{
  const audit=require('./tour-audit.cjs')({page,shot}),{settled,begin,one,group,markerAt}=audit;
+ if(!await page.evaluate(()=>NotaTour.fullToursEnabled)){
+  await check('Full walkthroughs stay disabled while first-visit tips preserve writing and remain independent by area',async()=>{await audit.tipsOnlyRegression();});
+  await check('Every Desk category starts expanded; manual collapses survive search and reopening',async()=>{await audit.expandedMenuRegression();});
+  return;
+ }
 
  await check('The practice tutor starts with blank fields, suggests text, accepts personal wording and restores the original draft',async()=>{
   await tool('note');await page.locator('#note-title').fill('My draft before the tour');await page.locator('#note-editor').fill('Keep these exact words.');await page.evaluate(async()=>{await persistDesk();window.beforePractice=structuredClone(state.items);window.originalPracticeEditor=document.querySelector('#note-editor');window.practiceServices={ai:aiCalls.length,mic:permissionCalls.length};NotaTour.guide('note');});await page.locator('#tour-demo').click();await settled();assert((await page.locator('#demo-copy').innerText()).includes('Drag the three lines'));await page.locator('#demo-next').click();await settled();

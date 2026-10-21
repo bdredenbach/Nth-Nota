@@ -2,15 +2,16 @@
 (function(){
 'use strict';
 let collapsed=false,mover=null,follower=null;
+const FULL_TOURS_ENABLED=false;
 const KEY='nota-tour-v2', $=s=>document.querySelector(s);
 const tip=(target,title,text,extra={})=>({target,title,text,...extra});
 const areas={
- scanner:{label:'Scanner',tips:[tip('#scan-import','Turn paper into pages.','Scan a document or import pictures, then rotate, trim and export a PDF. Show me walks through a prepared example.',{tryLabel:'Let me scan'})]},
+ scanner:{label:'Scanner',tips:[tip('#scan-import','Turn paper into pages.','Scan a document or import pictures, then rotate, trim and export a PDF.',{tryLabel:'Let me scan'})]},
  index:{label:'Index Builder',tips:[tip('#index-tabs','A custom reference, in tabs.','Create entries with their own tags and fields. Link an entry to another tab to keep the relationships close.',{tryLabel:'Let me build an index'})]},
  snippets:{label:'Snippet Shelf',tips:[tip('#snippet-editor','Save it once, use it again.','Keep reusable text here. The Snippet Shelf button in a writing editor inserts a block at your cursor.',{tryLabel:'Let me make a block'})]},
  streak:{label:'Streak Board',tips:[tip('#habit-editor','A small record of showing up.','Set your own daily target and total goal. Each logged day updates the heat map and progress bar.',{tryLabel:'Let me log a routine'})]},
  flash:{label:'Flash Cards',tips:[tip('#flash-editor','A little practice, whenever you want.','Write a question and answer, add tags, then Study cards. Reveal before rating whether you knew it.',{tryLabel:'Let me make a card'})]},
- reminders:{label:'Reminders',tips:[tip('#rem-body,#reminders-new','A little help remembering.','Choose a schedule or create a persistent notification. Show me demonstrates how the message also becomes a canvas item.',{tryLabel:'Let me set it up'})]},
+ reminders:{label:'Reminders',tips:[tip('#rem-body,#reminders-new','A little help remembering.','Choose a schedule or create a persistent notification. A new reminder also becomes a canvas item.',{tryLabel:'Let me set it up'})]},
 
  budget:{label:'Budget planner',tips:[tip('#budget-rows','Give each amount a place.','Compare planned and actual income and expenses. Set aside protects a little room before the remaining amount is calculated.'),tip('#budget-summary','Check your room to spend.','Totals use the amounts you enter. Nothing connects to a bank. Choose the destination canvas above, then save or press ×.',{tryLabel:'Let me plan'})]},
  calendar:{label:'Calendar',tips:[tip('#calendar-days','A day with room for a thought.','Choose a day, then Add a plan. Entries save as you type; a time is optional.'),tip('#calendar-entries,#calendar-add','Let a plan become a next step.','Make an entry a task, then choose notification options with its bell. Journal for this day opens a dated page on the same canvas.',{tryLabel:'Let me plan a day'})]},
@@ -73,7 +74,7 @@ const areas={
  ]},
  settings:{label:'Make it yours',tips:[
   tip('.theme-picker','A desk that feels like yours.','Choose Paper, Dark paper, Blue or Rosy pink. Below, choose Canvas or List and your navigation style.'),
-  tip('#open-permissions','Your choices stay within reach.','Change microphone, notification and cloud AI choices here. Privacy & data includes your policy, backups, AI reports and local data controls. Replay the tour whenever you need it.',{tryLabel:'Explore settings'})
+  tip('#open-permissions','Your choices stay within reach.','Change microphone, notification and cloud AI choices here. Privacy & data includes your policy, backups, AI reports and local data controls. Short tips appear when you first open a tool.',{tryLabel:'Explore settings'})
  ]},
  backup:{label:'Backup & restore',tips:[
   tip('#save-backup','Keep a copy outside the app.','Download backup includes your workspaces, notes and attachments. Keep it privately. Restore previews a confirmation before replacing this device’s desk.',{tryLabel:'Choose my backup'})
@@ -106,15 +107,15 @@ function permissionState(kind){const p=NotaPlatform.permissions(),c=NotaPlatform
 function render(scroll=true){
  if(!area)return;$('#tour-fold').textContent=collapsed?'Show explanation':'Hide explanation';$('#tour-fold').setAttribute('aria-expanded',String(!collapsed));const page=areas[area],t=page.tips[index];
  if(area==='desk'){if(t.menu)NotaDeskMenu.open();else NotaDeskMenu.close(false);}
- $('#tour-area').textContent=page.label;$('#tour-count').textContent=(index+1)+' of '+page.tips.length;$('#tour-title').textContent=t.title;$('#tour-copy').textContent=t.text+(index===0?' Drag the three lines above to move this see-through tutor out of your way.':'');$('#tour-back').hidden=index===0;$('#tour-next').textContent=index+1<page.tips.length?'Next tip':intro?'Permission choices':'Got it';$('#tour-try').hidden=!t.tryLabel;$('#tour-try').textContent=t.tryLabel||'Try it';$('#tour-allow').hidden=!t.permission;$('#tour-allow').textContent={microphone:'Allow microphone',notifications:'Allow notifications',cloud:NotaPlatform.cloudState().allowed?'Cloud AI allowed':'Choose cloud AI'}[t.permission]||'';$('#tour-allow').disabled=busy||(t.permission==='cloud'&&(!NotaPlatform.cloudState().configured||NotaPlatform.cloudState().allowed));$('#tour-status').textContent=t.permission?permissionState(t.permission):'';$('#tour-storage').hidden=remembered;$('#tour-demo').hidden=!window.NotaTourDemo?.has(area);$('#tour-demo').textContent=area==='desk'?'Explore the tour':'Show me';$('#tour-demo').disabled=busy;
+ $('#tour-area').textContent=page.label;$('#tour-count').textContent=(index+1)+' of '+page.tips.length;$('#tour-title').textContent=t.title;$('#tour-copy').textContent=t.text+(index===0?' Drag the three lines above to move this see-through tutor out of your way.':'');$('#tour-back').hidden=index===0;$('#tour-next').textContent=index+1<page.tips.length?'Next tip':intro?'Permission choices':'Got it';$('#tour-try').hidden=!t.tryLabel;$('#tour-try').textContent=t.tryLabel||'Try it';$('#tour-allow').hidden=!t.permission;$('#tour-allow').textContent={microphone:'Allow microphone',notifications:'Allow notifications',cloud:NotaPlatform.cloudState().allowed?'Cloud AI allowed':'Choose cloud AI'}[t.permission]||'';$('#tour-allow').disabled=busy||(t.permission==='cloud'&&(!NotaPlatform.cloudState().configured||NotaPlatform.cloudState().allowed));$('#tour-status').textContent=t.permission?permissionState(t.permission):'';$('#tour-close').setAttribute('aria-label',intro?'Skip tour and review permission choices':'Close these tips');$('#tour-skip').textContent=intro?'Skip tour · review choices':'Close these tips';$('#tour-storage').hidden=remembered;$('#tour-demo').hidden=!window.NotaTourDemo?.has(area);$('#tour-demo').textContent=area==='desk'?'Explore the tour':'Show me';$('#tour-demo').disabled=busy;
  for(const id of ['tour-back','tour-next','tour-try','tour-skip','tour-close'])$('#'+id).disabled=busy;
  applyModality();requestAnimationFrame(()=>{position(scroll);(collapsed?$('#tour-fold'):$('#tour-title')).focus({preventScroll:true});});
 }
 function applyModality(){if(dialog.open&&dialog.matches(':modal'))dialog.close();if(!dialog.open)dialog.show();follower.start();}
 function hide(){follower?.stop();dialog?.close();anchor=null;}
 function finish({skip=false,tryIt=false}={}){
- if(!area||busy)return;seen.add(area);if(skip)enabled=false;persist();const wasIntro=intro;area=null;intro=false;hide();NotaDeskMenu.close(false);
- if(wasIntro||skip){closeModal();permissionsModal(true);return;}
+ if(!area||busy)return;seen.add(area);const wasIntro=intro;if(skip&&wasIntro)enabled=false;persist();area=null;intro=false;hide();NotaDeskMenu.close(false);
+ if(wasIntro){closeModal();permissionsModal(true);return;}
  const focus=target('#note-editor,#add-task,#record-start,#ai-message,#draw-title,#saved-search,#layout-setting,#save-backup')||$('#desk-menu-toggle');focus?.focus();
 }
 async function allow(){
@@ -127,7 +128,7 @@ async function allow(){
  }catch{toast('Access was not granted. You can change this later in Settings.');}
  finally{busy=false;if(area)render(false);}
 }
-async function launchDemo(){if(!area||busy)return;const saved={area,index,intro,collapsed};const id=area;hide();area=null;intro=false;let finished=false;const started=await NotaTourDemo.start({chapter:id,onFinish:()=>{finished=true;seen.add(id);persist();if(saved.intro)permissionsModal(true);}});if(!started&&!finished){area=saved.area;index=saved.index;intro=saved.intro;collapsed=saved.collapsed;render(false);}}
+async function launchDemo(){if(!FULL_TOURS_ENABLED||!area||busy)return;const saved={area,index,intro,collapsed};const id=area;hide();area=null;intro=false;let finished=false;const started=await NotaTourDemo.start({chapter:id,onFinish:()=>{finished=true;seen.add(id);persist();if(saved.intro)permissionsModal(true);}});if(!started&&!finished){area=saved.area;index=saved.index;intro=saved.intro;collapsed=saved.collapsed;render(false);}}
 function open(id,{first=false,force=false}={}){if(area||!areas[id]||!force&&(!enabled||seen.has(id))||blocked())return false;area=id;index=0;collapsed=false;mover?.reset();dialog?.classList.remove('tour-collapsed');intro=first;render();return true;}
 function queue(){clearTimeout(timer);timer=setTimeout(()=>{if(!area&&enabled&&!blocked()&&localStorage.getItem('nota-tour-version')==='2'){const id=currentArea();if(id)open(id);}},160);}
 function wire(){
@@ -138,9 +139,9 @@ function wire(){
  document.addEventListener('click',queue);new MutationObserver(queue).observe($('#modal-root'),{childList:true,subtree:true});window.addEventListener('resize',()=>position());window.visualViewport?.addEventListener('resize',()=>position());document.addEventListener('scroll',e=>{if(!e.target.closest?.('#nota-tour'))position();},true);document.addEventListener('focusin',()=>{if(area)position();});window.addEventListener('nota-permissions',()=>{if(area&&!busy)render(false);});
 }
 window.NotaTour={
- start(replay=false){if(window.NotaTourDemo?.active)NotaTourDemo.stop({notify:false});wire();if(busy)return;if(area){area=null;hide();}closeModal();dismissMenu();enabled=true;if(replay)seen.clear();persist();open('desk',{first:true,force:true});},
- guide(id){if(window.NotaTourDemo?.active)return;wire();if(area){area=null;hide();}open(id,{force:true});},
- queue,wire,skip:()=>finish({skip:true}),get active(){return !!area;},get enabled(){return enabled;},setEnabled(value){enabled=!!value;persist();if(!enabled&&area)finish();},
+ start(replay=false){if(!FULL_TOURS_ENABLED)return false;if(window.NotaTourDemo?.active)NotaTourDemo.stop({notify:false});wire();if(busy)return;if(area){area=null;hide();}closeModal();dismissMenu();enabled=true;if(replay)seen.clear();persist();open('desk',{first:true,force:true});},
+ guide(id){if(id==='desk'&&!FULL_TOURS_ENABLED)return false;if(window.NotaTourDemo?.active)return;wire();if(area){area=null;hide();}open(id,{force:true});},
+ queue,wire,skip:()=>finish({skip:true}),get fullToursEnabled(){return FULL_TOURS_ENABLED;},get active(){return !!area;},get enabled(){return enabled;},setEnabled(value){enabled=!!value;persist();if(!enabled&&area)finish();},
  dismiss(){area=null;intro=false;hide();},get state(){return {area,index,enabled,seen:[...seen]};}
 };
 })();

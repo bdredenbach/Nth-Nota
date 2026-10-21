@@ -1,12 +1,22 @@
-# Nth Nota 0.13.7
+# Nth Nota 0.13.8
 
-**[Download Nth Nota 0.13.7 for Android (APK)](https://github.com/bdredenbach/Nth-Nota/releases/download/v0.13.7/Nth-Nota-0.13.7.apk)**
+**[Download Nth Nota 0.13.8 for Android (APK)](https://github.com/bdredenbach/Nth-Nota/releases/download/v0.13.8/Nth-Nota-0.13.8.apk)**
 
-[Release notes & downloads](https://github.com/bdredenbach/Nth-Nota/releases/tag/v0.13.7) · [Open the web app](https://bdredenbach.github.io/Nth-Nota/)
+[Release notes & downloads](https://github.com/bdredenbach/Nth-Nota/releases/tag/v0.13.8) · [Open the web app](https://bdredenbach.github.io/Nth-Nota/)
 
 For iPhone testing, open the web app in Safari and choose **Share → Add to Home Screen**.
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Feedback refinements in 0.13.8
+
+Full live and practice walkthroughs are disabled for now, with their code retained for later. Their Desk, Settings and contextual-tip launch buttons are hidden. First launch goes straight to optional permission choices, without starting a tour.
+
+Short guided tips still appear the first time a tool is opened. Closing a tool's tips dismisses only those tips; it does not switch off tips for other areas or open permission choices. **Tips as I explore** remains available in Settings, and existing opt-outs are respected.
+
+Every Desk category starts expanded: Write & capture, Think & create, Plan & remember, Numbers & budgets, and Workspace & help. Categories can still be collapsed manually, and search reveals matching tools.
+
+See [0.13.8 feedback notes](docs/0.13.8-feedback.md).
 
 ## Tour refinements in 0.13.7
 

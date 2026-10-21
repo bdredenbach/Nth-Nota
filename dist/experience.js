@@ -21,6 +21,7 @@ function cloudConsent(signal){
  });
 }
 function tutorialModal(replay=false){
+ if(!NotaTour.fullToursEnabled)return false;
  NotaTour.dismiss();
  if(NotaTourDemo.active)NotaTourDemo.stop({notify:false});
  modal('Find your way around',`<p>Choose how you would like to explore Nth Nota. Move either guide by its three-line handle, and continue at your own pace.</p><div class="tutorial-choices"><div><button id="tutorial-live" class="primary">Start a live tour</button><p class="hint">Tips on your own desk. Your changes save as usual.</p></div><span class="tutorial-or" aria-label="or"><i></i><em>OR</em><i></i></span><div><button id="tutorial-practice" class="primary">Start tutorial</button><p class="hint">Try the tools on a practice desk. Practice does not save.</p></div></div>`);
