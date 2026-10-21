@@ -46,10 +46,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          tag_exists=false
+          release_commit="$GITHUB_SHA"
           if gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG" > existing-tag.json 2>/dev/null; then
-            test "$(gh api "repos/$GH_REPO/commits/$RELEASE_TAG" --jq .sha)" = "$SOURCE_SHA"
-          else
-            gh api --method POST "repos/$GH_REPO/git/refs" -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$SOURCE_SHA" > /dev/null
+            tag_exists=true
+            release_commit=$(gh api "repos/$GH_REPO/commits/$RELEASE_TAG" --jq .sha)
+          fi
+          source_tree=$(gh api "repos/$GH_REPO/commits/$SOURCE_SHA" --jq .commit.tree.sha)
+          release_tree=$(gh api "repos/$GH_REPO/commits/$release_commit" --jq .commit.tree.sha)
+          gh api "repos/$GH_REPO/git/trees/$source_tree" --jq '[.tree[] | select(.path != "README.md" and .path != ".github")] | sort_by(.path)' > source-files.json
+          gh api "repos/$GH_REPO/git/trees/$release_tree" --jq '[.tree[] | select(.path != "README.md" and .path != ".github")] | sort_by(.path)' > release-files.json
+          cmp source-files.json release-files.json
+          if test "$tag_exists" = false; then
+            gh api --method POST "repos/$GH_REPO/git/refs" -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$release_commit" > /dev/null
           fi
           cat > release-notes.md <<'NOTES'
           Android preview of Nth Nota 0.13.7.
