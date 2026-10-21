@@ -111,8 +111,12 @@ function position(scroll=false){
  const view=guidance();if(view.mode!==recoveryMode)renderCoach();const explanation=$('#demo-scroll'),explanationTop=explanation.scrollTop,card=$('#demo-card'),spot=$('#demo-spot'),anchor=view.anchor,v=NotaTourPanel.viewport(),pad=10,selfTarget=anchor&&card.contains(anchor);
  card.style.maxHeight=Math.max(130,v.h-pad*2)+'px';
  if(scroll&&anchor&&!intro&&!selfTarget)anchor.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
- const r=anchor?.getBoundingClientRect();let ch=card.offsetHeight,left=v.x+(v.w-card.offsetWidth)/2,top=v.y+v.h-ch-pad;
- if(r&&!intro&&!selfTarget){const above=r.top-v.y-pad*2,below=v.y+v.h-r.bottom-pad*2,available=Math.max(above,below);if(available>=160&&available<ch){card.style.maxHeight=available+'px';ch=card.offsetHeight;}if(above>=ch)top=r.top-ch-pad;else if(below>=ch)top=r.bottom+pad;
+ let r=anchor?.getBoundingClientRect(),floor=v.y+v.h;const inMenu=anchor?.closest('#desk-launcher');
+ // Keep the menu header, its close button and the Desk bar clear as search
+ // changes the sheet's height. The marker still follows the actual field.
+ if(r&&inMenu){const head=$('.launcher-head')?.getBoundingClientRect();if(head)r={top:Math.min(r.top,head.top),bottom:Math.max(r.bottom,head.bottom)};floor=Math.min(floor,$('.desk-taskbar').getBoundingClientRect().top);}
+ let ch=card.offsetHeight,left=v.x+(v.w-card.offsetWidth)/2,top=v.y+v.h-ch-pad;
+ if(r&&!intro&&!selfTarget){const above=r.top-v.y-pad*2,below=floor-r.bottom-pad*2,available=Math.max(above,below);if(available>=(inMenu?130:160)&&available<ch){card.style.maxHeight=available+'px';ch=card.offsetHeight;}if(above>=ch)top=r.top-ch-pad;else if(below>=ch)top=r.bottom+pad;
  }
  NotaTourPanel.outline(spot,anchor);
  ({left,top}=NotaTourPanel.avoid(card,anchor,mover,left,top));mover.place(left,top);NotaTourPanel.point($('#demo-pointer'),anchor);if(explanation.scrollTop!==explanationTop)explanation.scrollTop=explanationTop;
