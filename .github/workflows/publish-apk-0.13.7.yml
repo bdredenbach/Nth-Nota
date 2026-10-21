@@ -1,0 +1,84 @@
+name: Publish Nth Nota 0.13.7 APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-apk-0.13.7.yml']
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: nota-release-0-13-7
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      SOURCE_SHA: e37a9f83b06964017b5d91ab97feeb608114c4c6
+      APK_SHA256: ee57d1c4011037e9d8f90de11300117c1d2bf693cbbdbee9e6de3015b806749a
+      RELEASE_TAG: v0.13.7
+    steps:
+      - name: Download the exact verified preview
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '12366634091'
+          merge-multiple: true
+          path: verified-preview
+          run-id: '39646511082'
+          github-token: ${{ github.token }}
+      - name: Check the build source and APK bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          read -r source result < <(gh api "repos/$GH_REPO/actions/runs/39646511082" --jq '[.head_sha, .conclusion] | @tsv')
+          test "$source" = "$SOURCE_SHA"
+          test "$result" = success
+          test "$(stat -c %s verified-preview/Nth-Nota-0.13.7.apk)" = 80615714
+          printf '%s  %s\n' "$APK_SHA256" verified-preview/Nth-Nota-0.13.7.apk | sha256sum --check --strict
+          mkdir -p publish
+          cp verified-preview/Nth-Nota-0.13.7.apk publish/
+          cd publish
+          sha256sum Nth-Nota-0.13.7.apk > SHA256SUMS.txt
+      - name: Publish the APK as a release download
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG" > existing-tag.json 2>/dev/null; then
+            test "$(gh api "repos/$GH_REPO/commits/$RELEASE_TAG" --jq .sha)" = "$SOURCE_SHA"
+          else
+            gh api --method POST "repos/$GH_REPO/git/refs" -f "ref=refs/tags/$RELEASE_TAG" -f "sha=$SOURCE_SHA" > /dev/null
+          fi
+          cat > release-notes.md <<'NOTES'
+          Android preview of Nth Nota 0.13.7.
+
+          Download **Nth-Nota-0.13.7.apk** below to install or update the Android app.
+
+          - Choose a live tour or a separate practice tutorial.
+          - Practice moving canvas cards and choosing note paper colors.
+          - Clearer List view guidance and an explicit practice-only label.
+          - More conversation space in Writing Companion and improved tutor placement.
+
+          All 25 tutorial chapters passed Chromium and WebKit checks. The APK also passed the Android build and signature checks.
+
+          [Open the web app for iPhone or desktop](https://bdredenbach.github.io/Nth-Nota/).
+
+          Built from commit e37a9f83b06964017b5d91ab97feeb608114c4c6 in [the verified Android workflow](https://github.com/bdredenbach/Nth-Nota/actions/runs/39646511082). SHA256SUMS.txt contains the APK checksum.
+          NOTES
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --draft --prerelease --title 'Nth Nota 0.13.7 · Android preview' --notes-file release-notes.md
+          fi
+          if gh release download "$RELEASE_TAG" --pattern 'Nth-Nota-0.13.7.apk' --dir existing-apk 2>/dev/null; then
+            printf '%s  %s\n' "$APK_SHA256" existing-apk/Nth-Nota-0.13.7.apk | sha256sum --check --strict
+          else
+            gh release upload "$RELEASE_TAG" publish/Nth-Nota-0.13.7.apk
+          fi
+          if ! gh release download "$RELEASE_TAG" --pattern 'SHA256SUMS.txt' --dir existing-checksum 2>/dev/null; then
+            gh release upload "$RELEASE_TAG" publish/SHA256SUMS.txt
+          else
+            cmp publish/SHA256SUMS.txt existing-checksum/SHA256SUMS.txt
+          fi
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease --notes-file release-notes.md
+          gh release view "$RELEASE_TAG" --json url --jq .url

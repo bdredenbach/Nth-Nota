@@ -1,5 +1,11 @@
 # Nth Nota 0.13.7
 
+**[Download Nth Nota 0.13.7 for Android (APK)](https://github.com/bdredenbach/Nth-Nota/releases/download/v0.13.7/Nth-Nota-0.13.7.apk)**
+
+[Release notes & downloads](https://github.com/bdredenbach/Nth-Nota/releases/tag/v0.13.7) · [Open the web app](https://bdredenbach.github.io/Nth-Nota/)
+
+For iPhone testing, open the web app in Safari and choose **Share → Add to Home Screen**.
+
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
 
 ## Tour refinements in 0.13.7
