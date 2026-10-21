@@ -12,7 +12,7 @@ An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline
 
 Full live and practice walkthroughs are disabled for now, with their code retained for later. Their Desk, Settings and contextual-tip launch buttons are hidden. First launch goes straight to optional permission choices, without starting a tour.
 
-Short guided tips still appear the first time a tool is opened. Closing a tool's tips dismisses only those tips; it does not switch off tips for other areas or open permission choices. **Tips as I explore** remains available in Settings, and existing opt-outs are respected.
+Short guided tips still appear the first time a tool is opened. Tips close when their editor closes. Closing a tool's tips dismisses only those tips; it does not switch off tips for other areas or open permission choices. **Tips as I explore** remains available in Settings, and existing opt-outs are respected.
 
 Every Desk category starts expanded: Write & capture, Think & create, Plan & remember, Numbers & budgets, and Workspace & help. Categories can still be collapsed manually, and search reveals matching tools.
 
