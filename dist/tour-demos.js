@@ -1,7 +1,7 @@
 /* A manual practice tutor: the person writes and operates the real controls. */
 (function(){'use strict';
 const $=s=>document.querySelector(s),abortError=()=>new DOMException('Walkthrough stopped','AbortError');
-let phase='idle',source=null,dialog=null,chapter=0,step=0,trying=false,ready=false,complete=false,intro=false,error='',generation=0,controller=null,onFinish=null,methods=[],pace=1,exampleClick=false,pending=null,mover=null,actionIndex=-1,actionCount=0,follower=null,recoveryMode='',instructionKey='';
+let phase='idle',source=null,dialog=null,chapter=0,step=0,trying=false,ready=false,complete=false,intro=false,error='',generation=0,controller=null,onFinish=null,methods=[],pace=1,exampleClick=false,pending=null,mover=null,actionIndex=-1,actionCount=0,follower=null,recoveryMode='',instructionKey='',freeTarget=null;
 const answers=new Map(),totals=new Map(),finished=new Set(),edited=new WeakSet();
 const resolve=id=>({audio:'voice',alerts:'tasks'})[id]||id;
 const chapters=()=>window.NotaTourScenes||[],active=()=>phase!=='idle',sandboxed=()=>phase==='running';
@@ -78,7 +78,7 @@ function capture(){const before=editorItem&&JSON.stringify({...editorItem,update
 function releaseInert(){for(const [el,value]of source?.inert||[])el.inert=value;}
 function containServices(){const reject=()=>Promise.reject(Error('Finish the practice tour to use this with your own work.')),quiet=()=>{};for(const key of ['syncReminders','mergeNativeReminders','microphone','alerts','permissionSettings','allowCloud','read','stopRead','localRequest','cloudRequest','reportAI','exportBlob']){methods.push([key,NotaPlatform[key]]);NotaPlatform[key]=['localRequest','cloudRequest','reportAI','exportBlob'].includes(key)?reject:quiet;}}
 function clearChoices(){document.querySelectorAll('.choice-overlay').forEach(el=>{el.querySelector('[data-choice-cancel]')?.click();if(el.isConnected)el.remove();});}
-function stop({notify=true}={}){if(!active())return;generation++;controller?.abort();controller=null;const s=source,callback=onFinish;onFinish=null;if(sandboxed()){clearChoices();closeModal();}for(const [key,value]of methods)NotaPlatform[key]=value;methods=[];NotaDeskMenu.close(false);if(s){state=s.state;currentView=s.currentView;zoom=s.zoom;listView=s.listView;selected=s.selected;$('#search').value=s.search;$('.desk').className=s.deskClass;releaseInert();render();if(s.boardStyle===null)$('#board').removeAttribute('style');else $('#board').setAttribute('style',s.boardStyle);$('#modal-root').append(s.fragment);activeEditor=s.activeEditor;mediaCleanup=s.mediaCleanup;editorItem=s.editorItem;editorField=s.editorField;suspendedEditor=s.suspendedEditor;if(suspendedEditor)document.body.append(suspendedEditor.fragment);$('#save-state').innerHTML=s.saveHTML;$('#board-scroll').scrollTo(...s.scroll);s.focus?.isConnected&&s.focus.focus({preventScroll:true});}source=null;phase='idle';trying=false;ready=false;complete=false;intro=false;pending=null;follower?.stop();recoveryMode='';mover?.reset();dialog?.close();document.body.classList.remove('tour-demo-active');if(notify)callback?.();}
+function stop({notify=true}={}){if(!active())return;generation++;controller?.abort();controller=null;const s=source,callback=onFinish;onFinish=null;if(sandboxed()){clearChoices();closeModal();}for(const [key,value]of methods)NotaPlatform[key]=value;methods=[];NotaDeskMenu.close(false);if(s){state=s.state;currentView=s.currentView;zoom=s.zoom;listView=s.listView;selected=s.selected;$('#search').value=s.search;$('.desk').className=s.deskClass;releaseInert();render();if(s.boardStyle===null)$('#board').removeAttribute('style');else $('#board').setAttribute('style',s.boardStyle);$('#modal-root').append(s.fragment);activeEditor=s.activeEditor;mediaCleanup=s.mediaCleanup;editorItem=s.editorItem;editorField=s.editorField;suspendedEditor=s.suspendedEditor;if(suspendedEditor)document.body.append(suspendedEditor.fragment);$('#save-state').innerHTML=s.saveHTML;$('#board-scroll').scrollTo(...s.scroll);s.focus?.isConnected&&s.focus.focus({preventScroll:true});}source=null;phase='idle';trying=false;ready=false;complete=false;intro=false;pending=null;freeTarget=null;follower?.stop();recoveryMode='';mover?.reset();dialog?.close();document.body.classList.remove('tour-demo-active');if(notify)callback?.();}
 
 function current(){return chapters()[chapter];}
 function guidance(){
@@ -93,7 +93,7 @@ function guidance(){
   if(inMenu&&!menu)return {anchor:found('#desk-menu-toggle'),mode:'open-menu'};
   if(anchor)return {anchor,mode:''};return {anchor:$('#demo-next'),mode:'return-step'};
  }
- let anchor=ready?found(current()?.steps[step]?.target):null;
+ let anchor=ready?(NotaTourPanel.available(freeTarget)?freeTarget:found(current()?.steps[step]?.target)):null;
  if(choice||menu&&anchor?.id!=='desk-menu-toggle'&&!anchor?.closest('#desk-launcher')||modal&&anchor&&!anchor.closest('.modal'))anchor=null;
  return {anchor:anchor|| (ready?$('#demo-next'):null),mode:''};
 }
@@ -133,7 +133,7 @@ function renderCoach(){
  dialog.style.setProperty('--tutor-pulse',(1.8/pace)+'s');dialog.classList.toggle('demo-trying',trying);if(!dialog.open)dialog.show();follower.start();requestAnimationFrame(()=>position());
 }
 async function run({rebuild=false,startAt=0}={}){
- rememberDraft();const token=++generation;controller?.abort();controller=new AbortController();const signal=controller.signal;ready=false;error='';complete=false;pending=null;actionIndex=-1;actionCount=0;
+ rememberDraft();const token=++generation;controller?.abort();controller=new AbortController();const signal=controller.signal;ready=false;error='';complete=false;pending=null;freeTarget=null;actionIndex=-1;actionCount=0;
  try{
   if(rebuild){clearChoices();closeModal();makeDesk();await current().enter(context(signal,true));for(let i=0;i<step;i++){check(signal);await current().steps[i].run?.(context(signal,true,false,0,i));}}
   check(signal);renderCoach();position(true);const ctx=context(signal,false,true,startAt);await current().steps[step].run?.(ctx);check(signal);if(token!==generation)return;
@@ -179,6 +179,9 @@ function wire(){
   if(!exampleClick&&p?.kind==='click'&&e.composedPath().some(el=>el.matches?.(p.selector))){p.activating=true;ready=false;renderCoach();setTimeout(()=>finishAction(p),0);}
  },true);
  document.addEventListener('input',e=>{if(e.isTrusted&&sandboxed()&&!dialog.contains(e.target)){edited.add(e.target);if(pending&&pending.kind!=='click'&&e.target.matches(pending.selector))rememberAction(pending,e.target);position();}},true);
+ // After an instruction finishes, make room for the control the person explores.
+ // Keep that anchor when focus returns to the guide so Next stays still.
+ document.addEventListener('focusin',e=>{if(sandboxed()&&ready&&!pending&&!intro&&!complete&&!dialog.contains(e.target)&&e.target.matches('input,textarea,select,button,summary,[contenteditable=true]')){freeTarget=e.target;position();}},true);
  document.addEventListener('nota-desk-menu-change',e=>{if(!sandboxed()||pending?.selector!=='#launcher-search')return;if(!e.detail.open)rememberDraft();else{const saved=answers.get(pending.key);if(saved)write(pending.selector,saved.value);}renderCoach();position();});
  const strokePoint=e=>{const p=pending;if(p?.kind!=='stroke')return;const el=$(p.selector);if(!el)return;const r=el.getBoundingClientRect();p.points.push([Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)),Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)),e.type,e.pointerType,e.pressure]);};
  let drawingPointer=null;document.addEventListener('pointerdown',e=>{if(pending?.kind==='stroke'&&e.target.matches(pending.selector)){drawingPointer=e.pointerId;strokePoint(e);}},true);document.addEventListener('pointermove',e=>{if(e.pointerId===drawingPointer)strokePoint(e);},true);document.addEventListener('pointerup',e=>{if(e.pointerId===drawingPointer){strokePoint(e);drawingPointer=null;}},true);document.addEventListener('pointercancel',e=>{if(e.pointerId===drawingPointer){strokePoint(e);drawingPointer=null;}},true);
