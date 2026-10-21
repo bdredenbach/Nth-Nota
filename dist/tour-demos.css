@@ -21,3 +21,6 @@
 
 /* Keep manual navigation outside the scrolling explanation on Safari too. */
 .demo-card{display:flex;flex-direction:column;overflow:hidden}.demo-card header{position:static;flex-shrink:0}.demo-scroll{min-height:0;flex:1 1 auto;overflow:auto;overscroll-behavior:contain}.demo-actions,.demo-practice-label{flex-shrink:0}
+#demo-state:empty{display:none}
+.tutorial-choices{display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);align-items:start;gap:12px;margin:24px 0 4px}.tutorial-choices button{width:100%;min-height:52px;padding:10px 8px;font-size:14px}.tutorial-choices .hint{margin:10px 0 0;font-size:12px}.tutorial-or{display:flex;flex-direction:column;align-items:center;gap:5px;height:52px;color:var(--muted)}.tutorial-or i{width:1px;flex:1;background:var(--line)}.tutorial-or em{font:italic 15px Georgia,serif;letter-spacing:.06em}
+@media(max-width:400px){.tutorial-choices{gap:6px;grid-template-columns:minmax(0,1fr) 26px minmax(0,1fr)}.tutorial-choices button{font-size:12px}}

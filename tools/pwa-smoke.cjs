@@ -44,6 +44,8 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
      await page.locator('#demo-grip').focus();const old=await page.locator('#demo-card').boundingBox();await page.keyboard.press('ArrowUp');assert((await page.locator('#demo-card').boundingBox()).y<=old.y);await page.keyboard.press('Home');await page.locator('#note-title').click();await page.locator('#note-title').fill('My own web practice');await page.locator('#demo-next').click();await page.waitForFunction(()=>NotaTourDemo.state.interaction?.selector==='#note-editor');assert.equal(await page.locator('#note-title').inputValue(),'My own web practice');await page.locator('#note-editor').fill('Typed by the person using the tutor.');await page.screenshot({path:path.join(out,name+'-interactive-tutor.png')});await page.locator('#demo-exit').click();assert.deepEqual(await page.evaluate(()=>state.items),before);
     });
     const audit=require('./tour-audit.cjs')({page,shot:async label=>page.screenshot({path:path.join(out,name+'-'+label+'.png')})});
+    await check('live and practice tutorials are distinct side-by-side choices',async()=>{await audit.launchRegression();});
+    await check('card movement, List view, note color and compact chat work on a phone',async()=>{await audit.practiceRefinements();});
     await check('Desk search follows real animation and resumes after menu detours',async()=>{await audit.menuRegression();});
     await check('every tour chapter uses its real highlighted controls with normal motion',async()=>{await audit.walkAll();});
     await check('unfinished writing and drawings survive backward navigation and recovery',async()=>{await audit.draftRegression();});

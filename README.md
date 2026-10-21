@@ -1,6 +1,14 @@
-# Nth Nota 0.13.6
+# Nth Nota 0.13.7
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## Tour refinements in 0.13.7
+
+Tutorial opens with adjacent **Start a live tour** and **Start tutorial** choices, separated by an ornamental OR. Live tips use the saved desk; the tutorial uses a temporary practice desk and labels it **Practice Only - Does not save**.
+
+Practice now waits for a real card drag by its three-line handle. Separate List and Canvas steps explain vertical, fixed cards and restore the chosen canvas arrangement. The writing companion lesson waits for a personal paper-color choice before opening the companion. Back retains that color and card position.
+
+The companion groups its writing controls in expandable options, folds them after sending, and uses more compact spacing to leave room for the conversation. Both send actions remain available. See [tour refinement notes](docs/0.13.7-tour-refinements.md).
 
 ## Tour action fixes in 0.13.6
 

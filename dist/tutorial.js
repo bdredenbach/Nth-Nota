@@ -141,6 +141,6 @@ window.NotaTour={
  start(replay=false){if(window.NotaTourDemo?.active)NotaTourDemo.stop({notify:false});wire();if(busy)return;if(area){area=null;hide();}closeModal();dismissMenu();enabled=true;if(replay)seen.clear();persist();open('desk',{first:true,force:true});},
  guide(id){if(window.NotaTourDemo?.active)return;wire();if(area){area=null;hide();}open(id,{force:true});},
  queue,wire,skip:()=>finish({skip:true}),get active(){return !!area;},get enabled(){return enabled;},setEnabled(value){enabled=!!value;persist();if(!enabled&&area)finish();},
- get state(){return {area,index,enabled,seen:[...seen]};}
+ dismiss(){area=null;intro=false;hide();},get state(){return {area,index,enabled,seen:[...seen]};}
 };
 })();
