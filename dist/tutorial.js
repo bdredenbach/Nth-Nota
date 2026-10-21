@@ -6,6 +6,8 @@ const FULL_TOURS_ENABLED=false;
 const KEY='nota-tour-v2', $=s=>document.querySelector(s);
 const tip=(target,title,text,extra={})=>({target,title,text,...extra});
 const areas={
+ spinner:{label:'Fidget Spinner',tips:[tip('#spinner-widget','A little room to unwind.','Tap to spin, or flick and drag the shape. Choose a shape and palette below. Stop brings it to rest. You can spin it right on the canvas, too.',{tryLabel:'Let me spin'})]},
+ dice:{label:'Dice Tray',tips:[tip('#dice-widget','Roll for your next adventure.','Choose quantities for any of the seven dice types, or pick Classic seven. Roll dice shows every result and a total. Your last 20 rolls stay with this tray.',{tryLabel:'Let me roll'})]},
  scanner:{label:'Scanner',tips:[tip('#scan-import','Turn paper into pages.','Scan a document or import pictures, then rotate, trim and export a PDF.',{tryLabel:'Let me scan'})]},
  index:{label:'Index Builder',tips:[tip('#index-tabs','A custom reference, in tabs.','Create entries with their own tags and fields. Link an entry to another tab to keep the relationships close.',{tryLabel:'Let me build an index'})]},
  snippets:{label:'Snippet Shelf',tips:[tip('#snippet-editor','Save it once, use it again.','Keep reusable text here. The Snippet Shelf button in a writing editor inserts a block at your cursor.',{tryLabel:'Let me make a block'})]},
@@ -85,6 +87,7 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s){seen=new Set((s.
 try{if(localStorage.getItem('nota-math-guide-revision')!=='2'){seen.delete('math');localStorage.setItem('nota-math-guide-revision','2');}}catch{}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({enabled,seen:[...seen]}));remembered=true;}catch{remembered=false;}}
 function currentArea(){
+ if($('#spinner-widget'))return 'spinner';if($('#dice-widget'))return 'dice';
  if($('#scan-notes'))return 'scanner';if($('#index-tabs'))return 'index';if($('#snippet-browser'))return 'snippets';if($('#habit-tabs'))return 'streak';if($('#flash-editor'))return 'flash';if($('#rem-title')||$('#reminders-list'))return 'reminders';
  if($('#permissions-done')||$('#privacy-policy')||$('#report-send')||$('#report-consent')||$('#transcript-text'))return null;
  if($('#calc-expression'))return 'calculator';if($('#choice-options'))return 'choice';if($('#reference-browser'))return 'reference';if($('#budget-rows'))return 'budget';if($('#calendar-days'))return 'calendar';if($('#photo-text'))return 'photo';if($('#journal-date'))return 'journal';if($('#map-stage'))return 'mindmap';if($('#math-rows'))return 'math';if($('#handwrite-pad'))return 'handwriting';if($('#audio-transcript'))return 'audio';if($('#task-alert-save'))return 'alerts';if($('#task-title'))return 'tasks';if($('#note-editor'))return 'note';if($('#draw-canvas'))return 'drawing';if($('#record-start'))return 'voice';if($('#ai-message'))return 'assistant';if($('#saved-search'))return 'saved';if($('#layout-setting'))return 'settings';if($('#save-backup'))return 'backup';return null;

@@ -56,6 +56,8 @@ const report={version:require('../package.json').version,basePath:prefix,checks:
      await check('full walkthroughs stay disabled and first-visit tool tips remain usable',async()=>{await audit.tipsOnlyRegression();});
      await check('all Desk categories open by default and search respects manual collapses',async()=>{await audit.expandedMenuRegression();});
     }
+    const miscTool=async action=>{if(await page.locator('.modal').count())await page.locator('#close-modal').click();await page.locator('#desk-menu-toggle').click();const button=page.locator('[data-launch-action="'+action+'"]'),category=page.locator('[data-launch-category="misc"]');if(await category.getAttribute('aria-expanded')==='false')await category.click();await button.click();};
+    await require('./misc-widgets-ui.cjs')({page,check,tool:miscTool,shot:async label=>page.screenshot({path:path.join(out,name+'-'+label+'.png')})});
     await check('a note survives online reload and an offline app launch',async()=>{
      await page.locator('#desk-menu-toggle').click();const tool=page.locator('[data-launch-action="note"]'),category=tool.locator('xpath=ancestor::section[contains(@class,"launcher-category")]').locator('[data-launch-category]');if(await category.getAttribute('aria-expanded')==='false')await category.click();await tool.click();
      await page.locator('#note-title').fill('An iPhone testing note');await page.locator('#note-editor').fill('These words stay on this phone, including offline.');await page.locator('#note-done').click();await page.waitForFunction(()=>document.querySelector('#save-state')?.textContent.includes('Saved on device'));
