@@ -46,7 +46,7 @@ const areas={
  ]},
  assistant:{label:'Writing companion',tips:[
   tip('.ai-task-tabs','Choose a helping hand.','Proofread, Polish, Chat & ideas, Draft, Summarize and Organize shape the help you receive. Write a message below, then Send. A reply is a suggestion; your note stays unchanged.'),
-  tip('#ai-message','Your words, your choice.','Local AI is tried first. With your consent, Cloudflare or configured Groq can receive your request, selected text or current note context, and recent chat when local AI is unavailable. No message is sent by taking this tour.',{permission:'cloud',tryLabel:'Let me try the companion'})
+  tip('#ai-message','Choose how AI can help.','Local AI is tried first. With your consent, Cloudflare or configured Groq can receive your request, selected text or current note context, and recent chat when local AI is unavailable. No message is sent by taking this tour.',{permission:'cloud',tryLabel:'Let me try the companion'})
  ]},
  audio:{label:'Audio & transcript',tips:[tip('#audio-player','Keep the sound and the words together.','Play your recording here. Convert to text creates a transcript inside this same note on supported phones. You can review and edit the words below.',{tryLabel:'Explore this audio note'})]},
  photo:{label:'Photo to text',tips:[tip('#photo-pick','Keep the source close.','Choose a clear photo of printed text. Extract text reads it on this device. The original photo stays with the note.'),tip('#photo-text','Make the words yours.','Check and edit the text. Choose text blocks to use only part of the photo, then Save to workspace.',{tryLabel:'Let me try'})]},
