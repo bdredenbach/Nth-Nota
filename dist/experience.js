@@ -83,7 +83,7 @@ function installEditorCompanion(item,{dates=true}={}){
  const body=$('.modal-body');
  if(['sketch','image','pdf'].includes(item.type)){body.insertAdjacentHTML('beforeend',`<label class="field">Notes about this ${item.type==='pdf'?'document':item.type==='image'?'image':'drawing'}<textarea id="editor-caption" rows="3" maxlength="100000">${esc(item.caption||'')}</textarea></label>`);$('#editor-caption').oninput=e=>{item.caption=e.target.value;touch(item);};}
  if(!$('#note-ai')&&!$('#mode-ai')){body.insertAdjacentHTML('beforeend','<button id="editor-companion" class="secondary mode-assist"><i data-lucide="sparkles"></i> '+(item.inputMode==='handwriting'?'Proofread with Writing Companion':'Writing companion')+'</button>');$('#editor-companion').onclick=()=>assistant(item);}
- installSnippetButton(item,body);if(dates)installDateMemory(item,body);body.addEventListener('input',e=>{if(isWritingField(e.target))editorField=e.target;});body.addEventListener('focusin',e=>{if(isWritingField(e.target)&&!e.target.classList.contains('editor-title'))editorField=e.target;});
+ installSnippetButton(item,body);NotaPolish.install(item,body);if(dates)installDateMemory(item,body);body.addEventListener('input',e=>{if(isWritingField(e.target))editorField=e.target;});body.addEventListener('focusin',e=>{if(isWritingField(e.target)&&!e.target.classList.contains('editor-title'))editorField=e.target;});
 }
 function isWritingField(el){return el?.matches('textarea:not(:disabled):not([readonly]),input:not(:disabled):not([readonly]):is([type=text],:not([type])),[contenteditable=true]');}
 function suspendWritingEditor(item,excerpt){

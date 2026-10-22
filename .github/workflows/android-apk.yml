@@ -68,12 +68,12 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           mkdir -p artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.14.0.apk
-          sha256sum artifacts/Nth-Nota-0.14.0.apk > artifacts/SHA256SUMS.txt
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/Nth-Nota-0.15.0.apk
+          sha256sum artifacts/Nth-Nota-0.15.0.apk > artifacts/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Nth-Nota-0.14.0-preview
+          name: Nth-Nota-0.15.0-preview
           path: artifacts/*
           if-no-files-found: error
           retention-days: 30
@@ -108,14 +108,14 @@ jobs:
       - name: Download the verified Android build
         uses: actions/download-artifact@v4
         with:
-          name: Nth-Nota-0.14.0-preview
+          name: Nth-Nota-0.15.0-preview
           path: release-build
       - name: Publish the verified APK
         shell: bash
         run: |
           set -euo pipefail
-          tag=v0.14.0
-          apk=Nth-Nota-0.14.0.apk
+          tag=v0.15.0
+          apk=Nth-Nota-0.15.0.apk
           read -r expected ignored < release-build/SHA256SUMS.txt
           test "${#expected}" = 64
           printf '%s  %s\n' "$expected" "release-build/$apk" | sha256sum --check --strict
@@ -123,21 +123,21 @@ jobs:
           cp "release-build/$apk" publish/
           (cd publish && sha256sum "$apk" > SHA256SUMS.txt)
           cat > release-notes.md <<'NOTES'
-          Android preview of Nth Nota 0.14.0.
+          Android preview of Nth Nota 0.15.0.
 
-          Download **Nth-Nota-0.14.0.apk** below to install or update the Android app.
+          Download **Nth-Nota-0.15.0.apk** below to install or update the Android app.
 
-          - New Miscellaneous category with Fidget Spinner and Dice Tray canvas widgets.
-          - Six spinner shapes, flick controls, shaded finishes, six palettes and custom colors.
-          - Mixed quantities of all seven RPG dice, animated rolls, totals and saved roll history.
-          - Offline support, portable backups and short first-visit tips; full tours stay disabled.
+          - Search Desk by a job or everyday term, and reopen recently used tools.
+          - Link related items across canvases and make connected tasks from selected writing.
+          - Shared writing controls and accurate tool names across the canvas and saved items.
+          - Visible saving feedback, retry and backup recovery, and draft capture when leaving the app.
 
           [Open the web app for iPhone or desktop](https://bdredenbach.github.io/Nth-Nota/).
           NOTES
           printf '\nVerified build commit: %s. SHA256SUMS.txt contains the APK checksum.\n' "$GITHUB_SHA" >> release-notes.md
           if ! gh release view "$tag" > /dev/null 2>&1; then
             test "$(gh api "repos/$GH_REPO/branches/main" --jq .commit.sha)" = "$GITHUB_SHA"
-            gh release create "$tag" --target "$GITHUB_SHA" --draft --prerelease --title 'Nth Nota 0.14.0 · Android preview' --notes-file release-notes.md
+            gh release create "$tag" --target "$GITHUB_SHA" --draft --prerelease --title 'Nth Nota 0.15.0 · Android preview' --notes-file release-notes.md
           fi
           if gh release download "$tag" --pattern "$apk" --dir existing-apk 2>/dev/null; then
             printf '%s  %s\n' "$expected" "existing-apk/$apk" | sha256sum --check --strict

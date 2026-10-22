@@ -1,12 +1,24 @@
-# Nth Nota 0.14.0
+# Nth Nota 0.15.0
 
-**[Download Nth Nota 0.14.0 for Android (APK)](https://github.com/bdredenbach/Nth-Nota/releases/download/v0.14.0/Nth-Nota-0.14.0.apk)**
+**[Download Nth Nota 0.15.0 for Android (APK)](https://github.com/bdredenbach/Nth-Nota/releases/download/v0.15.0/Nth-Nota-0.15.0.apk)**
 
-[Release notes & downloads](https://github.com/bdredenbach/Nth-Nota/releases/tag/v0.14.0) · [Open the web app](https://bdredenbach.github.io/Nth-Nota/)
+[Release notes & downloads](https://github.com/bdredenbach/Nth-Nota/releases/tag/v0.15.0) · [Open the web app](https://bdredenbach.github.io/Nth-Nota/)
 
 For iPhone testing, open the web app in Safari and choose **Share → Add to Home Screen**.
 
 An Nth Experience app for notes, sketches, tasks and ideas. Includes the offline browser editor and Android preview project. No paid AI service or client-side cloud key is configured. The Android preview connects to the owner’s free gateway when Cloud AI is enabled. It defaults on for new installs; previous opt-outs are respected.
+
+## A more connected desk in 0.15.0
+
+Desk search understands everyday jobs such as “birthday”, “reusable email”, “study” and “RPG dice”. Recently used tools stay close, and all six categories still start expanded. Cards and Saved notes use the same tool names.
+
+Every item editor has **Connected items** beside its canvas picker. Link existing items across canvases and follow the link in either direction. Tasks, remembered calendar dates, map notes and reference notes also reveal their existing relationships. Removing a manual connection keeps both items.
+
+**Work with this writing** groups Writing companion, Snippet Shelf and **Make it a task**. Select a passage or use the current writing field, review the task, and create it with a connection back to its source. The original writing is kept.
+
+Editor headers show saving progress and saved state. A failed save offers **Retry saving** and **Keep a backup**, and closing an editor reports success after its save completes. Leaving the app captures the active draft before flushing it to the device. Backups include connections and recently used tools.
+
+Full tours remain disabled; first-visit tips remain available. See [polish and connection notes](docs/0.15.0-cohesion.md).
 
 ## New in 0.14.0
 
