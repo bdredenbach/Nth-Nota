@@ -1,77 +1,110 @@
-# Free cloud activation for the app owner
+# Free cloud assistance for Nth Nota and Nth Desktop
 
-Status on October 19, 2026: the owner confirmed Workers Free and manually deployed the gateway. A live dashboard HTTP proofreading test returned 200 with corrected text. No Groq account/key is connected, and the Android app path still needs device testing. The APK works independently with on-device assistance on supported phones. This gateway is for the Android prototype; the hosted browser app does not call it yet.
+The launcher uses this owner-operated Cloudflare Worker after the user enables **Cloud questions for Nth Nota AI** and sends a message. The standalone Nota app tries on-device assistance first and uses the same writing endpoint after cloud opt-in. No provider credentials are included in the APK.
 
-## Route and cost controls
+## Task routing and automatic recovery
 
-The app tries Gemini Nano on the phone first. With the user's cloud opt-in, an unavailable or quota-limited local engine falls back to the owner-operated Cloudflare Worker. The Worker tries Cloudflare Workers AI (Llama 3.1 8B FP8 fast), then optionally Groq (GPT OSS 20B) when the first provider is unavailable. Safety/invalid-input failures stop rather than trigger provider hopping. The system does not create accounts or rotate API keys to circumvent limits.
+| Task | Preferred model | Backup model |
+| --- | --- | --- |
+| Proofread, polish, summarize, launcher-setting explanations | Cloudflare Workers AI: Llama 3.1 8B FP8 fast | Groq: GPT-OSS 20B |
+| General conversations, brainstorming, creative writing | Groq: GPT-OSS 20B | Cloudflare Workers AI: Llama 3.1 8B FP8 fast |
+| Answer synthesis using retrieved public excerpts | Groq: GPT-OSS 20B | Cloudflare Workers AI: Llama 3.1 8B FP8 fast |
+| Live web retrieval | Tavily Basic Search | Exa Auto Search, only when its secret is configured |
 
-Use a **Workers Free** account and, optionally, a **Groq Free** account. Do not enable Workers Paid, prepaid AI Gateway credits, Groq Developer billing, or any automatic upgrade. As checked October 18, 2026, Workers Free includes 10,000 neurons/day and fails beyond that allowance. Quotas belong to the owner's account, so other apps can consume them. Groq's actual limits must be checked in the account console. Model availability and free terms can change; recheck before public rollout.
+Both model providers can cover all supported model tasks. Missing keys are skipped. An absent AI binding still permits Groq. Network errors, timeouts, rate limits, authentication errors, empty/truncated replies and malformed structured answers can trigger a single alternate-provider attempt. Safety refusals and invalid client requests stop without hopping models. No same-provider retry loops, key rotation, account creation, paid model selection or built-in Groq search/code tools are used.
 
-`FREE_ONLY_CONFIRMED=yes` is the owner's explicit deployment check, not an API that verifies billing. The app/router cannot prevent an owner from later changing provider billing. Remaining on the providers' free account plans is the external hard billing boundary.
+Failures set a D1 cooldown shared across Worker instances. Rate limits honor Retry-After when available; temporary failures normally rest for one minute, credential failures for ten minutes, daily compute exhaustion until the next UTC day, and search credit exhaustion until the next UTC month. A provider is eligible again automatically after its cooldown. A long prompt that cannot fit Groq's conservative free-minute budget uses Cloudflare without marking Groq down for smaller questions.
 
-The gateway also has conservative fixed limits: 50 requests/day for the whole app, 15/day per connection, 16,000 prompt characters, and 512 output tokens. Both successful and failed provider attempts count as requests. Daily caps reset at 00:00 UTC. D1 claims are atomic across Worker instances; failures in quota storage stop inference. Provider cooldowns are shared by all clients. Do not treat these counts as an exact neuron/token measurement. Provider-enforced free limits remain authoritative.
+Each inference attempt has a 12-second response deadline, search attempts have eight seconds, and the whole provider workflow has a 48-second deadline. An HTTP timeout aborts its fetch. A timed-out Workers AI binding call cannot be guaranteed canceled upstream, so its reserved compute remains charged against the local budget and late output is ignored.
 
-## Owner setup
+## Free-only boundaries and shared budgets
 
-1. Create a [Cloudflare Free account](https://dash.cloudflare.com/sign-up). Keep Workers on Free. Install Node.js 22+, open a terminal in this repository's `cloud` folder, then run:
+The owner must keep **Workers Free**, **Groq Free**, and **Tavily's free Researcher plan with pay-as-you-go disabled**. Optional Exa must remain on its free Starter allowance without paid usage. `FREE_ONLY_CONFIRMED=yes` records that owner check; it does not inspect the billing status of any account. API keys cannot prove an account is on a free plan. Provider-enforced free limits are the external hard billing boundary.
 
-   ```sh
-   cp wrangler.example.jsonc wrangler.jsonc
-   npx wrangler@4 login
-   npx wrangler@4 d1 create nth-nota-ai-quota
-   ```
+Keep the existing global cap of **50 user requests/day** and **15/day per connection**. These are shared by the launcher and other apps using the Worker, including failed attempts. A chat needs at most two model phases and one successful search; each phase may attempt two configured providers. Request caps reset at 00:00 UTC.
 
-2. Put the returned database ID into the `DB` binding in `wrangler.jsonc`. After checking the account is on Free, change `FREE_ONLY_CONFIRMED` from `no` to `yes`. Apply the migration and set a random salt used only to hash daily quota identities:
+Additional fixed, atomic D1 reservations limit traffic from this gateway:
 
-   ```sh
-   npx wrangler@4 d1 migrations apply nth-nota-ai-quota --remote
-   openssl rand -hex 32 | npx wrangler@4 secret put IP_HASH_SALT
-   ```
+| Provider budget | Local limit |
+| --- | --- |
+| Cloudflare inference | 9,000 estimated Neurons/day |
+| Groq inference | 180,000 reserved tokens/day; 7,500/minute; 900 requests/day; 25/minute |
+| Tavily Basic Search | 900 search attempts/calendar month |
+| Optional Exa | 500 search attempts/calendar month |
 
-3. Deploy with `npx wrangler@4 deploy`. The Worker will provide its HTTPS address. In [GitHub repository variables](https://github.com/bdredenbach/Nth-Nota/settings/variables/actions), add `NOTA_AI_GATEWAY_URL` with value `https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev/v1/write`. This public endpoint is not a secret. Run the **Nth Nota Android preview** workflow manually and install its newly built APK. Users can then enable **Allow free cloud assistance** in Settings.
+Input reservations use UTF-8 byte counts plus message overhead as a deliberately conservative token bound and include the maximum output allowance. Groq's 1,536 completion-token allowance includes its reasoning; Cloudflare retains 768 chat/512 writing output tokens. These are reservations, not a billing meter; failed and timed-out attempts are not refunded. Sequential budget claims can reserve capacity even when a later claim fails. The provider's own free quotas, pricing and usage elsewhere on the account remain authoritative. Current model rates and account limits must be reviewed before changing models or these budgets.
 
-Optional second provider: create a free [Groq account](https://console.groq.com/), verify its current Free plan and limits, and run `npx wrangler@4 secret put GROQ_API_KEY` in this folder. Enter the key at the terminal prompt. Never paste keys into chat, source code, the APK, or a GitHub repository variable. Use `npx wrangler@4 secret delete GROQ_API_KEY` to remove that provider. One Cloudflare account is enough to begin.
+Tavily calls explicitly set `search_depth: basic`, `auto_parameters: false`, `include_answer: false`, and no raw-page retrieval or images. A basic search currently uses one credit. Optional Exa requests Auto search, three results and bounded text only; its local cap leaves room within the published $10/month Starter credit at checked rates. Unexpected reported costs put the affected search provider on cooldown for the rest of the month for owner review.
 
-`wrangler.jsonc`, local secrets and Wrangler state are ignored by git. The example file has cloud activation off. No deploy workflow runs automatically. The repository now supplies the verified public endpoint through `android/ai-gateway.properties`. A nonempty `NOTA_AI_GATEWAY_URL` environment variable overrides it. Clear the properties-file URL to build with no gateway. Cloud permission defaults to off.
+Search quotas are stored with the final date of their month as their expiry key. The daily cleanup therefore retains the active monthly counter, then removes it two days after that month ends. No new database table or migration is required. If usage storage fails, new inference/search stops before an unmetered request is sent. A model never substitutes remembered current facts when search is unavailable; the launcher offers a manual browser search instead. Model outages after retrieval retain the retrieved source links.
 
-## Privacy and prototype limits
+## Existing owner setup: Groq and Tavily secrets already saved
 
-Only the current request, selected passage/note context and recent conversation are sent, after opt-in. The Worker sends them to Cloudflare and optionally Groq for inference. D1 stores day, a salted daily IP hash, counters and provider cooldowns; it does not store prompts, replies, raw IPs, or keys. The scheduled handler deletes old quota rows daily when the Cron Trigger is configured. The manually deployed Worker still needs that trigger; confirmation is pending. Worker observability is disabled in the example. Provider processing/retention policies and infrastructure metadata still apply; this is not end-to-end encrypted cloud inference.
+The owner screenshot on November 17, 2026 shows these existing production settings:
 
-This prototype endpoint is public and intentionally has no embedded shared secret (an APK cannot keep one). CORS is an origin filter, not authentication. Someone outside the app can consume the capped free allowance. Per-IP quotas can be shared by a household/network. Add proper per-install authentication/attestation and abuse protection before a public release. Do not remove global caps to compensate for abuse. No secret is returned to clients and clients cannot choose models, upstream URLs or paid options.
+- Variable `FREE_ONLY_CONFIRMED=yes`.
+- Encrypted secrets `GROQ_API_KEY`, `TAVILY_API_KEY`, `IP_HASH_SALT`.
+- Workers AI binding `AI` and existing D1 binding `DB` (`nth-nota-ai-quota`).
 
-After deployment, validate real proofreading and idea-board requests on the target phone, local-only operation in airplane mode after model preparation, consent-off network behavior, local-to-cloud switching, provider quota exhaustion and reset, and opt-out/cancellation. Automated tests use mocked providers and do not claim live cloud inference.
+The screenshot confirms names/bindings, not successful authentication or billing settings. Preserve all existing keys, bindings and data. There is no need to recreate a secret or paste it into chat.
 
-References:
+Deploy the updated code to the **existing** `nth-nota-free-ai` Worker. `cloud/dashboard-worker.mjs` is the self-contained dashboard version. Regenerate it after source changes:
+
+```sh
+node tools/package-chat-worker.cjs cloud/dashboard-worker.mjs
+node --check cloud/dashboard-worker.mjs
+```
+
+In Cloudflare: **Workers & Pages → nth-nota-free-ai → Edit code**, replace the current module with the complete dashboard version, and **Deploy**. Keep the Worker's existing AI and DB bindings and encrypted secrets. `NOTA_WEB_SEARCH` can be absent or `auto`; the existing Tavily secret then enables search. `off` explicitly disables search. `tavily` or `exa` selects that search service alone. Old `NOTA_SEARCH_BILLING_CONFIRMED`, Gateway IDs and key-alias settings are no longer used; Cloudflare Web Search/AI Gateway credits are never called by this free-only implementation.
+
+If desired, add an encrypted `EXA_API_KEY` later to activate the prepared Tavily-to-Exa search fallback while `NOTA_WEB_SEARCH` is absent or `auto`. Without that key there is one search provider; Cloudflare and Groq still provide model failover.
+
+Ensure **Settings → Trigger events → Cron triggers** includes `7 0 * * *` (00:07 UTC daily) for quota/report cleanup. The exported `scheduled` handler performs this cleanup, but deploying code alone does not create a dashboard Cron Trigger. The example Wrangler config includes it for CLI deployment.
+
+The existing launcher 0.9.6 already supports this `/v1/chat` contract, so the routing change does not require a new APK. After deployment:
+
+1. Open `https://nth-nota-free-ai.bdredenbach.workers.dev/v1/capabilities`. Expected: `{"chatVersion":1,"webSearch":true}` when the existing Tavily key is configured. This checks configuration without spending a model/search call.
+2. Send a simple explanation, then a follow-up in the launcher; both should remain in the same conversation.
+3. Ask for current information or choose **Web: Always**. Check that source buttons open supporting pages and the reply's content agrees with their dates.
+4. Confirm Groq/Tavily usage dashboards show the small test requests and no paid plan/automatic refill has been enabled.
+
+Do not deliberately exhaust real provider allowances to test failover. Automated outage, recovery, concurrency and quota tests use synthetic providers and an actual SQLite concurrency check. Live behavior still needs verification after deployment with the owner's real secrets.
+
+## New installations using Wrangler
+
+Copy `cloud/wrangler.example.jsonc` to `cloud/wrangler.jsonc`, create the `nth-nota-ai-quota` D1 database, set its ID, apply `cloud/migrations`, and add an encrypted random `IP_HASH_SALT`. Keep Workers on Free and set `FREE_ONLY_CONFIRMED=yes` after checking the provider accounts. Optional provider keys are encrypted Worker secrets. From `cloud`, use the official Wrangler commands:
+
+```sh
+npx wrangler@4 login
+npx wrangler@4 d1 migrations apply nth-nota-ai-quota --remote
+npx wrangler@4 secret put IP_HASH_SALT
+npx wrangler@4 secret put GROQ_API_KEY
+npx wrangler@4 secret put TAVILY_API_KEY
+npx wrangler@4 deploy
+```
+
+Keep local secrets and `wrangler.jsonc` out of git. A nonempty `NOTA_AI_GATEWAY_URL` overrides the standalone app's endpoint in `android/ai-gateway.properties`. No deployment workflow or paid subscription is created by this source change.
+
+## API, consent and privacy
+
+`POST /v1/chat` accepts a question, up to six completed user/assistant exchanges, `auto`/`search` mode, timezone, optional launcher-setting reference values, and `consentAccepted: true`. `POST /v1/write` preserves the existing proofread/polish/brainstorm/generate/summarize contract. `POST /v1/report` and `GET /privacy` are preserved. `GET /v1/capabilities` exposes only conversation version and configured-search availability, consumes no quota, and never exposes provider credentials or remaining account budgets.
+
+The model decides whether search is needed and resolves follow-ups. Search returns at most three safe HTTPS result links with bounded excerpts. The synthesis must cite valid source IDs and exact supporting quotes; unsupported output is replaced by an honest unavailable answer and source links. This checks provenance rather than guaranteeing that every claim is correct or current. Retrieved pages are untrusted reference material; they cannot change device settings or run actions.
+
+Only an explicitly sent, opted-in request and its bounded context enter the cloud path. Task routing/failover can process that request with Cloudflare or Groq. Search terms go directly from the Worker to Tavily or optional Exa; excerpts then go to the selected model. The Worker does not store prompts, responses, conversation histories, search terms or sources in D1. D1 holds daily salted-IP request counters, anonymous provider budget counters and cooldowns; explicitly submitted AI reports have their separate existing retention policy. Provider processing and operational metadata policies apply independently. See `dist/privacy.html` and the Worker's identical `/privacy` policy.
+
+The endpoint is public; CORS is an origin filter, not authentication. Per-IP caps can be shared by a household. The global cap limits abuse exposure; production authentication/attestation remains a separate rollout consideration. Client requests cannot choose provider URLs, models, API keys, billing settings or budgets. Turning cloud consent off, Stop or leaving the screen cancels client delivery, but cannot retract provider processing already completed.
+
+## Validation
+
+Run `node --test checks/gateway.test.cjs checks/chat-gateway.test.cjs checks/free-providers.test.cjs checks/reports.test.cjs` for focused backend coverage, and `npm test` for the complete Nota suite. Tests cover both directions of model fallback, shared cooldown and recovery, malformed output, search fallback, consent, request caps, monthly reset/cleanup, concurrent atomic reservations, storage failures, safety handling, source validation and the dashboard bundle.
+
+References checked November 17, 2026:
+
 - https://developers.cloudflare.com/workers-ai/platform/pricing/
-- https://developers.cloudflare.com/workers-ai/configuration/bindings/
-- https://developers.cloudflare.com/d1/worker-api/prepared-statements/
-- https://developers.cloudflare.com/workers/wrangler/commands/
 - https://console.groq.com/docs/rate-limits
 - https://console.groq.com/docs/text-chat
-
-## Completing the manual dashboard deployment
-
-The owner has already completed Worker creation, free-plan verification, AI and DB bindings, schema creation, encrypted IP hash salt, `FREE_ONLY_CONFIRMED=yes`, disabled observability, code deployment and an HTTP proofreading test. The runtime currently has no Groq secret, so cloud inference uses Cloudflare alone.
-
-In the Worker’s **Settings**, scroll to **Trigger events → Cron triggers → Add**. Use the custom cron expression `7 0 * * *` (00:07 UTC daily) and save. The gateway’s scheduled handler then deletes quota rows older than two days. This is the dashboard equivalent of `triggers.crons` in the example Wrangler file. Do not alter any free-plan or billing setting.
-
-Install the 0.3.1 Android preview, open Settings, turn on **Allow free cloud assistance**, then try proofreading from a note’s writing companion. On-device assistance is attempted first, so a supported phone may answer locally. Cloud replies are labelled as processed with free cloud assistance. No in-app end-to-end result has yet been claimed.
-
-
-## Launcher conversations and optional web search
-
-The separate `/v1/chat` endpoint accepts a question, up to six completed user/assistant exchanges, an `auto` or `search` mode, the user's timezone, optional launcher-setting reference values and `consentAccepted: true`. It uses conversational instructions and up to 768 output tokens. `/v1/write` retains its existing tasks, writing instructions and 512-token output limit. Both endpoints share the existing atomic 15-per-connection and 50-global daily request caps. A chat invokes at most two model calls and one search per request; these request caps are not exact compute limits. Provider-enforced free quotas remain authoritative.
-
-`GET /v1/capabilities` exposes only `chatVersion: 1` and a `webSearch` availability boolean. It does not invoke a model, consume an AI request allowance or reveal credentials. The launcher calls it only after an explicitly sent, cloud-enabled question. Older deployed Workers return no capability; the launcher falls back to the existing writing endpoint with bounded conversation context and clearly labels replies that did not use web search.
-
-A model decides whether a question needs search, using conversation context to resolve follow-ups. Stable explanations and creative/planning requests can be answered directly. The system explicitly says when live search is unavailable. Optional search returns provider result excerpts, not full-page browsing. Source URLs come only from validated provider responses. A factual search answer must reference valid source IDs and exact supporting quotes in the excerpts; unverified output is replaced by an unavailable message and the retrieved source links. This checks citation provenance, not a guarantee that every claim is true or that a source is current.
-
-Search is **off by default**. This patch does not add credits, change any plan, create a provider account, deploy the Worker or enable billing. Do not set `NOTA_SEARCH_BILLING_CONFIRMED=yes` as part of the free-only setup above. Cloudflare Web Search uses AI Gateway credits or a separately configured search-provider key. If the owner separately chooses a funded search arrangement, configure its budget and provider credentials first, then set `NOTA_WEB_SEARCH=cloudflare`, `NOTA_SEARCH_BILLING_CONFIRMED=yes`, and optionally `NOTA_SEARCH_GATEWAY` and `NOTA_SEARCH_KEY_ALIAS`. With a key alias, an absent provider key fails rather than falling back to credits. The runtime must support `env.AI.websearch`. Neither an API key nor a payment option is accepted from the Android client.
-
-Conversation messages and search terms are processed by the configured services. The Worker does not store prompts, replies or conversation histories in D1; only the existing quota/cooldown records are written. Cloudflare/AI Gateway and search-provider logging/retention are separate. Launcher conversations are stored on the device, outside desktop backups and presets, with up to 12 conversations and 24 exchanges each. Recent completed cloud exchanges become follow-up context; local actions, failures and canceled replies are excluded.
-
-For dashboard deployment, `node tools/package-chat-worker.cjs /path/to/Nth-Nota-Cloud-Worker.mjs` produces one self-contained module from `cloud/worker.mjs` and `cloud/chat.mjs`. It preserves the existing writing/report/privacy routes, bindings and limits. Replace the existing Worker's code only after reviewing and testing the bundled module. Keep AI, DB and existing secrets bound; no new secret is needed for conversation-only use. Leave both search variables off for free-only operation.
-
-References: [Cloudflare Web Search integration](https://developers.cloudflare.com/web-search/how-to-use/) and [search providers and prices](https://developers.cloudflare.com/web-search/providers/).
+- https://docs.tavily.com/documentation/api-reference/endpoint/search
+- https://help.tavily.com/articles/8298987937-billing-credits-usage-limits
+- https://exa.ai/pricing/
+- https://exa.ai/docs/reference/search
