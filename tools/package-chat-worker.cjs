@@ -9,4 +9,4 @@ const inline=file=>fs.readFileSync(path.join(root,'cloud',file),'utf8')
  .replace(/^export \{.*\} from ['"].*['"];\n/gm,'')
  .replace(/^export (?!default)/gm,'');
 const files=['free-providers.mjs','chat.mjs','worker.mjs'];
-fs.writeFileSync(destination,'// Generated from cloud/{free-providers,chat,worker}.mjs. Keep provider accounts on Free.\n'+files.map(inline).join('\n'));
+fs.writeFileSync(destination,'// Nth Nota free gateway v2. Generated from cloud/{free-providers,chat,worker}.mjs. Keep provider accounts on Free.\n'+files.map(inline).join('\n'));

@@ -9,7 +9,7 @@ const refs=[{title:'Rainbow science',url:'https://science.example/rainbows',text
 test('capabilities detect encrypted search keys without any model or search request',async()=>{
  const {handle}=await worker,e=env();e.AI.run=()=>{throw Error('must not run');};e.AI.websearch=()=>{throw Error('must not enable paid search');};
  const get=()=>new Request('https://gateway.example/v1/capabilities');
- assert.deepEqual(await(await handle(get(),e)).json(),{chatVersion:1,webSearch:false});
+ assert.deepEqual(await(await handle(get(),e)).json(),{chatVersion:1,gatewayVersion:2,webSearch:false,pageReading:false,configuredProviders:{models:['cloudflare'],search:[],pages:[]},contextProviderRequired:false});
  e.TAVILY_API_KEY='test-only';assert.equal((await(await handle(get(),e)).json()).webSearch,true);
  e.NOTA_WEB_SEARCH='off';assert.equal((await(await handle(get(),e)).json()).webSearch,false);
  e.NOTA_WEB_SEARCH='cloudflare';e.NOTA_SEARCH_BILLING_CONFIRMED='yes';assert.equal((await(await handle(get(),e)).json()).webSearch,false);

@@ -10,6 +10,8 @@
   "vars": {
     "FREE_ONLY_CONFIRMED": "no",
     "NOTA_WEB_SEARCH": "auto",
+    "NOTA_PAGE_READER": "auto",
+    "NOTA_CONTEXT_PROVIDER": "",
     "ALLOWED_ORIGINS": "https://nth-nota.bradredenbach.chatgpt.site"
   },
   "triggers": { "crons": ["7 0 * * *"] }

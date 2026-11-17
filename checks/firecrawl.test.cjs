@@ -77,5 +77,5 @@ test('Firecrawl’s excerpt links flow through the existing launcher chat source
 test('adding only a Firecrawl secret advertises search without making an upstream request',async()=>{
  const {handle}=await import('../cloud/worker.mjs'),e={...environment(),IP_HASH_SALT:'test-salt',AI:{run(){throw Error('must not generate');}}};
  const result=await handle(new Request('https://gateway.test/v1/capabilities'),e,async()=>{throw Error('must not search');});
- assert.deepEqual(await result.json(),{chatVersion:1,webSearch:true});assert.equal(e.DB.quota.size,0);
+ const caps=await result.json();assert.equal(caps.chatVersion,1);assert.equal(caps.gatewayVersion,2);assert.equal(caps.webSearch,true);assert.deepEqual(caps.configuredProviders.search,['firecrawl']);assert.equal(e.DB.quota.size,0);
 });
