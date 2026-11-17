@@ -9,6 +9,8 @@
   "d1_databases": [{ "binding": "DB", "database_name": "nth-nota-ai-quota", "database_id": "REPLACE_WITH_CREATED_DATABASE_ID", "migrations_dir": "migrations" }],
   "vars": {
     "FREE_ONLY_CONFIRMED": "no",
+    "NOTA_WEB_SEARCH": "off",
+    "NOTA_SEARCH_BILLING_CONFIRMED": "no",
     "ALLOWED_ORIGINS": "https://nth-nota.bradredenbach.chatgpt.site"
   },
   "triggers": { "crons": ["7 0 * * *"] }
